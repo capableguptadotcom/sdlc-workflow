@@ -1,3 +1,10 @@
+---
+status: draft
+accepted_at:
+accepted_via:
+accepted_spec: spec.md
+---
+
 # Implementation plan: <name>
 
 ## Existing system evidence

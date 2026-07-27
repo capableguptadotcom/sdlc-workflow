@@ -122,8 +122,9 @@ team rather than copy an IDE's interface or productivity claims.
 
 ## 4. Current repository: foundation and gaps
 
-The repository already has a credible workflow kernel. The ordinary validator
-currently passes with 13 skills, 26 routing cases, and 13 behavior cases.
+At plan acceptance, the repository already had a credible workflow kernel. The
+ordinary validator passed with 13 skills, 26 routing cases, and 13 behavior
+cases.
 
 | Area | Already present | Missing product work |
 | --- | --- | --- |
@@ -171,6 +172,32 @@ The assistant makes routing visible without exposing taxonomy:
 - “This is a larger initiative, so I recommend mapping its decision tracks
   before we create feature specs.”
 - “The implementation is ready for deterministic checks and review.”
+
+The developer brings the problem, desired outcome, or uncertainty. They are not
+responsible for selecting the workflow or designing routine implementation
+details. The assistant owns repository investigation, workflow selection,
+technical legwork, and a recommendation. The developer owns product policy,
+acceptable risk, durable trade-offs, and external actions.
+
+### How the agent handles “I do not know how”
+
+Uncertainty is classified before it is escalated:
+
+1. Inspect repository facts first.
+2. Ask the developer only when observable behavior, policy, risk, or a durable
+   trade-off is unresolved.
+3. Make routine reversible engineering choices from repository evidence.
+4. Use bounded research for an external fact and a bounded prototype for a
+   measurable question.
+5. Use simulated perspectives when one consequential decision has several
+   defensible answers; recommend a choice, but leave it to the human.
+6. Propose Wayfinder only when discovery contains multiple coordinated outcomes
+   or decision tracks that cannot remain one coherent spec or session.
+
+Developer uncertainty by itself is not a Wayfinder signal. The canonical
+normal-language examples and near-neighbor routing boundaries live in
+`repo-template/evals/dialogue-cases.json` and render into the draft
+walkthrough.
 
 ### End-to-end developer flow
 
@@ -993,6 +1020,62 @@ project policy through a reviewed change, then run the same command again.
 The single command does not mean an unsafe automatic mutation. It means one
 state-aware entry point with a safe stop condition.
 
+### Dialogue 12: the outcome is known, but the implementation approach is not
+
+```text
+Developer:
+I want users to access recent records offline, but I have no idea how to
+implement it.
+
+Assistant:
+I’ll inspect the current data-loading, caching, authentication, and mutation
+paths before asking you to make decisions.
+
+Assistant:
+This is one coherent feature, not an initiative. The product decision is
+whether offline access is read-only or also queues writes. I recommend
+read-only first because queued writes require synchronization and conflict
+policy. Which behavior do you need?
+
+Developer:
+Start with read-only offline access.
+
+Assistant:
+I’ll own the routine implementation choices. If repository evidence cannot
+settle a measurable technical question, I’ll run a bounded prototype. If one
+durable choice has several defensible options, I’ll compare their consequences
+and bring you a recommendation.
+
+I’ll now draft the behavior and verification contract for review. I will not
+implement until you accept it.
+```
+
+Internal route:
+
+```text
+develop → inspect repository
+        → shape unresolved product behavior only
+        → resolve technical uncertainty with evidence
+            → repository convention: agent decides
+            → external fact: bounded research
+            → empirical question: bounded prototype
+            → contested durable choice: simulated perspectives, human decides
+        → accept spec → conditional plan → implement → finish
+```
+
+Wayfinder is not triggered merely because the developer is unsure how to
+implement something. It is proposed only when discovery contains multiple
+coordinated outcomes or decision branches that cannot remain one coherent spec
+or discovery session.
+
+Must not happen:
+
+- asking the developer to design routine implementation details;
+- turning one coherent feature into an initiative;
+- debating a question that repository evidence or a small experiment can
+  answer;
+- letting simulated perspectives make the final policy or architecture choice.
+
 ## 9. Quality and enforcement model
 
 The workflow has four distinct layers. Each layer should do only work suited to
@@ -1195,7 +1278,7 @@ Every shipped path must be classified before the reconciler is built.
 
 | Classification | Current paths and rule |
 | --- | --- |
-| Kit-owned whole files | `.agents/skills/**`, `.claude/commands/**`, `.ai/README.md`, `.ai/skills-catalog.json`, `.ai/skills.lock.json`, `THIRD_PARTY_NOTICES.md`, `specs/_template/**`, `evals/**`, and the installed validator scripts |
+| Kit-owned whole files | `.agents/skills/**`, `.claude/commands/**`, `.ai/README.md`, `.ai/ARTIFACTS.md`, `.ai/templates/**`, `.ai/skills-catalog.json`, `.ai/skills.lock.json`, `THIRD_PARTY_NOTICES.md`, `specs/_template/**`, `evals/**`, and the installed validator/render scripts |
 | Shared managed region | Root `AGENTS.md`, `CLAUDE.md`, `.github/copilot-instructions.md`, and an existing pull-request template when the team accepts the managed evidence block |
 | Project-owned after adoption | `ai-sdlc.yaml`, nested `AGENTS.md`, project-specific skills not in the release manifest, `CONTEXT*.md`, feature specs, initiative maps, ADRs, product/operational docs, and handoff configuration |
 | Generated/machine-owned | `.ai/kit.lock.json` and generated adapter/version consistency metadata |

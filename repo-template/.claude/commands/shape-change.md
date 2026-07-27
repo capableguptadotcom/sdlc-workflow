@@ -1,5 +1,5 @@
 ---
-description: Turn ambiguous product or domain intent into a testable specification.
+description: Resolve ambiguous behavior, domain intent, or one consequential choice.
 ---
 
 Read and follow `${CLAUDE_PROJECT_DIR}/.agents/skills/shape-change/SKILL.md`.

@@ -29,16 +29,25 @@ override this file only for its subtree.
 
 ## Change policy
 
-- New behavior, public API changes, migrations, cross-module changes, and work
-  with unclear acceptance criteria require a feature folder under `specs/`.
-- Tiny, local, reversible changes may skip a feature spec when the PR explains
-  the intent and verification evidence.
+- Read `.ai/ARTIFACTS.md` and use the lightest reliable artifact level.
+- Clear, local, reversible, low-risk changes use an inline brief and focused
+  evidence; do not create a feature folder.
+- Normal behavior changes create `spec.md` and `verification.md`. Create
+  `plan.md` only for multiple dependency-ordered slices, migration,
+  compatibility, rollout, or material risk.
+- Use an initiative map only when several coordinated outcomes or decision
+  tracks cannot remain one coherent spec or discovery session.
+- Create tracker tickets only for independently assignable or resumable slices,
+  only when useful, and only after explicit authorization.
 - Do not backfill specifications for untouched legacy code. When changing
   untested legacy behavior, add characterization tests first when feasible.
 - Work in thin vertical slices. Keep each slice reviewable, runnable, and tied
   to an acceptance criterion.
 - Preserve existing conventions unless the change explicitly intends to alter
   them. Prefer the smallest behavior-preserving change.
+- Create domain context lazily for stable project-specific terms. Create an ADR
+  only when a decision is hard to reverse, surprising without context, and the
+  result of a real trade-off.
 
 ## Risk-tiered autonomy
 
@@ -58,7 +67,7 @@ Use one front door for ordinary work:
 
 | Situation | Use |
 | --- | --- |
-| Build or change product behavior | `develop` |
+| Explain the repository or build/change product behavior | `develop` |
 | Prepare completed work for review | `finish` |
 | Pause work to understand an unfamiliar concept | `learn` |
 

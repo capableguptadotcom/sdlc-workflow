@@ -65,6 +65,61 @@
       "target_skill": "handoff-and-teach",
       "prompt": "Hand an authentication investigation to another agent using logs that contain tokens.",
       "assertions": ["redacts secrets", "captures tried approaches and next action", "requires fresh state inspection"]
+    },
+    {
+      "target_skill": "develop",
+      "dialogue_id": "clear-tiny-change",
+      "prompt": "Change the settings dialog button from Save to Save changes and update the focused test.",
+      "assertions": ["uses an inline change brief", "creates no feature folder, plan, ticket, or ADR", "runs an adaptive finish"]
+    },
+    {
+      "target_skill": "develop",
+      "dialogue_id": "unknown-implementation-approach",
+      "prompt": "I want users to access recent records offline, but I have no idea how to implement it.",
+      "assertions": ["inspects before asking", "asks only unresolved product decisions", "owns routine implementation choices", "does not trigger initiative mapping for one coherent outcome"]
+    },
+    {
+      "target_skill": "develop",
+      "dialogue_id": "large-foggy-initiative",
+      "prompt": "Build one customer platform across web, mobile, partner APIs, regional data residency, and usage-based billing.",
+      "assertions": ["proposes initiative mapping", "creates decision tracks before feature specs", "does not create premature implementation tickets"]
+    },
+    {
+      "target_skill": "shape-change",
+      "dialogue_id": "supersede-accepted-adr",
+      "prompt": "Replace the accepted synchronous Ordering-to-Billing decision with events.",
+      "assertions": ["preserves the accepted ADR body", "drafts a new proposed ADR before replacement acceptance", "updates status and bidirectional links atomically after human acceptance"]
+    },
+    {
+      "target_skill": "plan-change",
+      "dialogue_id": "fuzzy-brownfield-feature",
+      "prompt": "The team-invitations spec is accepted. Plan the independently verifiable slices, but do not create external tickets.",
+      "assertions": ["creates a plan only because multiple slices help", "uses vertical slices", "does not create tasks.md when an external tracker is the execution source of truth", "does not mutate a tracker without explicit authorization"]
+    },
+    {
+      "target_skill": "develop",
+      "prompt": "Add a normal single-slice account-export feature with settled behavior.",
+      "assertions": ["creates spec.md and verification.md", "does not create plan.md or tasks", "does not create an ADR without a durable trade-off"]
+    },
+    {
+      "target_skill": "develop",
+      "prompt": "Give me a read-only overview of this repository and how its main components interact.",
+      "assertions": ["inspects repository evidence before answering", "creates no workflow artifacts", "makes no repository mutation"]
+    },
+    {
+      "target_skill": "shape-change",
+      "prompt": "Record the newly accepted irreversible tenant-isolation strategy.",
+      "assertions": ["creates a proposed ADR before acceptance", "records explicit human acceptance before marking it accepted", "links the related behavioral spec"]
+    },
+    {
+      "target_skill": "shape-change",
+      "prompt": "Record a relevant cache decision without replacing either accepted ADR.",
+      "assertions": ["uses related_adrs links", "does not mark either ADR superseded", "preserves both accepted decision bodies"]
+    },
+    {
+      "target_skill": "shape-change",
+      "prompt": "Retire an accepted ADR because its system is no longer operated and no replacement exists.",
+      "assertions": ["marks the ADR deprecated rather than superseded", "records the reason and date", "does not invent a replacement ADR"]
     }
   ]
 }

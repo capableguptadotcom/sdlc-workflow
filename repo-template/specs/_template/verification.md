@@ -2,7 +2,7 @@
 
 ## Acceptance-criteria mapping
 
-| Criterion | Evidence | Result |
+| Criterion | Intended evidence | Observed result |
 | --- | --- | --- |
 | AC1 | | |
 

@@ -8,7 +8,7 @@
       "status": "core",
       "invocation": "manual-preferred",
       "risk": "medium",
-      "purpose": "Orchestrate change shaping, planning, and slice implementation.",
+      "purpose": "Route repository explanation and change work through the lightest reliable path.",
       "sources": []
     },
     {
@@ -16,7 +16,7 @@
       "status": "core",
       "invocation": "manual-preferred",
       "risk": "medium",
-      "purpose": "Prepare a verified diff for human review.",
+      "purpose": "Adaptively verify, review, simplify when useful, and report readiness.",
       "sources": []
     },
     {
@@ -32,7 +32,7 @@
       "status": "core",
       "invocation": "automatic-or-explicit",
       "risk": "low",
-      "purpose": "Create shared requirements, domain scenarios, and acceptance evidence.",
+      "purpose": "Resolve material decisions and create accepted behavior and evidence contracts.",
       "sources": ["mattpocock-skills", "addyosmani-agent-skills"]
     },
     {
@@ -40,7 +40,7 @@
       "status": "core",
       "invocation": "automatic-or-explicit",
       "risk": "low",
-      "purpose": "Plan tracer-first vertical slices from an accepted specification.",
+      "purpose": "Plan tracer-first slices only when sequencing, migration, rollout, or risk warrants it.",
       "sources": ["mattpocock-skills", "addyosmani-agent-skills"]
     },
     {
@@ -48,7 +48,7 @@
       "status": "core",
       "invocation": "automatic-or-explicit",
       "risk": "medium",
-      "purpose": "Implement one vertical increment with tests and primary-source verification.",
+      "purpose": "Implement one accepted slice or low-risk inline brief with deterministic evidence.",
       "sources": ["mattpocock-skills", "addyosmani-agent-skills"]
     },
     {
@@ -56,7 +56,7 @@
       "status": "core",
       "invocation": "automatic-or-explicit",
       "risk": "low",
-      "purpose": "Find an evidence-backed root cause before fixing.",
+      "purpose": "Find an evidence-backed root cause and fix only when requested.",
       "sources": ["mattpocock-skills"]
     },
     {

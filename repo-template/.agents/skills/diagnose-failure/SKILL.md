@@ -6,6 +6,9 @@ description: Determine the root cause of a reproducible bug, failing test, runti
 # Diagnose failure
 
 1. State the observed failure, expected behavior, impact, and current evidence.
+   Read relevant specs, context, and ADRs to distinguish a defect from
+   intentional behavior. If expected behavior is unresolved, pause and route
+   only that decision through `../shape-change/SKILL.md`.
 2. Reproduce it with the smallest reliable command, input, or scenario. If it is
    not reproducible, identify the missing observability instead of guessing.
    In diagnosis-only mode, suppress incidental caches, snapshots, coverage
@@ -18,8 +21,9 @@ description: Determine the root cause of a reproducible bug, failing test, runti
    assertions over broad debug output.
 6. Reject or strengthen each hypothesis using new evidence.
 7. Identify the root cause and the causal chain, not merely the failing line.
-8. When the user also asked for a fix, add a regression test, implement the
-   smallest causal fix, rerun relevant checks, and remove temporary diagnostics.
+8. When the user also asked for a fix, make the reproduction red-capable, add a
+   regression test, implement the smallest causal fix, rerun focused and
+   affected checks, and remove temporary diagnostics.
 
 Return the reproduction, evidence, root cause, confidence, fix status, and any
 unresolved alternatives. Do not modify code when the request is diagnosis-only.

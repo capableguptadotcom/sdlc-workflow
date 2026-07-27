@@ -1,0 +1,1018 @@
+{
+  "schema_version": 1,
+  "status": "tabletop-design-only",
+  "installed_walkthrough_scenario_ids": [
+    "unknown-implementation-approach",
+    "fuzzy-brownfield-feature",
+    "clear-tiny-change",
+    "diagnose-and-fix",
+    "finish-before-commit"
+  ],
+  "developer_mental_model": {
+    "promise": "Describe the work normally. The assistant investigates the repository, asks only for decisions that belong to you, chooses the lightest reliable workflow, and shows evidence before calling the work ready.",
+    "sequence": [
+      {
+        "step": "Describe the goal",
+        "developer": "State the outcome, problem, question, or uncertainty in ordinary language.",
+        "assistant": "Recognize whether this is orientation, change, failure, learning, or finish work."
+      },
+      {
+        "step": "Inspect before asking",
+        "developer": "Do not reconstruct facts the repository already contains.",
+        "assistant": "Read relevant code, tests, instructions, specifications, context, and decisions."
+      },
+      {
+        "step": "Settle only important decisions",
+        "developer": "Choose product policy, acceptable risk, and durable trade-offs.",
+        "assistant": "Own routine implementation choices and bring recommendations for consequential decisions."
+      },
+      {
+        "step": "Build the smallest useful slice",
+        "developer": "Review material behavior contracts and plans when they are warranted.",
+        "assistant": "Keep tiny work tiny, implement accepted behavior in verifiable slices, and adapt when evidence changes scope."
+      },
+      {
+        "step": "Finish with evidence",
+        "developer": "Authorize commits, pushes, pull requests, or other external actions explicitly.",
+        "assistant": "Run relevant checks, review correctness, simplify only when useful, recheck, and report readiness."
+      }
+    ],
+    "examples": [
+      {
+        "developer_says": "Give me an overview of this project. Do not change files.",
+        "assistant_does": "Inspects and explains the repository without editing."
+      },
+      {
+        "developer_says": "Rename this button and update its test.",
+        "assistant_does": "Makes the bounded change and runs the focused check without creating planning artifacts."
+      },
+      {
+        "developer_says": "Add team invitations.",
+        "assistant_does": "Inspects existing roles, asks only unresolved product questions, and drafts a behavior contract before material implementation."
+      },
+      {
+        "developer_says": "I want offline access, but I have no idea how to implement it.",
+        "assistant_does": "Separates product behavior from technical uncertainty, owns routine engineering choices, and uses evidence for the rest."
+      },
+      {
+        "developer_says": "Polling, webhooks, and server-sent events all seem viable.",
+        "assistant_does": "Compares the consequences from relevant perspectives, recommends one option, and leaves the durable choice to the developer."
+      },
+      {
+        "developer_says": "We do not know whether IndexedDB meets the latency target.",
+        "assistant_does": "Runs a bounded prototype for that named empirical question."
+      },
+      {
+        "developer_says": "Build the customer platform across channels, regions, identity, and billing.",
+        "assistant_does": "Proposes an initiative map because several coordinated outcomes cannot remain one coherent spec."
+      },
+      {
+        "developer_says": "Checkout retries sometimes charge twice. Find the cause and fix it.",
+        "assistant_does": "Reproduces and diagnoses before making the smallest causal fix."
+      },
+      {
+        "developer_says": "Pause and teach me this migration pattern, then return here.",
+        "assistant_does": "Preserves the workstream, teaches the needed concept, checks understanding, and resumes."
+      },
+      {
+        "developer_says": "Finish this and commit it.",
+        "assistant_does": "Completes checks and review before making only the authorized Git action."
+      }
+    ],
+    "uncertainty_rules": [
+      {
+        "signal": "A repository fact is missing",
+        "example": "How is authentication implemented here?",
+        "response": "Inspect the repository instead of asking the developer.",
+        "route": "repository inspection"
+      },
+      {
+        "signal": "Product behavior or policy is missing",
+        "example": "Should offline mode allow queued writes?",
+        "response": "Ask one focused question with a recommendation and trade-off.",
+        "route": "shape-change with grilling behavior"
+      },
+      {
+        "signal": "A routine technical choice is unresolved",
+        "example": "Which existing serializer pattern should this field use?",
+        "response": "Follow repository evidence and make the engineering choice.",
+        "route": "agent-owned implementation decision"
+      },
+      {
+        "signal": "An external or version-sensitive fact is missing",
+        "example": "Does the supported SDK version expose this capability?",
+        "response": "Verify the primary source and record the relevant limitation.",
+        "route": "bounded research"
+      },
+      {
+        "signal": "A measurable implementation question is unresolved",
+        "example": "Can IndexedDB meet the required query latency?",
+        "response": "Run a throwaway experiment that answers only the named question.",
+        "route": "bounded prototype"
+      },
+      {
+        "signal": "One durable decision has several defensible answers",
+        "example": "Should delivery use polling, webhooks, or server-sent events?",
+        "response": "Compare relevant perspectives, recommend a choice, and let the human decide.",
+        "route": "simulated discussion inside shaping"
+      },
+      {
+        "signal": "Discovery contains several coordinated outcomes or decision tracks",
+        "example": "Build one customer platform spanning identity, billing, regions, and channels.",
+        "response": "Propose an initiative map and return each coherent outcome for its own spec.",
+        "route": "guarded Wayfinder initiative mapping"
+      }
+    ]
+  },
+  "visible_modes": {
+    "inspect": "Checking the existing project",
+    "shape": "Settling an important behavior decision",
+    "plan": "Making the implementation order explicit",
+    "implement": "Building the accepted slice",
+    "diagnose": "Diagnosing the failure before editing",
+    "initiative": "Mapping a larger initiative",
+    "finish": "Finishing verification and review",
+    "learn": "Teaching the needed concept, then returning",
+    "update": "Checking the installed workflow safely"
+  },
+  "walkthrough_scenario_ids": [
+    "adopt-existing-repository",
+    "unknown-implementation-approach",
+    "fuzzy-brownfield-feature",
+    "clear-tiny-change",
+    "diagnose-and-fix",
+    "finish-before-commit"
+  ],
+  "routing_boundary_cases": [
+    {
+      "id": "coherent-outcome-unknown-approach",
+      "prompt": "I want offline access to recent records, but I have no idea how to implement it.",
+      "expected_route": [
+        "inspect repository",
+        "shape unresolved product behavior only",
+        "agent recommends the routine technical approach"
+      ],
+      "rejected_routes": [
+        "initiative mapping",
+        "ask the developer to design the implementation"
+      ],
+      "reason": "One coherent outcome with implementation uncertainty is not an initiative."
+    },
+    {
+      "id": "routine-technical-choice",
+      "prompt": "Add the accepted field to the existing serializer; use the repository's normal pattern.",
+      "expected_route": [
+        "inspect repository",
+        "agent selects the established implementation pattern",
+        "implement and verify"
+      ],
+      "rejected_routes": [
+        "human decision gate",
+        "simulated perspectives",
+        "initiative mapping"
+      ],
+      "reason": "A reversible choice already answered by repository convention belongs to the agent."
+    },
+    {
+      "id": "single-contested-decision",
+      "prompt": "The outcome is settled, but polling, webhooks, and server-sent events all seem viable.",
+      "expected_route": [
+        "inspect constraints",
+        "compare relevant perspectives",
+        "recommend one option",
+        "human chooses the durable trade-off"
+      ],
+      "rejected_routes": [
+        "initiative mapping",
+        "let simulated perspectives decide"
+      ],
+      "reason": "Several defensible answers to one consequential decision call for simulated discussion, not Wayfinder."
+    },
+    {
+      "id": "empirical-implementation-unknown",
+      "prompt": "We know the behavior, but we do not know whether IndexedDB can meet the required query latency.",
+      "expected_route": [
+        "inspect existing evidence",
+        "run a bounded prototype for the named latency question",
+        "discard or isolate prototype code"
+      ],
+      "rejected_routes": [
+        "opinion-only debate",
+        "initiative mapping",
+        "treat prototype as production"
+      ],
+      "reason": "A measurable uncertainty is cheaper and more reliable to test than debate."
+    },
+    {
+      "id": "multi-outcome-discovery",
+      "prompt": "Create offline-first web and mobile clients with multi-device conflict resolution, regional synchronization, identity changes, and a staged migration.",
+      "expected_route": [
+        "inspect repository",
+        "propose initiative mapping",
+        "order decision tracks",
+        "return each coherent outcome for its own spec"
+      ],
+      "rejected_routes": [
+        "single enormous spec",
+        "premature implementation tickets",
+        "immediate implementation"
+      ],
+      "reason": "Several coordinated outcomes and decision branches cannot remain one coherent spec or discovery session."
+    }
+  ],
+  "cases": [
+    {
+      "id": "adopt-existing-repository",
+      "source_dialogue": 1,
+      "title": "Adopt an existing repository",
+      "repository_fixture": null,
+      "developer_turns": [
+        "npx @company/ai-sdlc",
+        "Apply the adoption plan."
+      ],
+      "walkthrough_transcript": [
+        {
+          "speaker": "Developer",
+          "text": "Run npx @company/ai-sdlc in an existing repository."
+        },
+        {
+          "speaker": "Kit",
+          "text": "I found the existing stack, instructions, hooks, CI, and project commands. No files have changed. Review this adoption preview and confirm whether I should apply it."
+        },
+        {
+          "speaker": "Developer",
+          "text": "Apply it."
+        },
+        {
+          "speaker": "Kit",
+          "text": "Adoption is applied and validated. Existing project guidance and hooks were preserved. Next, ask your assistant for a read-only project overview."
+        }
+      ],
+      "expected_visible_modes": [
+        "inspect"
+      ],
+      "expected_internal_route": [
+        "inspect repository",
+        "preview adoption",
+        "confirm",
+        "apply transaction",
+        "validate"
+      ],
+      "artifacts_created": [
+        "reviewed workflow files",
+        "thin host adapters",
+        "human walkthrough",
+        "project command mapping",
+        "installation lock"
+      ],
+      "artifacts_skipped": [
+        "feature spec",
+        "implementation plan",
+        "tracker tickets",
+        "ADR"
+      ],
+      "human_gates": [
+        "confirm the complete adoption preview before any mutation"
+      ],
+      "deterministic_commands": [
+        "structural validation",
+        "mapped project validation when configured"
+      ],
+      "allowed_mutations": [
+        "confirmed adoption files and managed instruction regions"
+      ],
+      "forbidden_mutations": [
+        "unconfirmed file changes",
+        "replacement of existing project guidance",
+        "replacement of existing hooks"
+      ],
+      "forbidden_behavior": [
+        "ask the developer to classify the repository by stack",
+        "require multiple setup commands"
+      ],
+      "expected_terminal_state": "adopted"
+    },
+    {
+      "id": "fuzzy-brownfield-feature",
+      "source_dialogue": 2,
+      "title": "Shape a fuzzy brownfield feature",
+      "repository_fixture": null,
+      "developer_turns": [
+        "Add team invitations.",
+        "Accept the proposed invitation rules and 72-hour expiry.",
+        "Accept the spec and plan, keep execution local, and start the first slice."
+      ],
+      "walkthrough_transcript": [
+        {
+          "speaker": "Developer",
+          "text": "Add team invitations."
+        },
+        {
+          "speaker": "Assistant",
+          "text": "I will inspect the current roles, user flow, email provider, and related decisions before asking you for product choices."
+        },
+        {
+          "speaker": "Assistant",
+          "text": "The repository does not say who may invite. I recommend Owners and Admins, while only Owners may invite another Owner. Should we use that rule?"
+        },
+        {
+          "speaker": "Developer",
+          "text": "Yes. Invitations expire after 72 hours."
+        },
+        {
+          "speaker": "Assistant",
+          "text": "I will draft the behavior and verification contract. I will not implement until you accept it."
+        }
+      ],
+      "expected_visible_modes": [
+        "inspect",
+        "shape",
+        "plan",
+        "implement",
+        "finish"
+      ],
+      "expected_internal_route": [
+        "develop",
+        "inspect facts",
+        "shape change",
+        "accept spec",
+        "plan change",
+        "implement slices",
+        "finish"
+      ],
+      "artifacts_created": [
+        "spec.md",
+        "verification.md",
+        "plan.md"
+      ],
+      "artifacts_skipped": [
+        "tracker tickets unless separately authorized",
+        "ADR unless the decision passes the ADR gate",
+        "CONTEXT.md unless a stable domain term needs definition"
+      ],
+      "human_gates": [
+        "confirm unresolved product policy",
+        "accept the behavioral spec",
+        "accept the multi-slice plan",
+        "authorize any external tracker mutation"
+      ],
+      "deterministic_commands": [
+        "checks mapped to every accepted criterion",
+        "affected checks after each slice",
+        "configured finish checks"
+      ],
+      "allowed_mutations": [
+        "accepted spec and plan",
+        "one accepted implementation slice at a time"
+      ],
+      "forbidden_mutations": [
+        "product code before spec acceptance",
+        "external tracker changes without authorization"
+      ],
+      "forbidden_behavior": [
+        "ask for repository facts that can be inspected",
+        "create an ADR for reversible expiry policy"
+      ],
+      "expected_terminal_state": "ready"
+    },
+    {
+      "id": "clear-tiny-change",
+      "source_dialogue": 3,
+      "title": "Make a clear tiny change",
+      "repository_fixture": null,
+      "developer_turns": [
+        "Change the settings dialog button from Save to Save changes and update the test."
+      ],
+      "walkthrough_transcript": [
+        {
+          "speaker": "Developer",
+          "text": "Change the settings dialog button from Save to Save changes and update the test."
+        },
+        {
+          "speaker": "Assistant",
+          "text": "This is clear, local, reversible, and low risk. I will make the smallest edit and run the focused UI test; no feature folder or planning ceremony is needed."
+        },
+        {
+          "speaker": "Assistant",
+          "text": "The label and assertion are updated. The focused test passes, the diff contains only the requested change, and no simplification was useful. Readiness: ready."
+        }
+      ],
+      "expected_visible_modes": [
+        "implement",
+        "finish"
+      ],
+      "expected_internal_route": [
+        "develop",
+        "implement from inline brief",
+        "adaptive finish"
+      ],
+      "artifacts_created": [
+        "request and verification evidence in the change summary"
+      ],
+      "artifacts_skipped": [
+        "feature folder",
+        "spec.md",
+        "plan.md",
+        "tracker tickets",
+        "ADR"
+      ],
+      "human_gates": [],
+      "deterministic_commands": [
+        "focused UI test"
+      ],
+      "allowed_mutations": [
+        "button label",
+        "matching test assertion"
+      ],
+      "forbidden_mutations": [
+        "unrelated dialog refactoring"
+      ],
+      "forbidden_behavior": [
+        "requirements interview",
+        "planning artifact generation"
+      ],
+      "expected_terminal_state": "ready"
+    },
+    {
+      "id": "diagnose-and-fix",
+      "source_dialogue": 4,
+      "title": "Diagnose and fix an existing failure",
+      "repository_fixture": null,
+      "developer_turns": [
+        "Some checkout retries charge the customer twice. Find the cause and fix it."
+      ],
+      "walkthrough_transcript": [
+        {
+          "speaker": "Developer",
+          "text": "Some checkout retries charge the customer twice. Find the cause and fix it."
+        },
+        {
+          "speaker": "Assistant",
+          "text": "I am diagnosing the failure before changing product code. I will reproduce it and inspect the checkout boundary, tests, history, specs, and relevant ADRs."
+        },
+        {
+          "speaker": "Assistant",
+          "text": "The timeout retry creates a new idempotency key, violating the existing payment decision. I will add a regression test, make the smallest causal fix, and rerun affected checkout checks."
+        },
+        {
+          "speaker": "Assistant",
+          "text": "The regression was red before the fix and is green now. The affected suite passes and no new ADR is needed. Readiness: ready."
+        }
+      ],
+      "expected_visible_modes": [
+        "diagnose",
+        "implement",
+        "finish"
+      ],
+      "expected_internal_route": [
+        "develop",
+        "diagnose failure",
+        "regression test",
+        "causal fix",
+        "affected checks",
+        "finish"
+      ],
+      "artifacts_created": [
+        "regression test",
+        "verification evidence"
+      ],
+      "artifacts_skipped": [
+        "new ADR",
+        "feature spec when expected behavior is already settled"
+      ],
+      "human_gates": [],
+      "deterministic_commands": [
+        "red-capable reproduction",
+        "focused checkout checks",
+        "affected checkout suite"
+      ],
+      "allowed_mutations": [
+        "regression test",
+        "smallest causal product-code fix"
+      ],
+      "forbidden_mutations": [
+        "product code before causal evidence",
+        "accepted ADR body"
+      ],
+      "forbidden_behavior": [
+        "guess and patch the first suspicious line",
+        "leave broad permanent instrumentation"
+      ],
+      "expected_terminal_state": "ready"
+    },
+    {
+      "id": "contested-architecture-decision",
+      "source_dialogue": 5,
+      "title": "Resolve a contested architecture decision",
+      "repository_fixture": null,
+      "developer_turns": [
+        "Should notifications be sent directly from the request or through an outbox?",
+        "Accept the outbox direction.",
+        "Draft and then accept the ADR."
+      ],
+      "walkthrough_transcript": [
+        {
+          "speaker": "Developer",
+          "text": "Should notifications be sent directly from the request or through an outbox?"
+        },
+        {
+          "speaker": "Assistant",
+          "text": "I will inspect the transaction boundary and delivery requirements, compare the credible choices, and recommend one. The trade-off passes the ADR gate, but discussion alone does not authorize a repository edit."
+        },
+        {
+          "speaker": "Developer",
+          "text": "Draft the recommended outbox ADR."
+        },
+        {
+          "speaker": "Assistant",
+          "text": "The ADR is proposed for review. A separate behavioral spec will still require acceptance before implementation."
+        }
+      ],
+      "expected_visible_modes": [
+        "inspect",
+        "shape"
+      ],
+      "expected_internal_route": [
+        "read-only architecture question",
+        "inspect",
+        "shape change",
+        "compare perspectives",
+        "human decision",
+        "authorized ADR draft",
+        "ADR acceptance",
+        "separate spec shaping"
+      ],
+      "artifacts_created": [
+        "proposed ADR after authorization",
+        "accepted ADR after explicit acceptance",
+        "separate linked spec when feature shaping begins"
+      ],
+      "artifacts_skipped": [
+        "implementation plan before an accepted spec",
+        "product code"
+      ],
+      "human_gates": [
+        "choose the architecture",
+        "authorize the ADR draft",
+        "accept the ADR",
+        "accept the later feature spec"
+      ],
+      "deterministic_commands": [],
+      "allowed_mutations": [
+        "authorized ADR status and content"
+      ],
+      "forbidden_mutations": [
+        "repository edit from discussion alone",
+        "product code"
+      ],
+      "forbidden_behavior": [
+        "let simulated perspectives decide policy",
+        "copy ADR rationale into the feature spec"
+      ],
+      "expected_terminal_state": "accepted-decision"
+    },
+    {
+      "id": "supersede-accepted-adr",
+      "source_dialogue": 6,
+      "title": "Supersede an accepted ADR",
+      "repository_fixture": null,
+      "developer_turns": [
+        "The availability requirement means Ordering must stop calling Billing synchronously. Move it to events.",
+        "Draft ADR-0014.",
+        "Accept ADR-0014."
+      ],
+      "walkthrough_transcript": [
+        {
+          "speaker": "Developer",
+          "text": "Move Ordering-to-Billing integration from synchronous HTTP to events."
+        },
+        {
+          "speaker": "Assistant",
+          "text": "ADR-0006 chose synchronous HTTP. I will shape the replacement guarantees, then draft a new ADR rather than rewriting accepted history."
+        },
+        {
+          "speaker": "Developer",
+          "text": "Accept the replacement ADR."
+        },
+        {
+          "speaker": "Assistant",
+          "text": "I will atomically accept ADR-0014, mark ADR-0006 superseded, add both links, and then draft a separately gated migration spec."
+        }
+      ],
+      "expected_visible_modes": [
+        "inspect",
+        "shape"
+      ],
+      "expected_internal_route": [
+        "discover active ADR",
+        "shape replacement decision",
+        "authorize proposed ADR",
+        "accept replacement atomically",
+        "shape migration spec"
+      ],
+      "artifacts_created": [
+        "ADR-0014",
+        "migration spec draft"
+      ],
+      "artifacts_skipped": [
+        "rewrite of ADR-0006 body"
+      ],
+      "human_gates": [
+        "confirm replacement behavior",
+        "authorize proposed ADR",
+        "accept replacement ADR",
+        "accept later migration spec and plan"
+      ],
+      "deterministic_commands": [
+        "ADR status and bidirectional-link validation"
+      ],
+      "allowed_mutations": [
+        "new ADR",
+        "old ADR status and superseded_by metadata",
+        "new ADR supersedes metadata"
+      ],
+      "forbidden_mutations": [
+        "accepted ADR-0006 body",
+        "implementation before migration spec acceptance"
+      ],
+      "forbidden_behavior": [
+        "leave one-way supersession links",
+        "mark the old ADR superseded before replacement acceptance"
+      ],
+      "expected_terminal_state": "accepted-decision"
+    },
+    {
+      "id": "large-foggy-initiative",
+      "source_dialogue": 7,
+      "title": "Map a large foggy initiative",
+      "repository_fixture": null,
+      "developer_turns": [
+        "Build one customer platform for web, mobile, partner APIs, regional data residency, and usage-based billing.",
+        "Proceed with the initiative map."
+      ],
+      "walkthrough_transcript": [
+        {
+          "speaker": "Developer",
+          "text": "Build one customer platform across channels, regions, and usage-based billing."
+        },
+        {
+          "speaker": "Assistant",
+          "text": "This contains several coordinated outcomes and decision tracks. I recommend an initiative map before feature specs or implementation tickets."
+        },
+        {
+          "speaker": "Developer",
+          "text": "Proceed."
+        },
+        {
+          "speaker": "Assistant",
+          "text": "I will start with the tenant boundary because it constrains the other tracks. Each coherent outcome will return for its own accepted spec."
+        }
+      ],
+      "expected_visible_modes": [
+        "initiative"
+      ],
+      "expected_internal_route": [
+        "develop",
+        "guarded initiative mapping",
+        "dependency-ordered decision tracks",
+        "research prototype or shaping per track",
+        "accepted spec per coherent outcome"
+      ],
+      "artifacts_created": [
+        "initiative map",
+        "one later spec per coherent outcome"
+      ],
+      "artifacts_skipped": [
+        "single enormous spec",
+        "premature implementation tickets"
+      ],
+      "human_gates": [
+        "approve initiative mapping",
+        "accept each later behavioral spec"
+      ],
+      "deterministic_commands": [],
+      "allowed_mutations": [
+        "initiative map after approval"
+      ],
+      "forbidden_mutations": [
+        "product code",
+        "external tracker tickets before accepted slices"
+      ],
+      "forbidden_behavior": [
+        "use initiative mapping for an ordinary coherent feature",
+        "split work into frontend backend and database task lists"
+      ],
+      "expected_terminal_state": "mapped"
+    },
+    {
+      "id": "finish-before-commit",
+      "source_dialogue": 8,
+      "title": "Finish before committing",
+      "repository_fixture": null,
+      "developer_turns": [
+        "Looks good. Commit it."
+      ],
+      "walkthrough_transcript": [
+        {
+          "speaker": "Developer",
+          "text": "Looks good. Commit it."
+        },
+        {
+          "speaker": "Assistant",
+          "text": "That authorizes the commit, but I will finish first: run configured checks, review against intent and repository standards, simplify only verified changed code when useful, and rerun affected checks."
+        },
+        {
+          "speaker": "Assistant",
+          "text": "The checks and final review pass. Readiness: ready. I will create the requested commit, but I will not push or open a pull request unless asked."
+        }
+      ],
+      "expected_visible_modes": [
+        "finish"
+      ],
+      "expected_internal_route": [
+        "finish",
+        "deterministic checks",
+        "correctness review",
+        "authorized fixes and recheck",
+        "scoped simplification and recheck",
+        "final diff review",
+        "authorized commit"
+      ],
+      "artifacts_created": [
+        "verification evidence",
+        "authorized Git commit"
+      ],
+      "artifacts_skipped": [
+        "new planning artifacts",
+        "pull request unless separately requested"
+      ],
+      "human_gates": [
+        "authorize commit",
+        "separately authorize push or pull request"
+      ],
+      "deterministic_commands": [
+        "configured relevant project checks",
+        "affected checks after any review fix or simplification"
+      ],
+      "allowed_mutations": [
+        "authorized blocking fixes",
+        "useful behavior-preserving simplification in changed code",
+        "Git commit"
+      ],
+      "forbidden_mutations": [
+        "push",
+        "pull request",
+        "deploy",
+        "merge"
+      ],
+      "forbidden_behavior": [
+        "commit a known-broken diff",
+        "treat AI review as deterministic evidence"
+      ],
+      "expected_terminal_state": "committed"
+    },
+    {
+      "id": "learn-and-return",
+      "source_dialogue": 9,
+      "title": "Learn without losing the workstream",
+      "repository_fixture": null,
+      "developer_turns": [
+        "Pause and teach me expand-contract, then return to this migration decision."
+      ],
+      "walkthrough_transcript": [
+        {
+          "speaker": "Developer",
+          "text": "Pause. Teach me expand-contract, then return to this migration decision."
+        },
+        {
+          "speaker": "Assistant",
+          "text": "I will preserve the current decision point in a redacted handoff, teach only the concept needed here, check understanding, and return to the rollout order."
+        },
+        {
+          "speaker": "Assistant",
+          "text": "The concept is clear and the conclusion is recorded in the handoff. We are back at the pending rollout decision."
+        }
+      ],
+      "expected_visible_modes": [
+        "learn"
+      ],
+      "expected_internal_route": [
+        "preserve workstream",
+        "teach focused concept",
+        "check transfer",
+        "return to exact decision"
+      ],
+      "artifacts_created": [
+        "redacted transient handoff"
+      ],
+      "artifacts_skipped": [
+        "permanent project documentation unless a stable constraint emerges"
+      ],
+      "human_gates": [
+        "original migration plan decision remains pending"
+      ],
+      "deterministic_commands": [],
+      "allowed_mutations": [
+        "transient handoff"
+      ],
+      "forbidden_mutations": [
+        "accepted spec",
+        "product code"
+      ],
+      "forbidden_behavior": [
+        "teach unrelated theory",
+        "lose the original workstream"
+      ],
+      "expected_terminal_state": "resumed"
+    },
+    {
+      "id": "capture-durable-guidance",
+      "source_dialogue": 10,
+      "title": "Capture durable project guidance",
+      "repository_fixture": null,
+      "developer_turns": [
+        "Migrations must support two application versions during rolling deploys. Make sure future agents know."
+      ],
+      "walkthrough_transcript": [
+        {
+          "speaker": "Developer",
+          "text": "Make sure future agents know migrations must support two application versions during rolling deploys."
+        },
+        {
+          "speaker": "Assistant",
+          "text": "This is a stable repository-wide constraint. I will propose one concise AGENTS.md rule, link the verification command, and add a behavior case through the reviewable diff."
+        }
+      ],
+      "expected_visible_modes": [
+        "implement",
+        "finish"
+      ],
+      "expected_internal_route": [
+        "identify durable repeated constraint",
+        "choose closest project scope",
+        "propose guidance change",
+        "add behavior coverage",
+        "finish"
+      ],
+      "artifacts_created": [
+        "concise AGENTS.md rule",
+        "behavior case"
+      ],
+      "artifacts_skipped": [
+        "private chat memory",
+        "new skill unless a detailed reusable procedure is needed"
+      ],
+      "human_gates": [],
+      "deterministic_commands": [
+        "behavior-case validation"
+      ],
+      "allowed_mutations": [
+        "project guidance and matching evaluation in the current diff"
+      ],
+      "forbidden_mutations": [
+        "unrelated guidance"
+      ],
+      "forbidden_behavior": [
+        "grow AGENTS.md with procedural detail",
+        "save the rule only in private memory"
+      ],
+      "expected_terminal_state": "ready"
+    },
+    {
+      "id": "update-local-conflict",
+      "source_dialogue": 11,
+      "title": "Stop safely on a local update conflict",
+      "repository_fixture": null,
+      "developer_turns": [
+        "npx @company/ai-sdlc"
+      ],
+      "walkthrough_transcript": [
+        {
+          "speaker": "Developer",
+          "text": "Run the workflow command in a repository with an older installed kit."
+        },
+        {
+          "speaker": "Kit",
+          "text": "Most files can update safely, but one managed skill was edited locally. I cannot prove compatibility, so no changes were applied. Resolve the policy through review and rerun the same command."
+        }
+      ],
+      "expected_visible_modes": [
+        "update"
+      ],
+      "expected_internal_route": [
+        "inspect installed release",
+        "compare managed baselines",
+        "preview complete update",
+        "stop on conflict"
+      ],
+      "artifacts_created": [
+        "console conflict report"
+      ],
+      "artifacts_skipped": [
+        "partial release update",
+        "written conflict artifact"
+      ],
+      "human_gates": [
+        "resolve local policy conflict through review",
+        "confirm a later conflict-free update"
+      ],
+      "deterministic_commands": [
+        "managed baseline hash comparison"
+      ],
+      "allowed_mutations": [],
+      "forbidden_mutations": [
+        "any release file",
+        "installed kit version",
+        "project-owned configuration"
+      ],
+      "forbidden_behavior": [
+        "automatic three-way merge",
+        "partial update"
+      ],
+      "expected_terminal_state": "conflict"
+    },
+    {
+      "id": "unknown-implementation-approach",
+      "source_dialogue": 12,
+      "title": "Start when the implementation approach is unknown",
+      "repository_fixture": null,
+      "developer_turns": [
+        "I want users to access recent records offline, but I have no idea how to implement it.",
+        "Start with read-only offline access."
+      ],
+      "walkthrough_transcript": [
+        {
+          "speaker": "Developer",
+          "text": "I want users to access recent records offline, but I have no idea how to implement it."
+        },
+        {
+          "speaker": "Assistant",
+          "text": "I will inspect the current data loading, caching, authentication, and mutation paths before asking you to make decisions."
+        },
+        {
+          "speaker": "Assistant",
+          "text": "This is one coherent feature, not an initiative. The product decision is whether offline access is read-only or also queues writes. I recommend read-only first because queued writes require synchronization and conflict policy. Which behavior do you need?"
+        },
+        {
+          "speaker": "Developer",
+          "text": "Start with read-only offline access."
+        },
+        {
+          "speaker": "Assistant",
+          "text": "I will own the routine implementation choices. If repository evidence cannot settle a measurable technical question, I will run a bounded prototype; if one durable choice has several defensible options, I will compare them and bring you a recommendation. I will now draft the behavior and verification contract for review."
+        }
+      ],
+      "expected_visible_modes": [
+        "inspect",
+        "shape",
+        "plan",
+        "implement",
+        "finish"
+      ],
+      "expected_internal_route": [
+        "develop",
+        "inspect repository",
+        "shape unresolved product behavior",
+        "resolve technical uncertainty with evidence",
+        "accept spec",
+        "plan only if warranted",
+        "implement",
+        "finish"
+      ],
+      "artifacts_created": [
+        "spec.md and verification.md after behavior is settled",
+        "plan.md only when multiple slices or risk warrant it"
+      ],
+      "artifacts_skipped": [
+        "initiative map for one coherent outcome",
+        "ADR unless a durable decision passes the ADR gate",
+        "tracker tickets unless useful and authorized"
+      ],
+      "human_gates": [
+        "choose unresolved product behavior",
+        "accept the behavioral spec",
+        "choose a durable contested trade-off only when one exists"
+      ],
+      "deterministic_commands": [
+        "repository-specific checks mapped to accepted behavior",
+        "bounded prototype measurement only when an empirical question remains",
+        "configured finish checks"
+      ],
+      "allowed_mutations": [
+        "accepted artifacts",
+        "bounded prototype in an isolated location when needed",
+        "accepted implementation slices"
+      ],
+      "forbidden_mutations": [
+        "product code before behavioral acceptance",
+        "external systems without authorization"
+      ],
+      "forbidden_behavior": [
+        "ask the developer to design routine implementation details",
+        "trigger initiative mapping merely because the developer is uncertain",
+        "debate a question that repository evidence or a small experiment can answer"
+      ],
+      "expected_terminal_state": "ready"
+    }
+  ]
+}

@@ -5,20 +5,31 @@ description: Prepare an existing code diff for human review by running determini
 
 # Finish
 
-Prepare the change; do not merely polish its presentation.
+Use the same order for every completed code change, but scale the checks and
+artifact work to the diff. A tiny change may need only focused checks, a bounded
+review, and a no-op simplification assessment.
 
 1. Establish the intended diff and exclude unrelated user changes.
-2. Read the applicable specification, plan, `AGENTS.md`, and configured commands.
+2. Read applicable specs, plans, ADRs, `AGENTS.md`, and configured commands.
 3. Run deterministic checks first. If they fail, stop review-oriented polishing
    and report or diagnose the failure.
 4. Follow `../review-change/SKILL.md` against the verified diff.
 5. Resolve blocking correctness findings when authorized, then rerun checks.
-6. Follow `../simplify-change/SKILL.md` only after correctness passes.
-7. Trigger `security-review`, `ui-quality`, or `review-web-motion` only when the
-   change actually matches those scopes.
-8. Update verification evidence and consequential documentation. Create an ADR
-   only for a durable, surprising, or hard-to-reverse decision.
-9. Rerun affected checks after every edit.
+6. Assess changed code for behavior-preserving simplification. Follow
+   `../simplify-change/SKILL.md` only when a useful in-scope simplification
+   exists, then rerun affected checks.
+7. Trigger security, UI, accessibility, motion, documentation, or migration
+   review only when the diff matches that scope.
+8. Update verification evidence and consequential documentation. Treat stale
+   required public or operational documentation as not ready.
+9. Check whether the diff introduced or replaced an architecture decision. An
+   ADR is warranted only when the decision is hard to reverse, surprising
+   without context, and the result of a real trade-off.
+10. Perform a compact final diff review and rerun affected checks after every
+    edit.
 
 Return a concise readiness verdict: `ready`, `ready-with-advisories`, or
 `not-ready`, with commands, evidence, blockers, and limitations.
+
+Commit, push, open a pull request, deploy, or merge only when that exact action
+is authorized and the readiness verdict permits it.

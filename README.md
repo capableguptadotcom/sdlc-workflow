@@ -39,3 +39,18 @@ not an instruction to invoke every skill on every change.
 Invocation syntax varies by agent: Claude exposes the adapters as `/develop`,
 `/finish`, and `/learn`; other Agent Skills-compatible tools may use a skill
 picker, `$develop`, or a natural-language request to use the named skill.
+
+## Maintainer checks
+
+The repository uses only the Python standard library for its current
+validation:
+
+```bash
+python -m unittest discover -s tests -v
+python repo-template/scripts/render_walkthrough.py --check
+python repo-template/scripts/validate_ai_kit.py
+```
+
+CI runs the same commands. The validator warning about empty command lists is
+expected in the shared template; adopted repositories must map their real
+commands.

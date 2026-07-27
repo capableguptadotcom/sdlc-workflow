@@ -1,3 +1,10 @@
+---
+status: draft
+accepted_at:
+accepted_via:
+superseded_by:
+---
+
 # Feature specification: <name>
 
 ## Problem and outcome
@@ -36,6 +43,10 @@ implementation unless it is a genuine constraint.
 ## Failure and recovery behavior
 
 -
+
+## Consequential documentation
+
+- User, API, integration, operational, migration, or support documentation:
 
 ## Open decisions
 

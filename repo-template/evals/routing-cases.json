@@ -41,7 +41,7 @@
       "id": "shape-positive",
       "prompt": "We need organization roles, but we have not agreed who can assign them or what failures users see.",
       "invoke": ["shape-change"],
-      "not_invoke": ["plan-change", "implement-slice"]
+      "not_invoke": ["plan-change", "implement-slice", "finish"]
     },
     {
       "id": "shape-negative-accepted-spec",
@@ -65,7 +65,7 @@
       "id": "implement-positive",
       "prompt": "Implement task 2, the approved password-reset request slice, and run its tests.",
       "invoke": ["implement-slice"],
-      "not_invoke": ["shape-change"]
+      "not_invoke": ["shape-change", "diagnose-failure", "review-change"]
     },
     {
       "id": "implement-negative-ops",
@@ -137,7 +137,7 @@
       "id": "motion-positive",
       "prompt": "Review the new draggable drawer transition on keyboard, touch, and reduced-motion settings.",
       "invoke": ["review-web-motion"],
-      "not_invoke": ["ui-quality"]
+      "not_invoke": ["ui-quality", "security-review"]
     },
     {
       "id": "motion-negative-static-ui",
@@ -156,6 +156,64 @@
       "prompt": "Give me a two-sentence status update on what you just completed.",
       "invoke": [],
       "not_invoke": ["handoff-and-teach"]
+    },
+    {
+      "id": "develop-unknown-approach",
+      "dialogue_id": "unknown-implementation-approach",
+      "prompt": "I want users to access recent records offline, but I have no idea how to implement it.",
+      "invoke": ["develop"],
+      "not_invoke": ["plan-change", "implement-slice"]
+    },
+    {
+      "id": "develop-large-initiative",
+      "dialogue_id": "large-foggy-initiative",
+      "prompt": "Build one customer platform across channels, regions, identity, and billing.",
+      "invoke": ["develop"],
+      "not_invoke": ["plan-change", "implement-slice"]
+    },
+    {
+      "id": "shape-contested-decision",
+      "dialogue_id": "contested-architecture-decision",
+      "prompt": "Polling, webhooks, and server-sent events all seem viable; compare the trade-offs and recommend one.",
+      "invoke": ["shape-change"],
+      "not_invoke": ["plan-change", "implement-slice"]
+    },
+    {
+      "id": "finish-before-commit",
+      "dialogue_id": "finish-before-commit",
+      "prompt": "The implementation looks good. Finish it and commit it.",
+      "invoke": ["finish"],
+      "not_invoke": ["implement-slice", "simplify-change"]
+    },
+    {
+      "id": "learn-positive-concept",
+      "prompt": "Explain this repository's outbox pattern so I can understand the next task; do not change files.",
+      "invoke": ["learn"],
+      "not_invoke": ["develop", "implement-slice"]
+    },
+    {
+      "id": "develop-positive-orientation",
+      "prompt": "Give me a read-only overview of this repository, its architecture, and how to run it.",
+      "invoke": ["develop"],
+      "not_invoke": ["learn", "implement-slice"]
+    },
+    {
+      "id": "motion-positive-scroll",
+      "prompt": "Evaluate the new scroll-linked header animation for performance, touch behavior, and reduced-motion fallback.",
+      "invoke": ["review-web-motion"],
+      "not_invoke": ["security-review"]
+    },
+    {
+      "id": "security-positive-authorization",
+      "prompt": "Review the authorization changes in this tenant-admin endpoint for privilege escalation and data exposure.",
+      "invoke": ["security-review", "review-change"],
+      "not_invoke": ["ui-quality"]
+    },
+    {
+      "id": "simplify-positive-duplication",
+      "prompt": "The changed code is verified; remove duplication in this diff while preserving its public behavior.",
+      "invoke": ["simplify-change"],
+      "not_invoke": ["shape-change", "diagnose-failure"]
     }
   ]
 }

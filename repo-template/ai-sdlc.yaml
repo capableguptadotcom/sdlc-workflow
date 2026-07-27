@@ -1,5 +1,4 @@
-schema_version: 1
-kit_version: 0.1.0
+schema_version: 2
 
 commands:
   # Fill these during adoption. Use lists when the repository has multiple apps.
@@ -14,13 +13,20 @@ commands:
 paths:
   specs: specs
   decisions: docs/adr
+  initiatives: initiatives
+  context_entry: CONTEXT.md
   transient_handoffs: artifacts/ai/handoffs
+
+artifact_profiles:
+  spec: ai-sdlc-v1
+  adr: ai-sdlc-v1
+  context: glossary-v1
 
 workflows:
   develop:
     trigger: manual
     model: inherit
-    skills: [shape-change, plan-change, implement-slice]
+    skills: [diagnose-failure, shape-change, plan-change, implement-slice, finish]
   finish:
     trigger: manual
     model: inherit
