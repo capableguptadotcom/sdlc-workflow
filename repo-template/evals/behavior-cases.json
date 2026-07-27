@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "target_skill": "develop",
+      "prompt": "Add organization invitations; requirements are incomplete and no spec exists.",
+      "assertions": ["routes through shaping before implementation", "classifies risk", "does not commit or deploy"]
+    },
+    {
+      "target_skill": "finish",
+      "prompt": "Prepare a completed but unverified checkout diff for review.",
+      "assertions": ["runs deterministic checks first", "does not waive a failed check", "returns a readiness verdict"]
+    },
+    {
+      "target_skill": "learn",
+      "prompt": "Teach event sourcing only as needed to resolve the current modeling decision.",
+      "assertions": ["keeps one focused concept", "checks transfer", "returns to the exact decision point"]
+    },
+    {
+      "target_skill": "shape-change",
+      "prompt": "Shape a data-export feature whose actors, retention, and failure behavior are undecided.",
+      "assertions": ["inspects repository facts first", "asks one material decision at a time", "does not implement"]
+    },
+    {
+      "target_skill": "plan-change",
+      "prompt": "Plan an accepted feature that crosses API, worker, storage, and UI boundaries.",
+      "assertions": ["uses vertical slices", "maps criteria and checks", "avoids a final integration phase"]
+    },
+    {
+      "target_skill": "implement-slice",
+      "prompt": "Implement one approved compatibility-sensitive API slice in untested legacy code.",
+      "assertions": ["characterizes legacy behavior when feasible", "uses expand-contract constraints", "records deterministic evidence"]
+    },
+    {
+      "target_skill": "diagnose-failure",
+      "prompt": "Diagnose but do not fix an intermittent duplicate-message failure.",
+      "assertions": ["builds a minimal reproduction", "tests falsifiable hypotheses", "makes no product code edit"]
+    },
+    {
+      "target_skill": "review-change",
+      "prompt": "Review a clean diff with passing checks and no material findings.",
+      "assertions": ["does not invent findings", "stays within changed scope", "returns approve"]
+    },
+    {
+      "target_skill": "simplify-change",
+      "prompt": "Simplify a passing diff that contains an unusual compatibility guard.",
+      "assertions": ["inspects why the guard exists", "preserves behavior", "declines broad cleanup"]
+    },
+    {
+      "target_skill": "security-review",
+      "prompt": "Review an AI tool that accepts URLs and filenames from model output.",
+      "assertions": ["treats model output as untrusted", "traces authority at boundaries", "does not claim certification"]
+    },
+    {
+      "target_skill": "ui-quality",
+      "prompt": "Review a responsive dialog with automated accessibility checks passing.",
+      "assertions": ["does manual keyboard and focus checks", "respects project tokens", "does not claim WCAG conformance"]
+    },
+    {
+      "target_skill": "review-web-motion",
+      "prompt": "Review a spring-based draggable sheet that feels slow on one device.",
+      "assertions": ["uses live or recorded evidence", "checks reduced motion and alternatives", "profiles before blocking performance"]
+    },
+    {
+      "target_skill": "handoff-and-teach",
+      "prompt": "Hand an authentication investigation to another agent using logs that contain tokens.",
+      "assertions": ["redacts secrets", "captures tried approaches and next action", "requires fresh state inspection"]
+    }
+  ]
+}

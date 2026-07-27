@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "kit_version": "0.1.0",
+  "canonical_root": ".agents/skills",
+  "skills": [
+    {
+      "name": "develop",
+      "status": "core",
+      "invocation": "manual-preferred",
+      "risk": "medium",
+      "purpose": "Orchestrate change shaping, planning, and slice implementation.",
+      "sources": []
+    },
+    {
+      "name": "finish",
+      "status": "core",
+      "invocation": "manual-preferred",
+      "risk": "medium",
+      "purpose": "Prepare a verified diff for human review.",
+      "sources": []
+    },
+    {
+      "name": "learn",
+      "status": "core",
+      "invocation": "manual-preferred",
+      "risk": "low",
+      "purpose": "Resolve one blocking knowledge gap without polluting the primary workflow.",
+      "sources": ["mattpocock-skills", "davidondrej-skills"]
+    },
+    {
+      "name": "shape-change",
+      "status": "core",
+      "invocation": "automatic-or-explicit",
+      "risk": "low",
+      "purpose": "Create shared requirements, domain scenarios, and acceptance evidence.",
+      "sources": ["mattpocock-skills", "addyosmani-agent-skills"]
+    },
+    {
+      "name": "plan-change",
+      "status": "core",
+      "invocation": "automatic-or-explicit",
+      "risk": "low",
+      "purpose": "Plan tracer-first vertical slices from an accepted specification.",
+      "sources": ["mattpocock-skills", "addyosmani-agent-skills"]
+    },
+    {
+      "name": "implement-slice",
+      "status": "core",
+      "invocation": "automatic-or-explicit",
+      "risk": "medium",
+      "purpose": "Implement one vertical increment with tests and primary-source verification.",
+      "sources": ["mattpocock-skills", "addyosmani-agent-skills"]
+    },
+    {
+      "name": "diagnose-failure",
+      "status": "core",
+      "invocation": "automatic-or-explicit",
+      "risk": "low",
+      "purpose": "Find an evidence-backed root cause before fixing.",
+      "sources": ["mattpocock-skills"]
+    },
+    {
+      "name": "review-change",
+      "status": "core",
+      "invocation": "automatic-or-explicit",
+      "risk": "low",
+      "purpose": "Review a bounded diff against spec, standards, and engineering axes.",
+      "sources": ["mattpocock-skills", "addyosmani-agent-skills"]
+    },
+    {
+      "name": "simplify-change",
+      "status": "core",
+      "invocation": "automatic-or-explicit",
+      "risk": "medium",
+      "purpose": "Simplify verified changed code without changing behavior.",
+      "sources": ["addyosmani-agent-skills"]
+    },
+    {
+      "name": "security-review",
+      "status": "core",
+      "invocation": "policy-or-explicit",
+      "risk": "high",
+      "purpose": "Threat-model and review changed security boundaries with deterministic evidence.",
+      "sources": ["addyosmani-agent-skills"]
+    },
+    {
+      "name": "ui-quality",
+      "status": "profile-ui",
+      "invocation": "automatic-or-explicit",
+      "risk": "medium",
+      "purpose": "Improve visible UI quality and common accessibility behavior.",
+      "sources": ["jakubkrehel-skills", "ibelick-ui-skills", "addyosmani-agent-skills"]
+    },
+    {
+      "name": "review-web-motion",
+      "status": "profile-ui",
+      "invocation": "explicit-or-diff-triggered",
+      "risk": "low",
+      "purpose": "Review changed web motion using runtime, accessibility, and performance evidence.",
+      "sources": ["emilkowalski-skills", "jakubkrehel-skills"]
+    },
+    {
+      "name": "handoff-and-teach",
+      "status": "core",
+      "invocation": "automatic-or-explicit",
+      "risk": "low",
+      "purpose": "Transfer redacted work state or teach one blocking concept.",
+      "sources": ["mattpocock-skills", "davidondrej-skills"]
+    }
+  ]
+}

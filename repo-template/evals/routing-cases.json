@@ -1,0 +1,161 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "develop-positive",
+      "prompt": "Build team invitations end to end, including tests and verification.",
+      "invoke": ["develop"],
+      "not_invoke": ["learn"]
+    },
+    {
+      "id": "develop-negative-review",
+      "prompt": "Read this completed pull request and report correctness findings; do not edit it.",
+      "invoke": ["review-change"],
+      "not_invoke": ["develop", "implement-slice"]
+    },
+    {
+      "id": "finish-positive",
+      "prompt": "Implementation is done. Run the relevant checks and get the diff ready for review.",
+      "invoke": ["finish"],
+      "not_invoke": ["shape-change"]
+    },
+    {
+      "id": "finish-negative-broken",
+      "prompt": "The checkout integration test just started failing and we do not know why.",
+      "invoke": ["diagnose-failure"],
+      "not_invoke": ["finish", "simplify-change"]
+    },
+    {
+      "id": "learn-positive",
+      "prompt": "Pause the feature work and teach me why idempotency keys matter here, then return to our decision.",
+      "invoke": ["learn", "handoff-and-teach"],
+      "not_invoke": ["develop"]
+    },
+    {
+      "id": "learn-negative-fact-lookup",
+      "prompt": "Check the installed SDK version and its official method signature before coding.",
+      "invoke": ["implement-slice"],
+      "not_invoke": ["learn", "handoff-and-teach"]
+    },
+    {
+      "id": "shape-positive",
+      "prompt": "We need organization roles, but we have not agreed who can assign them or what failures users see.",
+      "invoke": ["shape-change"],
+      "not_invoke": ["plan-change", "implement-slice"]
+    },
+    {
+      "id": "shape-negative-accepted-spec",
+      "prompt": "The accepted spec and scenarios are complete; break them into runnable vertical slices.",
+      "invoke": ["plan-change"],
+      "not_invoke": ["shape-change"]
+    },
+    {
+      "id": "plan-positive",
+      "prompt": "Turn specs/bulk-export/spec.md into dependency-aware slices with verification per criterion.",
+      "invoke": ["plan-change"],
+      "not_invoke": ["shape-change"]
+    },
+    {
+      "id": "plan-negative-architecture-unknown",
+      "prompt": "Prototype two storage approaches only to learn whether either meets the latency constraint.",
+      "invoke": ["shape-change"],
+      "not_invoke": ["plan-change"]
+    },
+    {
+      "id": "implement-positive",
+      "prompt": "Implement task 2, the approved password-reset request slice, and run its tests.",
+      "invoke": ["implement-slice"],
+      "not_invoke": ["shape-change"]
+    },
+    {
+      "id": "implement-negative-ops",
+      "prompt": "Deploy the current branch to production and rotate the production secret.",
+      "invoke": [],
+      "not_invoke": ["implement-slice", "develop"]
+    },
+    {
+      "id": "diagnose-positive",
+      "prompt": "The same request intermittently returns 409; reproduce it and identify the cause, but do not fix it.",
+      "invoke": ["diagnose-failure"],
+      "not_invoke": ["implement-slice"]
+    },
+    {
+      "id": "diagnose-negative-known-fix",
+      "prompt": "The root cause is documented in the incident: implement the approved one-line guard and regression test.",
+      "invoke": ["implement-slice"],
+      "not_invoke": ["diagnose-failure"]
+    },
+    {
+      "id": "review-positive",
+      "prompt": "Review only the current diff against the accepted subscription-cancellation spec.",
+      "invoke": ["review-change"],
+      "not_invoke": ["simplify-change"]
+    },
+    {
+      "id": "review-negative-whole-repo",
+      "prompt": "Redesign the architecture of every package even though no change is in progress.",
+      "invoke": [],
+      "not_invoke": ["review-change", "simplify-change"]
+    },
+    {
+      "id": "simplify-positive",
+      "prompt": "All checks pass; simplify the changed parser without altering behavior or touching unrelated files.",
+      "invoke": ["simplify-change"],
+      "not_invoke": ["shape-change"]
+    },
+    {
+      "id": "simplify-negative-redesign",
+      "prompt": "Replace the repository architecture with microservices as a cleanup.",
+      "invoke": [],
+      "not_invoke": ["simplify-change"]
+    },
+    {
+      "id": "security-positive",
+      "prompt": "Threat-model and review this OAuth callback and token-storage diff.",
+      "invoke": ["security-review", "review-change"],
+      "not_invoke": ["ui-quality"]
+    },
+    {
+      "id": "security-negative-css",
+      "prompt": "Review the spacing-token-only CSS diff; it changes no data or trust boundary.",
+      "invoke": ["ui-quality"],
+      "not_invoke": ["security-review"]
+    },
+    {
+      "id": "ui-positive",
+      "prompt": "Improve the new responsive settings form, including errors, focus, contrast, and empty states.",
+      "invoke": ["ui-quality"],
+      "not_invoke": ["review-web-motion"]
+    },
+    {
+      "id": "ui-negative-backend",
+      "prompt": "Optimize the database index used by a background worker; no interface changes.",
+      "invoke": ["implement-slice"],
+      "not_invoke": ["ui-quality"]
+    },
+    {
+      "id": "motion-positive",
+      "prompt": "Review the new draggable drawer transition on keyboard, touch, and reduced-motion settings.",
+      "invoke": ["review-web-motion"],
+      "not_invoke": ["ui-quality"]
+    },
+    {
+      "id": "motion-negative-static-ui",
+      "prompt": "Audit the static article page typography and heading hierarchy; it has no motion.",
+      "invoke": ["ui-quality"],
+      "not_invoke": ["review-web-motion"]
+    },
+    {
+      "id": "handoff-positive",
+      "prompt": "Create a safe handoff so another developer can resume this migration tomorrow.",
+      "invoke": ["handoff-and-teach"],
+      "not_invoke": ["learn"]
+    },
+    {
+      "id": "handoff-negative-status",
+      "prompt": "Give me a two-sentence status update on what you just completed.",
+      "invoke": [],
+      "not_invoke": ["handoff-and-teach"]
+    }
+  ]
+}

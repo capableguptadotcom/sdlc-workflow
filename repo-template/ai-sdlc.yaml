@@ -1,0 +1,54 @@
+schema_version: 1
+kit_version: 0.1.0
+
+commands:
+  # Fill these during adoption. Use lists when the repository has multiple apps.
+  format: []
+  lint: []
+  typecheck: []
+  unit_test: []
+  integration_test: []
+  build: []
+  security: []
+
+paths:
+  specs: specs
+  decisions: docs/adr
+  transient_handoffs: artifacts/ai/handoffs
+
+workflows:
+  develop:
+    trigger: manual
+    model: inherit
+    skills: [shape-change, plan-change, implement-slice]
+  finish:
+    trigger: manual
+    model: inherit
+    skills: [review-change, simplify-change]
+  learn:
+    trigger: manual
+    model: inherit
+    skills: [handoff-and-teach]
+  security-review:
+    trigger: manual-or-pr-policy
+    model: inherit
+    required_for_risk_tiers: [0]
+
+gates:
+  pre_commit:
+    networked_ai: false
+    allowed: [format, lint, secret-scan, cheap-changed-file-checks]
+  pre_push:
+    networked_ai: false
+    allowed: [typecheck, targeted-tests, build]
+  pull_request:
+    required: [full-tests, security, policy, evidence]
+  merge:
+    required: [protected-branch-checks, code-owner-review]
+
+evidence:
+  require_for_behavior_change:
+    - acceptance-criteria-mapping
+    - deterministic-command-results
+    - tests-added-or-rationale
+    - known-limitations

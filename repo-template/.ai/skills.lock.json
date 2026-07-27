@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "reviewed_at": "2026-07-15",
+  "policy": "Reviewed commits are provenance anchors. Upstream changes require a diff PR and evaluation; they never overwrite derived skills automatically.",
+  "sources": [
+    {
+      "id": "mattpocock-skills",
+      "repository": "mattpocock/skills",
+      "url": "https://github.com/mattpocock/skills",
+      "default_branch": "main",
+      "reviewed_commit": "e9fcdf95b402d360f90f1db8d776d5dd450f9234",
+      "license": "MIT",
+      "strategy": "derived"
+    },
+    {
+      "id": "addyosmani-agent-skills",
+      "repository": "addyosmani/agent-skills",
+      "url": "https://github.com/addyosmani/agent-skills",
+      "default_branch": "main",
+      "reviewed_commit": "98967c45a42b88d6b8fb3a88b7ff6273920763d6",
+      "license": "MIT",
+      "strategy": "derived"
+    },
+    {
+      "id": "emilkowalski-skills",
+      "repository": "emilkowalski/skills",
+      "url": "https://github.com/emilkowalski/skills",
+      "default_branch": "main",
+      "reviewed_commit": "6bf24434f7730ad169077756cf9c7cd7bd675fc6",
+      "license": "MIT",
+      "strategy": "derived"
+    },
+    {
+      "id": "jakubkrehel-skills",
+      "repository": "jakubkrehel/skills",
+      "url": "https://github.com/jakubkrehel/skills",
+      "default_branch": "main",
+      "reviewed_commit": "f8a1574b08319685705a82e3c28139d1c935af9e",
+      "license": "MIT",
+      "strategy": "derived"
+    },
+    {
+      "id": "davidondrej-skills",
+      "repository": "davidondrej/skills",
+      "url": "https://github.com/davidondrej/skills",
+      "default_branch": "main",
+      "reviewed_commit": "d88deb06d2d16770833d148207fffaf33033e6e7",
+      "license": "MIT",
+      "strategy": "ideas-only"
+    },
+    {
+      "id": "ibelick-ui-skills",
+      "repository": "ibelick/ui-skills",
+      "url": "https://github.com/ibelick/ui-skills",
+      "default_branch": "main",
+      "reviewed_commit": "ce91b85952f76ec738242bcf8aefa8c68653592c",
+      "license": "MIT",
+      "strategy": "derived"
+    }
+  ]
+}

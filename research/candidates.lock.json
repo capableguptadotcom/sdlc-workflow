@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "observed_on": "2026-07-15 America/Los_Angeles",
+  "purpose": "Reproducible audit anchors for reviewed candidates. Presence here does not approve installation.",
+  "candidates": [
+    {
+      "id": "mattpocock-skills",
+      "url": "https://github.com/mattpocock/skills",
+      "commit": "e9fcdf95b402d360f90f1db8d776d5dd450f9234",
+      "license_status": "MIT",
+      "decision": "derive-selected-workflows"
+    },
+    {
+      "id": "addyosmani-agent-skills",
+      "url": "https://github.com/addyosmani/agent-skills",
+      "commit": "98967c45a42b88d6b8fb3a88b7ff6273920763d6",
+      "license_status": "MIT",
+      "decision": "derive-selected-workflows"
+    },
+    {
+      "id": "emilkowalski-skills",
+      "url": "https://github.com/emilkowalski/skills",
+      "commit": "6bf24434f7730ad169077756cf9c7cd7bd675fc6",
+      "license_status": "MIT",
+      "decision": "consolidate-motion-guidance"
+    },
+    {
+      "id": "jakubkrehel-skills",
+      "url": "https://github.com/jakubkrehel/skills",
+      "commit": "f8a1574b08319685705a82e3c28139d1c935af9e",
+      "license_status": "MIT",
+      "decision": "derive-ui-guidance"
+    },
+    {
+      "id": "davidondrej-skills",
+      "url": "https://github.com/davidondrej/skills",
+      "commit": "d88deb06d2d16770833d148207fffaf33033e6e7",
+      "license_status": "MIT",
+      "decision": "ideas-only"
+    },
+    {
+      "id": "raphaelsalaja-12-principles",
+      "url": "https://github.com/raphaelsalaja/skill",
+      "commit": "dc9eef22f13635df77d9b9e67c82aa85d52a97b7",
+      "license_status": "MIT declared in skill; install repository lacks root license text",
+      "decision": "reject-raw"
+    },
+    {
+      "id": "ibelick-fixing-accessibility",
+      "url": "https://github.com/ibelick/ui-skills",
+      "commit": "ce91b85952f76ec738242bcf8aefa8c68653592c",
+      "license_status": "MIT",
+      "decision": "derive-ui-accessibility-guidance"
+    },
+    {
+      "id": "shadcn-ui-skill",
+      "url": "https://github.com/shadcn-ui/ui",
+      "commit": "6a5e6da78cad8c501f6b30830af0bbb56ba48867",
+      "license_status": "MIT",
+      "decision": "adapted-project-profile-candidate"
+    },
+    {
+      "id": "vercel-react-best-practices",
+      "url": "https://github.com/vercel-labs/agent-skills",
+      "commit": "f8a72b9603728bb92a217a879b7e62e43ad76c81",
+      "license_status": "MIT declared in files; no repository license text at review",
+      "decision": "hold-for-license-and-rule-corrections"
+    },
+    {
+      "id": "millionco-react-doctor",
+      "url": "https://github.com/millionco/react-doctor",
+      "commit": "5915a58231c3ba640d2d17e3c703511b8c9c2746",
+      "license_status": "Modified MIT with AI-evaluation/training and hosted-service restrictions",
+      "decision": "experimental-after-legal-and-privacy-review"
+    },
+    {
+      "id": "antfu-vitest-pnpm-skills",
+      "url": "https://github.com/antfu/skills",
+      "commit": "a74f281a27dadc02397bc1a174b0f2c97531b6ae",
+      "license_status": "MIT",
+      "decision": "reject-raw"
+    },
+    {
+      "id": "microsoft-playwright-cli-skill",
+      "url": "https://github.com/microsoft/playwright-cli",
+      "commit": "eee5a185c98e6b04d88f580d45a854e9692ab50b",
+      "license_status": "Apache-2.0",
+      "decision": "adapted-experimental-candidate"
+    }
+  ]
+}
