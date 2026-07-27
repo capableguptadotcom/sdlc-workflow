@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "scenario_id",
+    "visible_modes",
+    "route",
+    "questions_asked",
+    "human_gates",
+    "commands_run",
+    "terminal_state",
+    "summary"
+  ],
+  "properties": {
+    "scenario_id": {
+      "type": "string"
+    },
+    "visible_modes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "route": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "questions_asked": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "human_gates": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "commands_run": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "terminal_state": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "string"
+    }
+  }
+}

@@ -1,7 +1,7 @@
 schema_version: 2
 
 commands:
-  # Fill these during adoption. Use lists when the repository has multiple apps.
+  # Mapped from existing project commands during adoption; review before accepting.
   format: []
   lint: []
   typecheck: []
@@ -9,6 +9,7 @@ commands:
   integration_test: []
   build: []
   security: []
+  pre_commit: []
 
 paths:
   specs: specs

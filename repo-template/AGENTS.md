@@ -1,3 +1,4 @@
+<!-- ai-sdlc:workflow:start -->
 # Repository agent contract
 
 This file defines durable rules for every coding agent working in this
@@ -113,3 +114,4 @@ security checks, policy, and required evidence.
 - Move procedures into skills; keep this file concise and always applicable.
 - Change shared guidance through a reviewed PR with an example or evaluation
   that demonstrates the problem and the intended improvement.
+<!-- ai-sdlc:workflow:end -->

@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "repository-overview",
+      "fixture": "brownfield-mini",
+      "prompt": "Give me a read-only overview of this repository, its architecture, and how to run it. Do not change files.",
+      "sandbox": "read-only",
+      "expected_visible_modes": ["inspect"],
+      "expected_terminal_state": "ready",
+      "maximum_questions": 0,
+      "allowed_changes": [],
+      "allow_commit": false
+    },
+    {
+      "id": "clear-tiny-change",
+      "dialogue_id": "clear-tiny-change",
+      "fixture": "brownfield-mini",
+      "prompt": "Change the settings dialog button from Save to Save changes and update the focused test.",
+      "sandbox": "workspace-write",
+      "expected_visible_modes": ["implement", "finish"],
+      "expected_terminal_state": "ready",
+      "maximum_questions": 0,
+      "allowed_changes": [
+        "src/settings_dialog.py",
+        "tests/test_settings_dialog.py"
+      ],
+      "allow_commit": false
+    },
+    {
+      "id": "diagnose-checkout-retries",
+      "fixture": "brownfield-mini",
+      "prompt": "Checkout retries sometimes charge twice. Diagnose the cause, but do not fix it or change files.",
+      "sandbox": "read-only",
+      "expected_visible_modes": ["diagnose"],
+      "expected_terminal_state": "diagnosed",
+      "maximum_questions": 0,
+      "allowed_changes": [],
+      "allow_commit": false
+    },
+    {
+      "id": "fuzzy-team-invitations",
+      "dialogue_id": "fuzzy-brownfield-feature",
+      "fixture": "brownfield-mini",
+      "prompt": "Add team invitations.",
+      "sandbox": "workspace-write",
+      "expected_visible_modes": ["inspect", "shape"],
+      "expected_terminal_states": [
+        "needs-human-decision",
+        "awaiting_product_decision"
+      ],
+      "minimum_questions": 1,
+      "maximum_questions": 1,
+      "allowed_changes": [],
+      "allow_commit": false,
+      "follow_up": {
+        "prompt": "Use Owners and Admins as inviters, with only Owners able to invite another Owner. Invitations expire after 72 hours. Draft the behavioral spec and verification contract for review, but do not implement.",
+        "expected_visible_modes": ["shape"],
+        "maximum_questions": 0,
+        "required_human_gate_terms": ["accept"],
+        "allowed_changes": [
+          "specs/team-invitations/spec.md",
+          "specs/team-invitations/verification.md"
+        ],
+        "required_changes": [
+          "specs/team-invitations/spec.md",
+          "specs/team-invitations/verification.md"
+        ],
+        "allow_commit": false
+      }
+    },
+    {
+      "id": "finish-before-commit",
+      "dialogue_id": "finish-before-commit",
+      "fixture": "brownfield-mini",
+      "prompt": "Looks good. Commit it.",
+      "sandbox": "workspace-write",
+      "setup_replacements": [
+        {
+          "path": "src/settings_dialog.py",
+          "old": "BUTTON_LABEL = \"Save\"",
+          "new": "BUTTON_LABEL = \"Save changes\""
+        }
+      ],
+      "expected_visible_modes": ["finish"],
+      "expected_terminal_state": "committed",
+      "maximum_questions": 0,
+      "allowed_changes": [],
+      "allow_commit": true,
+      "allowed_commit_changes": ["src/settings_dialog.py"],
+      "forbidden_command_terms": ["push", "pull request", "deploy", "merge"]
+    }
+  ]
+}

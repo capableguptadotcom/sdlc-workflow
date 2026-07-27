@@ -225,7 +225,7 @@
       "id": "adopt-existing-repository",
       "source_dialogue": 1,
       "title": "Adopt an existing repository",
-      "repository_fixture": null,
+      "repository_fixture": "brownfield-mini",
       "developer_turns": [
         "npx @company/ai-sdlc",
         "Apply the adoption plan."
@@ -296,7 +296,7 @@
       "id": "fuzzy-brownfield-feature",
       "source_dialogue": 2,
       "title": "Shape a fuzzy brownfield feature",
-      "repository_fixture": null,
+      "repository_fixture": "brownfield-mini",
       "developer_turns": [
         "Add team invitations.",
         "Accept the proposed invitation rules and 72-hour expiry.",
@@ -379,7 +379,7 @@
       "id": "clear-tiny-change",
       "source_dialogue": 3,
       "title": "Make a clear tiny change",
-      "repository_fixture": null,
+      "repository_fixture": "brownfield-mini",
       "developer_turns": [
         "Change the settings dialog button from Save to Save changes and update the test."
       ],
@@ -437,7 +437,7 @@
       "id": "diagnose-and-fix",
       "source_dialogue": 4,
       "title": "Diagnose and fix an existing failure",
-      "repository_fixture": null,
+      "repository_fixture": "brownfield-mini",
       "developer_turns": [
         "Some checkout retries charge the customer twice. Find the cause and fix it."
       ],
@@ -708,7 +708,7 @@
       "id": "finish-before-commit",
       "source_dialogue": 8,
       "title": "Finish before committing",
-      "repository_fixture": null,
+      "repository_fixture": "brownfield-mini",
       "developer_turns": [
         "Looks good. Commit it."
       ],

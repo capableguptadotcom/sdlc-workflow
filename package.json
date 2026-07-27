@@ -1,0 +1,31 @@
+{
+  "name": "@company/ai-sdlc",
+  "version": "0.1.0",
+  "description": "Adopt the shared AI SDLC workflow into an existing repository.",
+  "type": "module",
+  "bin": {
+    "ai-sdlc": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "repo-template",
+    "!repo-template/.ai/ADOPTION.md",
+    "!repo-template/.ai/kit-version.json",
+    "!repo-template/**/__pycache__/**",
+    "!repo-template/**/*.py[cod]"
+  ],
+  "scripts": {
+    "clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
+    "build": "npm run clean && tsc",
+    "prepack": "npm run build",
+    "test": "npm run build && node --test test/*.test.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.8.0"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "UNLICENSED"
+}
