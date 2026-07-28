@@ -1,7 +1,21 @@
 {
-  "name": "@company/ai-sdlc",
-  "version": "0.1.0",
+  "name": "@innovate-x/ai-sdlc",
+  "version": "0.1.0-alpha.1",
   "description": "Adopt the shared AI SDLC workflow into an existing repository.",
+  "keywords": [
+    "ai",
+    "developer-tools",
+    "sdlc",
+    "workflow"
+  ],
+  "homepage": "https://github.com/capableguptadotcom/sdlc-workflow#readme",
+  "bugs": {
+    "url": "https://github.com/capableguptadotcom/sdlc-workflow/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/capableguptadotcom/sdlc-workflow.git"
+  },
   "type": "module",
   "bin": {
     "ai-sdlc": "dist/cli.js"
@@ -27,5 +41,9 @@
   "engines": {
     "node": ">=22"
   },
-  "license": "UNLICENSED"
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
 }

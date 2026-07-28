@@ -53,6 +53,10 @@ test("confirmation installs the reviewed payload and lock", async (t) => {
   assert.equal(result.status, 0, result.stderr);
   assert.equal(existsSync(join(root, "AGENTS.md")), true);
   assert.equal(existsSync(join(root, "ai-sdlc.yaml")), true);
+  assert.equal(
+    existsSync(join(root, ".ai", "workflow-walkthrough.html")),
+    true,
+  );
   assert.equal(existsSync(join(root, ".ai", "ADOPTION.md")), false);
   assert.equal(existsSync(join(root, ".ai", "kit-version.json")), false);
 
@@ -60,8 +64,8 @@ test("confirmation installs the reviewed payload and lock", async (t) => {
     await readFile(join(root, ".ai", "kit.lock.json"), "utf8"),
   );
   assert.equal(lock.schema_version, 1);
-  assert.equal(lock.kit_version, "0.1.0");
-  assert.equal(lock.source.package, "@company/ai-sdlc");
+  assert.equal(lock.kit_version, "0.1.0-alpha.1");
+  assert.equal(lock.source.package, "@innovate-x/ai-sdlc");
   assert.match(lock.source.release_manifest_digest, /^[a-f0-9]{64}$/);
   assert.ok(
     lock.managed_units.some((unit) => unit.path === "AGENTS.md"),

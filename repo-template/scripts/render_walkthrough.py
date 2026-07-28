@@ -102,6 +102,9 @@ def render_developer_walkthrough(data: dict) -> str:
         "",
         mental_model["promise"],
         "",
+        "Start with the [interactive workflow walkthrough](workflow-walkthrough.html) "
+        "for visual, scenario-based tutorials and copyable example prompts.",
+        "",
         "## How to work with it",
         "",
     ]

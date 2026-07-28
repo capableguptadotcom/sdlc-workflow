@@ -227,13 +227,13 @@
       "title": "Adopt an existing repository",
       "repository_fixture": "brownfield-mini",
       "developer_turns": [
-        "npx @company/ai-sdlc",
+        "npx @innovate-x/ai-sdlc@alpha",
         "Apply the adoption plan."
       ],
       "walkthrough_transcript": [
         {
           "speaker": "Developer",
-          "text": "Run npx @company/ai-sdlc in an existing repository."
+          "text": "Run npx @innovate-x/ai-sdlc@alpha in an existing repository."
         },
         {
           "speaker": "Kit",
@@ -884,7 +884,7 @@
       "title": "Stop safely on a local update conflict",
       "repository_fixture": null,
       "developer_turns": [
-        "npx @company/ai-sdlc"
+        "npx @innovate-x/ai-sdlc@alpha"
       ],
       "walkthrough_transcript": [
         {

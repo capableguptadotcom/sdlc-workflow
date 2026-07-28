@@ -681,7 +681,10 @@ status: active
             encoding="utf-8"
         )
 
-        self.assertNotIn("npx @company/ai-sdlc", installed_walkthrough)
+        self.assertNotIn(
+            "npx @innovate-x/ai-sdlc@alpha",
+            installed_walkthrough,
+        )
 
 
 if __name__ == "__main__":

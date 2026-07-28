@@ -57,7 +57,7 @@ Describe the work normally. The assistant investigates the repository, asks only
 
 ## Adopt an existing repository
 
-**Developer:** Run npx @company/ai-sdlc in an existing repository.
+**Developer:** Run npx @innovate-x/ai-sdlc@alpha in an existing repository.
 
 **Kit:** I found the existing stack, instructions, hooks, CI, and project commands. No files have changed. Review this adoption preview and confirm whether I should apply it.
 

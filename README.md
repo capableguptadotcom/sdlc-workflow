@@ -4,6 +4,12 @@ This repository contains a governed, cross-agent starter kit for AI-assisted
 software development. It is the source of the shared kit, not a second
 repository that every developer must clone.
 
+Open the
+[interactive workflow walkthrough](repo-template/.ai/workflow-walkthrough.html)
+for scenario-based tutorials, example prompts, routing visuals, artifact
+guidance, and a short team practice checklist. The adopter ships this page into
+each project so the team receives it through the normal repository workflow.
+
 ## Team adoption: no extra clone
 
 The intended distribution flow is:
@@ -50,8 +56,15 @@ files. They are not a consistent cross-agent contract. Use `.gitignore` for
 generated repository noise, concise scoped instructions for focus, and each
 host's permissions or sandbox only for genuine sensitive-path enforcement.
 
-Until the package is published to the team's registry, a maintainer can test
-the command from this repository:
+The public alpha release target is `@innovate-x/ai-sdlc`. After the first
+release is published, a repository maintainer will adopt it with:
+
+```bash
+npx @innovate-x/ai-sdlc@alpha
+```
+
+Until that release is published, a maintainer can test the command from this
+repository:
 
 ```bash
 npm install

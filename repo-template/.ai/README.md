@@ -5,6 +5,8 @@
 
 Describe the work normally. The assistant investigates the repository, asks only for decisions that belong to you, chooses the lightest reliable workflow, and shows evidence before calling the work ready.
 
+Start with the [interactive workflow walkthrough](workflow-walkthrough.html) for visual, scenario-based tutorials and copyable example prompts.
+
 ## How to work with it
 
 1. **Describe the goal** — State the outcome, problem, question, or uncertainty in ordinary language. The assistant will recognize whether this is orientation, change, failure, learning, or finish work.

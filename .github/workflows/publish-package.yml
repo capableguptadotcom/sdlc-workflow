@@ -1,0 +1,45 @@
+name: Publish npm package
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: npm-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.14"
+          registry-url: "https://registry.npmjs.org"
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: npm install --global npm@11.6.0
+      - run: npm ci
+      - run: npm test
+      - run: python -m unittest discover -s tests -v
+      - run: python repo-template/scripts/render_walkthrough.py --check
+      - run: python repo-template/scripts/validate_ai_kit.py
+      - name: Publish with the matching npm distribution tag
+        shell: bash
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          version="$(node --print "require('./package.json').version")"
+          tag="latest"
+          if [[ "$version" == *-* ]]; then
+            tag="${version#*-}"
+            tag="${tag%%.*}"
+          fi
+          npm publish --access public --tag "$tag"

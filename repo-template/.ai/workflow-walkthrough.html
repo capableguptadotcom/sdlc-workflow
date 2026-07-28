@@ -1,0 +1,2286 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta
+    name="description"
+    content="A scenario-based walkthrough for using the AI SDLC workflow."
+  >
+  <title>AI SDLC workflow walkthrough</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #182126;
+      --muted: #5c696f;
+      --paper: #f6f2e8;
+      --surface: #fffdf7;
+      --surface-strong: #ffffff;
+      --line: #d9d5ca;
+      --navy: #17324d;
+      --blue: #276b8f;
+      --teal: #16756c;
+      --green: #d8f08b;
+      --green-strong: #b8dd50;
+      --amber: #f4c96b;
+      --rose: #ef8c7d;
+      --shadow: 0 18px 50px rgb(30 42 48 / 10%);
+      --radius: 22px;
+      --mono: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 8% 4%, rgb(216 240 139 / 38%), transparent 24rem),
+        radial-gradient(circle at 92% 18%, rgb(39 107 143 / 14%), transparent 28rem),
+        var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      line-height: 1.55;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    a:focus-visible,
+    button:focus-visible,
+    summary:focus-visible,
+    input:focus-visible {
+      outline: 3px solid var(--blue);
+      outline-offset: 3px;
+    }
+
+    .shell {
+      width: min(1180px, calc(100% - 36px));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      position: sticky;
+      z-index: 20;
+      top: 0;
+      border-bottom: 1px solid rgb(217 213 202 / 78%);
+      background: rgb(246 242 232 / 88%);
+      backdrop-filter: blur(16px);
+    }
+
+    .topbar-inner {
+      display: flex;
+      min-height: 66px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 30px;
+      height: 30px;
+      place-items: center;
+      border: 1px solid var(--ink);
+      border-radius: 9px;
+      background: var(--green);
+      box-shadow: 3px 3px 0 var(--ink);
+      letter-spacing: 0;
+    }
+
+    .topnav {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      font-weight: 650;
+    }
+
+    .topnav a {
+      text-decoration: none;
+    }
+
+    .topnav a:hover {
+      color: var(--ink);
+    }
+
+    .hero {
+      display: grid;
+      min-height: 650px;
+      grid-template-columns: 1.04fr 0.96fr;
+      align-items: center;
+      gap: clamp(40px, 7vw, 90px);
+      padding: 78px 0 88px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 20px;
+      color: var(--teal);
+      font-size: 0.78rem;
+      font-weight: 850;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      width: 24px;
+      height: 3px;
+      background: var(--green-strong);
+      content: "";
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin-top: 0;
+      line-height: 1.08;
+      letter-spacing: -0.035em;
+    }
+
+    h1 {
+      max-width: 760px;
+      margin-bottom: 24px;
+      font-size: clamp(3rem, 7vw, 6.5rem);
+      font-weight: 850;
+    }
+
+    h1 span {
+      color: var(--blue);
+    }
+
+    h2 {
+      margin-bottom: 16px;
+      font-size: clamp(2rem, 4vw, 3.8rem);
+    }
+
+    h3 {
+      margin-bottom: 10px;
+      font-size: 1.25rem;
+    }
+
+    .lede {
+      max-width: 680px;
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(1.08rem, 2vw, 1.32rem);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 32px;
+    }
+
+    .button {
+      display: inline-flex;
+      min-height: 48px;
+      align-items: center;
+      justify-content: center;
+      padding: 0 20px;
+      border: 1px solid var(--ink);
+      border-radius: 999px;
+      background: var(--ink);
+      color: white;
+      font-weight: 750;
+      text-decoration: none;
+      transition: transform 140ms ease, box-shadow 140ms ease;
+    }
+
+    .button:hover {
+      box-shadow: 4px 4px 0 var(--green-strong);
+      transform: translate(-2px, -2px);
+    }
+
+    .button.secondary {
+      background: transparent;
+      color: var(--ink);
+    }
+
+    .conversation {
+      position: relative;
+      padding: 22px;
+      border: 1px solid var(--ink);
+      border-radius: 28px;
+      background: var(--surface-strong);
+      box-shadow: 12px 14px 0 var(--navy);
+    }
+
+    .conversation::before {
+      position: absolute;
+      z-index: -1;
+      right: -24px;
+      bottom: -32px;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: var(--amber);
+      content: "";
+    }
+
+    .window-bar {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .window-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--rose);
+    }
+
+    .window-dot:nth-child(2) {
+      background: var(--amber);
+    }
+
+    .window-dot:nth-child(3) {
+      background: var(--green-strong);
+    }
+
+    .window-label {
+      margin-left: auto;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 0.72rem;
+    }
+
+    .message {
+      max-width: 88%;
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-radius: 17px;
+      font-size: 0.93rem;
+    }
+
+    .message.developer {
+      margin-left: auto;
+      border-bottom-right-radius: 4px;
+      background: var(--navy);
+      color: white;
+    }
+
+    .message.assistant {
+      border: 1px solid var(--line);
+      border-bottom-left-radius: 4px;
+      background: #f8faf9;
+    }
+
+    .message-label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.7rem;
+      font-weight: 850;
+      letter-spacing: 0.08em;
+      opacity: 0.72;
+      text-transform: uppercase;
+    }
+
+    .status-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 18px;
+      color: var(--teal);
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .status-line::before {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green-strong);
+      box-shadow: 0 0 0 4px rgb(184 221 80 / 24%);
+      content: "";
+    }
+
+    .section {
+      padding: 96px 0;
+    }
+
+    .section-ink {
+      background: var(--navy);
+      color: white;
+    }
+
+    .section-heading {
+      display: grid;
+      grid-template-columns: 0.8fr 1.2fr;
+      gap: 52px;
+      align-items: end;
+      margin-bottom: 46px;
+    }
+
+    .section-heading p {
+      max-width: 680px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.08rem;
+    }
+
+    .section-ink .section-heading p {
+      color: #c4d2da;
+    }
+
+    .section-index {
+      display: block;
+      margin-bottom: 14px;
+      color: var(--teal);
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      font-weight: 750;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .section-ink .section-index {
+      color: var(--green);
+    }
+
+    .mental-model {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+    }
+
+    .model-step {
+      position: relative;
+      min-height: 250px;
+      padding: 22px;
+      overflow: hidden;
+      border: 1px solid rgb(255 255 255 / 20%);
+      border-radius: 20px;
+      background: rgb(255 255 255 / 6%);
+    }
+
+    .model-step::after {
+      position: absolute;
+      right: -9px;
+      bottom: -38px;
+      color: rgb(255 255 255 / 5%);
+      content: attr(data-step);
+      font-size: 9rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .step-number {
+      display: grid;
+      width: 38px;
+      height: 38px;
+      margin-bottom: 42px;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--green);
+      color: var(--ink);
+      font-family: var(--mono);
+      font-weight: 850;
+    }
+
+    .model-step p {
+      position: relative;
+      z-index: 1;
+      margin-bottom: 0;
+      color: #c4d2da;
+      font-size: 0.9rem;
+    }
+
+    .ownership {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 32px;
+    }
+
+    .ownership-card {
+      padding: 28px;
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--ink);
+    }
+
+    .ownership-card.assistant {
+      background: var(--green);
+    }
+
+    .ownership-card ul {
+      margin: 18px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .ownership-card li {
+      position: relative;
+      padding: 9px 0 9px 26px;
+      border-top: 1px solid rgb(24 33 38 / 14%);
+    }
+
+    .ownership-card li::before {
+      position: absolute;
+      left: 2px;
+      content: "→";
+      font-weight: 900;
+    }
+
+    .route-layout {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .scenario-menu {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .scenario-button {
+      min-height: 94px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgb(255 253 247 / 68%);
+      color: var(--ink);
+      cursor: pointer;
+      text-align: left;
+      transition: border-color 140ms ease, background 140ms ease,
+        transform 140ms ease;
+    }
+
+    .scenario-button:hover {
+      border-color: var(--blue);
+      transform: translateY(-2px);
+    }
+
+    .scenario-button[aria-pressed="true"] {
+      border-color: var(--ink);
+      background: var(--green);
+      box-shadow: 4px 4px 0 var(--ink);
+    }
+
+    .scenario-button strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 0.96rem;
+    }
+
+    .scenario-button span {
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .route-card {
+      position: sticky;
+      top: 88px;
+      min-height: 520px;
+      padding: clamp(24px, 4vw, 42px);
+      border: 1px solid var(--ink);
+      border-radius: 26px;
+      background: var(--surface-strong);
+      box-shadow: var(--shadow);
+    }
+
+    .route-tag {
+      display: inline-flex;
+      margin-bottom: 18px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--navy);
+      color: white;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+
+    .route-prompt {
+      position: relative;
+      margin: 22px 0;
+      padding: 20px 54px 20px 20px;
+      border-left: 4px solid var(--green-strong);
+      background: #f5f7f4;
+      font-size: 1.05rem;
+      font-weight: 650;
+    }
+
+    .copy-button {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      padding: 6px 9px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.7rem;
+      font-weight: 750;
+    }
+
+    .copy-button:hover {
+      color: var(--ink);
+    }
+
+    .route-flow {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin: 18px 0 24px;
+    }
+
+    .route-node {
+      padding: 8px 11px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--paper);
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+
+    .route-arrow {
+      color: var(--blue);
+      font-weight: 900;
+    }
+
+    .route-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .meta-box {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+    }
+
+    .meta-box strong {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--blue);
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .meta-box p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .trigger-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .trigger-card {
+      min-height: 280px;
+      padding: 26px;
+      border: 1px solid rgb(255 255 255 / 18%);
+      border-radius: 20px;
+      background: rgb(255 255 255 / 6%);
+    }
+
+    .trigger-card .signal {
+      display: inline-block;
+      margin-bottom: 34px;
+      padding: 5px 9px;
+      border: 1px solid rgb(255 255 255 / 28%);
+      border-radius: 999px;
+      color: var(--green);
+      font-family: var(--mono);
+      font-size: 0.7rem;
+    }
+
+    .trigger-card p {
+      color: #c4d2da;
+      font-size: 0.9rem;
+    }
+
+    .trigger-card .route-name {
+      display: block;
+      margin-top: 20px;
+      color: var(--green);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+
+    .callout {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 16px;
+      margin-top: 24px;
+      padding: 20px;
+      border: 1px solid rgb(255 255 255 / 18%);
+      border-radius: 16px;
+      background: rgb(216 240 139 / 10%);
+    }
+
+    .callout-mark {
+      display: grid;
+      width: 36px;
+      height: 36px;
+      place-items: center;
+      border-radius: 10px;
+      background: var(--green);
+      color: var(--ink);
+      font-weight: 900;
+    }
+
+    .callout p {
+      margin: 0;
+      color: #d7e1e6;
+    }
+
+    .tutorials {
+      display: grid;
+      gap: 18px;
+    }
+
+    .tutorial {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: 0 8px 30px rgb(30 42 48 / 5%);
+    }
+
+    .tutorial summary {
+      display: grid;
+      grid-template-columns: 70px 1fr auto;
+      align-items: center;
+      gap: 20px;
+      padding: 24px 28px;
+      cursor: pointer;
+      list-style: none;
+    }
+
+    .tutorial summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .tutorial summary::after {
+      content: "+";
+      color: var(--blue);
+      font-size: 1.7rem;
+      font-weight: 500;
+    }
+
+    .tutorial[open] summary::after {
+      content: "−";
+    }
+
+    .tutorial-number {
+      display: grid;
+      width: 52px;
+      height: 52px;
+      place-items: center;
+      border: 1px solid var(--ink);
+      border-radius: 15px;
+      background: var(--green);
+      box-shadow: 3px 3px 0 var(--ink);
+      font-family: var(--mono);
+      font-weight: 850;
+    }
+
+    .tutorial-title {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+
+    .tutorial-subtitle {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .tutorial-body {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(240px, 0.7fr);
+      gap: 30px;
+      padding: 8px 28px 32px 118px;
+      border-top: 1px solid var(--line);
+    }
+
+    .tutorial-main {
+      padding-top: 24px;
+    }
+
+    .tutorial-side {
+      align-self: start;
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 16px;
+      background: var(--navy);
+      color: white;
+    }
+
+    .tutorial-side h4 {
+      margin: 0 0 8px;
+      color: var(--green);
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .tutorial-side p,
+    .tutorial-side li {
+      color: #d7e1e6;
+      font-size: 0.84rem;
+    }
+
+    .tutorial-side ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .exchange {
+      display: grid;
+      gap: 10px;
+      margin: 18px 0 24px;
+    }
+
+    .exchange-row {
+      display: grid;
+      grid-template-columns: 90px 1fr;
+      gap: 12px;
+    }
+
+    .speaker {
+      padding-top: 10px;
+      color: var(--muted);
+      font-size: 0.7rem;
+      font-weight: 850;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+
+    .speech {
+      position: relative;
+      margin: 0;
+      padding: 12px 44px 12px 14px;
+      border-radius: 12px;
+      background: #f0eee6;
+      font-size: 0.9rem;
+    }
+
+    .exchange-row:first-child .speech {
+      background: var(--green);
+    }
+
+    .sequence {
+      display: grid;
+      gap: 0;
+      margin: 24px 0;
+      counter-reset: sequence;
+    }
+
+    .sequence-step {
+      position: relative;
+      display: grid;
+      min-height: 72px;
+      grid-template-columns: 42px 1fr;
+      gap: 14px;
+      counter-increment: sequence;
+    }
+
+    .sequence-step::before {
+      z-index: 1;
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--navy);
+      color: white;
+      content: counter(sequence);
+      font-family: var(--mono);
+      font-size: 0.74rem;
+      font-weight: 800;
+    }
+
+    .sequence-step:not(:last-child)::after {
+      position: absolute;
+      top: 34px;
+      bottom: 0;
+      left: 16px;
+      width: 2px;
+      background: var(--line);
+      content: "";
+    }
+
+    .sequence-step p {
+      margin: 4px 0 20px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .sequence-step strong {
+      color: var(--ink);
+    }
+
+    code,
+    .code {
+      font-family: var(--mono);
+    }
+
+    pre {
+      position: relative;
+      overflow-x: auto;
+      margin: 18px 0;
+      padding: 20px 54px 20px 20px;
+      border-radius: 14px;
+      background: #101d28;
+      color: #e8f1f1;
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      line-height: 1.65;
+      white-space: pre-wrap;
+    }
+
+    pre .copy-button {
+      border-color: #42515e;
+      background: #1b2a36;
+      color: #d8e3e7;
+    }
+
+    .artifact-ladder {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      align-items: end;
+    }
+
+    .artifact-level {
+      display: flex;
+      min-height: var(--height);
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--surface);
+    }
+
+    .artifact-level:nth-child(2) {
+      background: #f3f7e7;
+    }
+
+    .artifact-level:nth-child(3) {
+      background: #edf5f4;
+    }
+
+    .artifact-level:nth-child(4) {
+      background: #eaf1f7;
+    }
+
+    .artifact-level:nth-child(5) {
+      background: #f7eee8;
+    }
+
+    .artifact-level small {
+      color: var(--muted);
+      font-family: var(--mono);
+    }
+
+    .artifact-level p {
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .gate-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 44px;
+    }
+
+    .gate {
+      padding: 20px;
+      border-top: 4px solid var(--amber);
+      border-radius: 0 0 16px 16px;
+      background: var(--surface);
+    }
+
+    .gate:nth-child(2) {
+      border-color: var(--green-strong);
+    }
+
+    .gate:nth-child(3) {
+      border-color: var(--blue);
+    }
+
+    .gate:nth-child(4) {
+      border-color: var(--rose);
+    }
+
+    .gate p {
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .progress-panel {
+      display: grid;
+      grid-template-columns: 0.65fr 1.35fr;
+      gap: 30px;
+      padding: clamp(24px, 5vw, 48px);
+      border-radius: 26px;
+      background: var(--navy);
+      color: white;
+    }
+
+    .progress-ring {
+      display: grid;
+      width: 180px;
+      height: 180px;
+      place-items: center;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle closest-side, var(--navy) 78%, transparent 80% 100%),
+        conic-gradient(var(--green) var(--progress), rgb(255 255 255 / 14%) 0);
+    }
+
+    .progress-ring span {
+      font-size: 2rem;
+      font-weight: 850;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 10px;
+    }
+
+    .check-item {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+      align-items: start;
+      padding: 13px 15px;
+      border: 1px solid rgb(255 255 255 / 16%);
+      border-radius: 12px;
+      background: rgb(255 255 255 / 5%);
+      cursor: pointer;
+    }
+
+    .check-item:hover {
+      background: rgb(255 255 255 / 9%);
+    }
+
+    .check-item input {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      accent-color: var(--green-strong);
+    }
+
+    .check-item span {
+      color: #d7e1e6;
+      font-size: 0.9rem;
+    }
+
+    .reset-button {
+      margin-top: 14px;
+      padding: 8px 0;
+      border: 0;
+      border-bottom: 1px solid rgb(255 255 255 / 28%);
+      background: transparent;
+      color: #d7e1e6;
+      cursor: pointer;
+      font-size: 0.78rem;
+    }
+
+    .alpha-note {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 18px;
+      margin-top: 34px;
+      padding: 22px;
+      border: 1px solid #e1b553;
+      border-radius: 18px;
+      background: #fff7df;
+    }
+
+    .alpha-note strong {
+      display: grid;
+      width: 48px;
+      height: 48px;
+      place-items: center;
+      border-radius: 12px;
+      background: var(--amber);
+      font-family: var(--mono);
+      font-size: 0.75rem;
+    }
+
+    .alpha-note p {
+      margin: 0;
+      color: #66562d;
+    }
+
+    footer {
+      padding: 48px 0 70px;
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      padding-top: 24px;
+      border-top: 1px solid var(--line);
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .section-heading,
+      .route-layout,
+      .progress-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .mental-model {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .model-step:last-child {
+        grid-column: 1 / -1;
+      }
+
+      .trigger-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .route-card {
+        position: static;
+      }
+
+      .artifact-ladder {
+        grid-template-columns: repeat(2, 1fr);
+        align-items: stretch;
+      }
+
+      .artifact-level {
+        min-height: 190px;
+      }
+
+      .artifact-level:last-child {
+        grid-column: 1 / -1;
+      }
+
+      .gate-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .shell {
+        width: min(100% - 24px, 1180px);
+      }
+
+      .topnav {
+        display: none;
+      }
+
+      .hero {
+        min-height: auto;
+        padding: 58px 0 70px;
+      }
+
+      .conversation {
+        margin-right: 10px;
+      }
+
+      .section {
+        padding: 72px 0;
+      }
+
+      .mental-model,
+      .ownership,
+      .scenario-menu,
+      .trigger-grid,
+      .route-meta,
+      .artifact-ladder,
+      .gate-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .model-step:last-child,
+      .artifact-level:last-child {
+        grid-column: auto;
+      }
+
+      .model-step {
+        min-height: 210px;
+      }
+
+      .tutorial summary {
+        grid-template-columns: 52px 1fr auto;
+        gap: 12px;
+        padding: 20px;
+      }
+
+      .tutorial-number {
+        width: 44px;
+        height: 44px;
+      }
+
+      .tutorial-body {
+        grid-template-columns: 1fr;
+        padding: 0 20px 24px;
+      }
+
+      .exchange-row {
+        grid-template-columns: 1fr;
+        gap: 3px;
+      }
+
+      .speaker {
+        padding-top: 0;
+      }
+
+      .progress-ring {
+        width: 144px;
+        height: 144px;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    @media print {
+      :root {
+        --paper: white;
+        --surface: white;
+      }
+
+      body {
+        background: white;
+      }
+
+      .topbar,
+      .hero-actions,
+      .scenario-menu,
+      .copy-button,
+      .reset-button {
+        display: none !important;
+      }
+
+      .shell {
+        width: 100%;
+      }
+
+      .hero {
+        min-height: auto;
+        grid-template-columns: 1fr;
+        padding: 30px 0;
+      }
+
+      .conversation {
+        box-shadow: none;
+      }
+
+      .section {
+        break-inside: avoid;
+        padding: 38px 0;
+      }
+
+      .section-ink {
+        border-top: 2px solid var(--ink);
+        border-bottom: 2px solid var(--ink);
+        background: white;
+        color: var(--ink);
+      }
+
+      .section-ink .section-heading p,
+      .model-step p,
+      .trigger-card p,
+      .callout p {
+        color: var(--muted);
+      }
+
+      .model-step,
+      .trigger-card,
+      .callout {
+        border-color: var(--line);
+        background: white;
+        color: var(--ink);
+      }
+
+      .route-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .route-card {
+        position: static;
+        box-shadow: none;
+      }
+
+      .tutorial {
+        break-inside: avoid;
+      }
+
+      .tutorial:not([open]) .tutorial-body {
+        display: grid;
+      }
+
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <a class="brand" href="#top">
+        <span class="brand-mark">AI</span>
+        SDLC walkthrough
+      </a>
+      <nav class="topnav" aria-label="Walkthrough sections">
+        <a href="#mental-model">Mental model</a>
+        <a href="#route-finder">Scenarios</a>
+        <a href="#tutorials">Tutorials</a>
+        <a href="#artifacts">Artifacts</a>
+        <a href="#practice">Practice</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="shell hero">
+      <div>
+        <p class="eyebrow">Team guide · workflow alpha</p>
+        <h1>Describe the work. <span>The workflow finds the route.</span></h1>
+        <p class="lede">
+          You do not need to memorize skills or process names. Tell the
+          assistant what outcome you want, what is uncertain, and what actions
+          you authorize. It inspects the repository, chooses the lightest safe
+          workflow, and finishes with evidence.
+        </p>
+        <div class="hero-actions">
+          <a class="button" href="#mental-model">Start the 15-minute tour</a>
+          <a class="button secondary" href="#route-finder">Choose my scenario</a>
+        </div>
+      </div>
+
+      <div class="conversation" aria-label="Example developer conversation">
+        <div class="window-bar" aria-hidden="true">
+          <span class="window-dot"></span>
+          <span class="window-dot"></span>
+          <span class="window-dot"></span>
+          <span class="window-label">project / assistant</span>
+        </div>
+        <div class="message developer">
+          <span class="message-label">Developer</span>
+          I want users to access recent records offline, but I have no idea how
+          to implement it.
+        </div>
+        <div class="message assistant">
+          <span class="message-label">Assistant</span>
+          I’ll inspect the current data loading, caching, authentication, and
+          mutation paths first. Then I’ll ask only about product behavior the
+          repository cannot answer.
+        </div>
+        <div class="message assistant">
+          <span class="message-label">Assistant</span>
+          The product decision is read-only access versus queued writes. I
+          recommend read-only first because queued writes require conflict
+          policy. Which behavior do you need?
+        </div>
+        <div class="status-line">Inspect → settle behavior → build → verify</div>
+      </div>
+    </section>
+
+    <section class="section section-ink" id="mental-model">
+      <div class="shell">
+        <div class="section-heading">
+          <div>
+            <span class="section-index">01 · Mental model</span>
+            <h2>Five moves, from request to evidence.</h2>
+          </div>
+          <p>
+            The amount of ceremony grows only when uncertainty or risk grows.
+            A button rename stays tiny. A fuzzy product feature earns a
+            behavior contract. A multi-outcome program earns an initiative map.
+          </p>
+        </div>
+
+        <div class="mental-model">
+          <article class="model-step" data-step="1">
+            <span class="step-number">01</span>
+            <h3>Describe the goal</h3>
+            <p>Use normal language. Include the outcome, problem, or uncertainty.</p>
+          </article>
+          <article class="model-step" data-step="2">
+            <span class="step-number">02</span>
+            <h3>Inspect first</h3>
+            <p>The assistant reads code, tests, decisions, and project guidance.</p>
+          </article>
+          <article class="model-step" data-step="3">
+            <span class="step-number">03</span>
+            <h3>Settle decisions</h3>
+            <p>You choose product policy and durable trade-offs—not routine code details.</p>
+          </article>
+          <article class="model-step" data-step="4">
+            <span class="step-number">04</span>
+            <h3>Build a slice</h3>
+            <p>The assistant implements the smallest useful, reviewable behavior.</p>
+          </article>
+          <article class="model-step" data-step="5">
+            <span class="step-number">05</span>
+            <h3>Finish with proof</h3>
+            <p>Checks, review, and the final diff support the readiness claim.</p>
+          </article>
+        </div>
+
+        <div class="ownership">
+          <article class="ownership-card">
+            <h3>The developer owns</h3>
+            <ul>
+              <li>Desired product behavior and business policy</li>
+              <li>Acceptable risk and material trade-offs</li>
+              <li>Acceptance of behavior contracts and consequential plans</li>
+              <li>Authorization to commit, push, publish, deploy, or mutate trackers</li>
+            </ul>
+          </article>
+          <article class="ownership-card assistant">
+            <h3>The assistant owns</h3>
+            <ul>
+              <li>Repository inspection and fact finding</li>
+              <li>Routine implementation choices that follow local evidence</li>
+              <li>Focused questions with a recommendation and trade-offs</li>
+              <li>Implementation, deterministic checks, review, and evidence</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="route-finder">
+      <div class="shell">
+        <div class="section-heading">
+          <div>
+            <span class="section-index">02 · Scenario finder</span>
+            <h2>What are you trying to do?</h2>
+          </div>
+          <p>
+            Select the closest situation. The example prompt is intentionally
+            ordinary: developers can copy it, adapt it, or simply say the same
+            thing in their own words.
+          </p>
+        </div>
+
+        <div class="route-layout">
+          <div class="scenario-menu" role="group" aria-label="Developer scenarios">
+            <button class="scenario-button" type="button" data-scenario="overview" aria-pressed="true">
+              <strong>Understand a repository</strong>
+              <span>Read-only orientation</span>
+            </button>
+            <button class="scenario-button" type="button" data-scenario="tiny" aria-pressed="false">
+              <strong>Make a tiny change</strong>
+              <span>Clear and local</span>
+            </button>
+            <button class="scenario-button" type="button" data-scenario="unknown" aria-pressed="false">
+              <strong>I have no idea how</strong>
+              <span>Outcome known, approach unknown</span>
+            </button>
+            <button class="scenario-button" type="button" data-scenario="fuzzy" aria-pressed="false">
+              <strong>Shape a fuzzy feature</strong>
+              <span>Product behavior is missing</span>
+            </button>
+            <button class="scenario-button" type="button" data-scenario="bug" aria-pressed="false">
+              <strong>Fix something broken</strong>
+              <span>Diagnose before editing</span>
+            </button>
+            <button class="scenario-button" type="button" data-scenario="options" aria-pressed="false">
+              <strong>Compare viable options</strong>
+              <span>A durable contested choice</span>
+            </button>
+            <button class="scenario-button" type="button" data-scenario="prototype" aria-pressed="false">
+              <strong>Test a technical unknown</strong>
+              <span>One measurable question</span>
+            </button>
+            <button class="scenario-button" type="button" data-scenario="initiative" aria-pressed="false">
+              <strong>Map a large initiative</strong>
+              <span>Several coordinated outcomes</span>
+            </button>
+            <button class="scenario-button" type="button" data-scenario="learn" aria-pressed="false">
+              <strong>Pause and learn</strong>
+              <span>Teach, then resume</span>
+            </button>
+            <button class="scenario-button" type="button" data-scenario="finish" aria-pressed="false">
+              <strong>Finish and commit</strong>
+              <span>Evidence before Git action</span>
+            </button>
+          </div>
+
+          <article class="route-card" aria-live="polite">
+            <span class="route-tag" id="route-tag">READ-ONLY</span>
+            <h3 id="route-title">Understand an unfamiliar repository</h3>
+            <div class="route-prompt">
+              <span id="route-prompt">Give me a read-only overview of this project: architecture, important workflows, and how to run it. Do not change files.</span>
+              <button class="copy-button" type="button" data-copy-target="route-prompt">Copy</button>
+            </div>
+            <p id="route-response">
+              The assistant inspects project guidance, structure, entry points,
+              and tests, then explains the system without editing it.
+            </p>
+            <div class="route-flow" id="route-flow" aria-label="Workflow route"></div>
+            <div class="route-meta">
+              <div class="meta-box">
+                <strong>Creates</strong>
+                <p id="route-creates">A concise repository map in the conversation.</p>
+              </div>
+              <div class="meta-box">
+                <strong>Human gate</strong>
+                <p id="route-gate">None. The request remains read-only.</p>
+              </div>
+              <div class="meta-box">
+                <strong>Evidence</strong>
+                <p id="route-evidence">Referenced files and runnable commands.</p>
+              </div>
+              <div class="meta-box">
+                <strong>Must not</strong>
+                <p id="route-forbidden">Edit files or ask the developer to recite repository facts.</p>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-ink" id="triggers">
+      <div class="shell">
+        <div class="section-heading">
+          <div>
+            <span class="section-index">03 · How special modes trigger</span>
+            <h2>No magic phrase required.</h2>
+          </div>
+          <p>
+            “Grill me,” “simulate a discussion,” and “Wayfinder” are useful
+            labels, but the routing signal is the shape of the uncertainty.
+            Developers describe the problem; the assistant chooses the tool.
+          </p>
+        </div>
+
+        <div class="trigger-grid">
+          <article class="trigger-card">
+            <span class="signal">MISSING PRODUCT POLICY</span>
+            <h3>Focused grilling</h3>
+            <p>
+              The repository cannot answer who may invite, what expires, or
+              which failure behavior the product should expose. The assistant
+              asks one consequential question at a time, with a recommendation.
+            </p>
+            <span class="route-name">shape-change → focused questions</span>
+          </article>
+          <article class="trigger-card">
+            <span class="signal">SEVERAL DEFENSIBLE CHOICES</span>
+            <h3>Simulated discussion</h3>
+            <p>
+              Polling, webhooks, and server-sent events all fit. Relevant
+              perspectives compare consequences; the assistant recommends one,
+              while the developer owns the durable choice.
+            </p>
+            <span class="route-name">shape-change → compare perspectives</span>
+          </article>
+          <article class="trigger-card">
+            <span class="signal">ONE MEASURABLE UNKNOWN</span>
+            <h3>Bounded prototype</h3>
+            <p>
+              The team does not know whether IndexedDB meets a latency target.
+              A throwaway experiment answers that one question and does not
+              quietly become production architecture.
+            </p>
+            <span class="route-name">prototype → measure → discard or record</span>
+          </article>
+          <article class="trigger-card">
+            <span class="signal">SEVERAL OUTCOME TRACKS</span>
+            <h3>Wayfinder initiative map</h3>
+            <p>
+              Identity, regional data, billing, and multiple channels cannot
+              stay coherent in one feature spec. The assistant maps outcomes
+              and dependencies before each outcome returns for its own spec.
+            </p>
+            <span class="route-name">guarded initiative mapping</span>
+          </article>
+          <article class="trigger-card">
+            <span class="signal">ROUTINE TECHNICAL CHOICE</span>
+            <h3>Assistant decides</h3>
+            <p>
+              Naming, serializer patterns, and file placement follow existing
+              repository evidence. The assistant should not turn every normal
+              engineering choice into a meeting.
+            </p>
+            <span class="route-name">inspect → implement</span>
+          </article>
+          <article class="trigger-card">
+            <span class="signal">EXTERNAL OR VERSION-SENSITIVE FACT</span>
+            <h3>Bounded research</h3>
+            <p>
+              When an SDK capability or current standard matters, the assistant
+              verifies primary sources and records only the limitation needed
+              for the decision.
+            </p>
+            <span class="route-name">research → cite → return</span>
+          </article>
+        </div>
+
+        <div class="callout">
+          <span class="callout-mark">!</span>
+          <p>
+            Saying “I have no idea how to implement this” does <strong>not</strong>
+            automatically trigger a long interview or an initiative map. The
+            assistant first separates missing product behavior from technical
+            uncertainty, then uses repository evidence, research, discussion,
+            or a prototype only where each is actually useful.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="tutorials">
+      <div class="shell">
+        <div class="section-heading">
+          <div>
+            <span class="section-index">04 · Guided tutorials</span>
+            <h2>Walk through the common journeys.</h2>
+          </div>
+          <p>
+            Open a tutorial to see a sample conversation, the expected
+            sequence, the artifacts that are justified, and the things the
+            workflow deliberately avoids.
+          </p>
+        </div>
+
+        <div class="tutorials">
+          <details class="tutorial" open>
+            <summary>
+              <span class="tutorial-number">00</span>
+              <span class="tutorial-title">
+                Adopt the workflow into a repository
+                <span class="tutorial-subtitle">One maintainer action; no extra clone for the team</span>
+              </span>
+            </summary>
+            <div class="tutorial-body">
+              <div class="tutorial-main">
+                <p>
+                  A repository maintainer runs the adopter once. It previews the
+                  complete installation, preserves supported project-owned
+                  guidance, maps recognized Node and Python commands, and asks
+                  before writing.
+                </p>
+                <pre><code id="adoption-command"># After alpha publication
+cd /path/to/existing-project
+npx @innovate-x/ai-sdlc@alpha</code><button class="copy-button" type="button" data-copy-target="adoption-command">Copy</button></pre>
+                <div class="sequence">
+                  <div class="sequence-step"><p><strong>Start from a clean worktree.</strong> The adopter will still show a preview on a dirty tree, but it will not apply changes.</p></div>
+                  <div class="sequence-step"><p><strong>Review the preview.</strong> Check files, command mappings, hook behavior, and any ownership conflicts.</p></div>
+                  <div class="sequence-step"><p><strong>Confirm once.</strong> The write is transactional and validated; a lock records managed ownership.</p></div>
+                  <div class="sequence-step"><p><strong>Review and commit the installed contract.</strong> Everyone else receives it through the project’s normal clone or pull.</p></div>
+                  <div class="sequence-step"><p><strong>Ask for a read-only overview.</strong> This verifies that the assistant can find and use the installed guidance.</p></div>
+                </div>
+                <div class="alpha-note">
+                  <strong>ALPHA</strong>
+                  <p>
+                    The current adopter supports first installation. If a kit
+                    lock already exists, it stops safely because managed update
+                    handling is not implemented yet.
+                  </p>
+                </div>
+              </div>
+              <aside class="tutorial-side">
+                <h4>What the team experiences</h4>
+                <ul>
+                  <li>No second repository to clone</li>
+                  <li>No skill names to memorize</li>
+                  <li>No new hook manager installed</li>
+                  <li>Project commands already mapped for review</li>
+                  <li>The same guidance available to supported assistants</li>
+                </ul>
+              </aside>
+            </div>
+          </details>
+
+          <details class="tutorial">
+            <summary>
+              <span class="tutorial-number">01</span>
+              <span class="tutorial-title">
+                Make a clear, tiny change
+                <span class="tutorial-subtitle">Keep small work small</span>
+              </span>
+            </summary>
+            <div class="tutorial-body">
+              <div class="tutorial-main">
+                <div class="exchange">
+                  <div class="exchange-row">
+                    <span class="speaker">Developer</span>
+                    <p class="speech">Change the settings dialog button from Save to Save changes and update the focused test.</p>
+                  </div>
+                  <div class="exchange-row">
+                    <span class="speaker">Assistant</span>
+                    <p class="speech">This is clear, local, reversible, and low risk. I’ll make the smallest edit and run the focused UI test; no feature folder or planning ceremony is needed.</p>
+                  </div>
+                </div>
+                <div class="sequence">
+                  <div class="sequence-step"><p><strong>Inspect the component and its focused test.</strong></p></div>
+                  <div class="sequence-step"><p><strong>Change only the label and assertion.</strong></p></div>
+                  <div class="sequence-step"><p><strong>Run the focused test and inspect the diff.</strong></p></div>
+                  <div class="sequence-step"><p><strong>Report readiness with the exact evidence.</strong></p></div>
+                </div>
+              </div>
+              <aside class="tutorial-side">
+                <h4>Lightest artifact level</h4>
+                <p><strong>Creates:</strong> code, focused test change, verification summary.</p>
+                <p><strong>Skips:</strong> feature folder, specification, plan, ADR, tracker ticket.</p>
+                <p><strong>Human gate:</strong> none until an external action is requested.</p>
+              </aside>
+            </div>
+          </details>
+
+          <details class="tutorial">
+            <summary>
+              <span class="tutorial-number">02</span>
+              <span class="tutorial-title">
+                Start when the approach is unknown
+                <span class="tutorial-subtitle">The developer knows the outcome, not the implementation</span>
+              </span>
+            </summary>
+            <div class="tutorial-body">
+              <div class="tutorial-main">
+                <div class="exchange">
+                  <div class="exchange-row">
+                    <span class="speaker">Developer</span>
+                    <p class="speech">I want users to access recent records offline, but I have no idea how to implement it.</p>
+                  </div>
+                  <div class="exchange-row">
+                    <span class="speaker">Assistant</span>
+                    <p class="speech">I’ll inspect data loading, caching, authentication, and mutation paths before asking you to make decisions.</p>
+                  </div>
+                  <div class="exchange-row">
+                    <span class="speaker">Assistant</span>
+                    <p class="speech">The product decision is read-only access versus queued writes. I recommend read-only first because queued writes require synchronization and conflict policy. Which behavior do you need?</p>
+                  </div>
+                </div>
+                <div class="sequence">
+                  <div class="sequence-step"><p><strong>Separate product uncertainty from technical uncertainty.</strong></p></div>
+                  <div class="sequence-step"><p><strong>Ask only for unresolved product behavior.</strong> Bring a recommendation.</p></div>
+                  <div class="sequence-step"><p><strong>Use evidence for the implementation approach.</strong> Repository patterns first, primary-source research second, bounded prototype only for a measurable unknown.</p></div>
+                  <div class="sequence-step"><p><strong>Draft the behavior and verification contract.</strong> Wait for acceptance before material implementation.</p></div>
+                  <div class="sequence-step"><p><strong>Plan only if multiple slices or material risk warrant it.</strong></p></div>
+                </div>
+              </div>
+              <aside class="tutorial-side">
+                <h4>What not to do</h4>
+                <ul>
+                  <li>Ask the developer to design caching internals</li>
+                  <li>Start an initiative map for one coherent feature</li>
+                  <li>Debate what a small experiment can measure</li>
+                  <li>Implement before behavior is accepted</li>
+                </ul>
+              </aside>
+            </div>
+          </details>
+
+          <details class="tutorial">
+            <summary>
+              <span class="tutorial-number">03</span>
+              <span class="tutorial-title">
+                Diagnose and fix a failure
+                <span class="tutorial-subtitle">Prove the cause before patching</span>
+              </span>
+            </summary>
+            <div class="tutorial-body">
+              <div class="tutorial-main">
+                <div class="exchange">
+                  <div class="exchange-row">
+                    <span class="speaker">Developer</span>
+                    <p class="speech">Checkout retries sometimes charge the customer twice. Find the cause and fix it.</p>
+                  </div>
+                  <div class="exchange-row">
+                    <span class="speaker">Assistant</span>
+                    <p class="speech">I’m diagnosing before changing product code. I’ll reproduce the behavior and inspect the checkout boundary, tests, history, specs, and relevant decisions.</p>
+                  </div>
+                </div>
+                <div class="sequence">
+                  <div class="sequence-step"><p><strong>Reproduce the failure or establish observable evidence.</strong></p></div>
+                  <div class="sequence-step"><p><strong>Trace the causal boundary.</strong> Do not patch the first suspicious line.</p></div>
+                  <div class="sequence-step"><p><strong>Add a regression test that can fail for the right reason.</strong></p></div>
+                  <div class="sequence-step"><p><strong>Make the smallest causal fix.</strong></p></div>
+                  <div class="sequence-step"><p><strong>Run focused and affected checks, then review the diff.</strong></p></div>
+                </div>
+              </div>
+              <aside class="tutorial-side">
+                <h4>Evidence to expect</h4>
+                <ul>
+                  <li>Reproduction or diagnostic evidence</li>
+                  <li>Root cause stated clearly</li>
+                  <li>Regression red before the fix</li>
+                  <li>Focused and affected suites green</li>
+                  <li>No broad permanent instrumentation</li>
+                </ul>
+              </aside>
+            </div>
+          </details>
+
+          <details class="tutorial">
+            <summary>
+              <span class="tutorial-number">04</span>
+              <span class="tutorial-title">
+                Resolve a contested technical direction
+                <span class="tutorial-subtitle">Use discussion, research, or a prototype for the right question</span>
+              </span>
+            </summary>
+            <div class="tutorial-body">
+              <div class="tutorial-main">
+                <div class="exchange">
+                  <div class="exchange-row">
+                    <span class="speaker">Developer</span>
+                    <p class="speech">Polling, webhooks, and server-sent events all seem viable. Help me choose.</p>
+                  </div>
+                  <div class="exchange-row">
+                    <span class="speaker">Assistant</span>
+                    <p class="speech">I’ll verify the repository constraints, compare the consequences from the relevant operational, product, and implementation perspectives, then recommend one option. You’ll own the durable choice.</p>
+                  </div>
+                </div>
+                <div class="sequence">
+                  <div class="sequence-step"><p><strong>Inspect constraints first.</strong> Eliminate options that do not fit.</p></div>
+                  <div class="sequence-step"><p><strong>Classify the remaining uncertainty.</strong> Current fact → research. Measurable claim → prototype. Value trade-off → discussion.</p></div>
+                  <div class="sequence-step"><p><strong>Compare consequences, not personalities.</strong> Reliability, latency, operations, cost, and migration impact.</p></div>
+                  <div class="sequence-step"><p><strong>Recommend one option and name the downside.</strong></p></div>
+                  <div class="sequence-step"><p><strong>Record an ADR only if the decision is durable, hard to reverse, and surprising without context.</strong></p></div>
+                </div>
+              </div>
+              <aside class="tutorial-side">
+                <h4>Direct invocation is optional</h4>
+                <p>
+                  Developers may say “simulate a discussion” or “grill me,” but
+                  ordinary language should trigger the same behavior when the
+                  uncertainty fits.
+                </p>
+              </aside>
+            </div>
+          </details>
+
+          <details class="tutorial">
+            <summary>
+              <span class="tutorial-number">05</span>
+              <span class="tutorial-title">
+                Map a large, foggy initiative
+                <span class="tutorial-subtitle">Wayfinder is guarded, not the default</span>
+              </span>
+            </summary>
+            <div class="tutorial-body">
+              <div class="tutorial-main">
+                <div class="exchange">
+                  <div class="exchange-row">
+                    <span class="speaker">Developer</span>
+                    <p class="speech">Build one customer platform for web, mobile, partner APIs, regional data residency, and usage-based billing.</p>
+                  </div>
+                  <div class="exchange-row">
+                    <span class="speaker">Assistant</span>
+                    <p class="speech">This contains several coordinated outcomes and decision tracks. I recommend an initiative map before feature specs or implementation tickets.</p>
+                  </div>
+                </div>
+                <div class="sequence">
+                  <div class="sequence-step"><p><strong>Confirm that several coherent outcomes truly exist.</strong></p></div>
+                  <div class="sequence-step"><p><strong>Map outcomes, decision tracks, dependencies, and unknowns.</strong></p></div>
+                  <div class="sequence-step"><p><strong>Start with the constraining decision.</strong> For example, tenant boundaries may constrain regional data and billing.</p></div>
+                  <div class="sequence-step"><p><strong>Return each coherent outcome for its own behavior contract.</strong></p></div>
+                  <div class="sequence-step"><p><strong>Create implementation tickets only after accepted slices and explicit authorization.</strong></p></div>
+                </div>
+              </div>
+              <aside class="tutorial-side">
+                <h4>Wayfinder should not trigger when</h4>
+                <ul>
+                  <li>The feature is coherent but technically unfamiliar</li>
+                  <li>One product decision is unresolved</li>
+                  <li>A normal plan has several implementation steps</li>
+                  <li>The work can stay in one reviewable behavior contract</li>
+                </ul>
+              </aside>
+            </div>
+          </details>
+
+          <details class="tutorial">
+            <summary>
+              <span class="tutorial-number">06</span>
+              <span class="tutorial-title">
+                Finish before committing
+                <span class="tutorial-subtitle">Authorization is specific; evidence comes first</span>
+              </span>
+            </summary>
+            <div class="tutorial-body">
+              <div class="tutorial-main">
+                <div class="exchange">
+                  <div class="exchange-row">
+                    <span class="speaker">Developer</span>
+                    <p class="speech">Looks good. Commit it.</p>
+                  </div>
+                  <div class="exchange-row">
+                    <span class="speaker">Assistant</span>
+                    <p class="speech">That authorizes the commit, but I’ll finish first: run configured checks, review against intent and repository standards, simplify only when useful, and rerun affected checks.</p>
+                  </div>
+                </div>
+                <div class="sequence">
+                  <div class="sequence-step"><p><strong>Run the smallest relevant checks, then configured checks for the affected scope.</strong></p></div>
+                  <div class="sequence-step"><p><strong>Review against the request, accepted behavior, and repository standards.</strong></p></div>
+                  <div class="sequence-step"><p><strong>Apply only authorized blocking fixes or useful behavior-preserving simplification.</strong></p></div>
+                  <div class="sequence-step"><p><strong>Rerun affected deterministic checks and inspect the final diff.</strong></p></div>
+                  <div class="sequence-step"><p><strong>Create the requested commit.</strong> Do not push, open a pull request, deploy, or merge without separate authorization.</p></div>
+                </div>
+              </div>
+              <aside class="tutorial-side">
+                <h4>Ready means</h4>
+                <ul>
+                  <li>Known relevant checks pass</li>
+                  <li>The diff matches the accepted intent</li>
+                  <li>Limitations are stated</li>
+                  <li>No unauthorized external action occurred</li>
+                  <li>The working state is reported clearly</li>
+                </ul>
+              </aside>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="artifacts">
+      <div class="shell">
+        <div class="section-heading">
+          <div>
+            <span class="section-index">05 · Progressive artifacts</span>
+            <h2>Artifacts are earned by complexity.</h2>
+          </div>
+          <p>
+            These levels are not a checklist. Use the lowest level that keeps
+            behavior, risk, implementation order, and durable decisions clear.
+          </p>
+        </div>
+
+        <div class="artifact-ladder">
+          <article class="artifact-level" style="--height: 170px">
+            <small>LEVEL 0</small>
+            <div>
+              <h3>Inline brief</h3>
+              <p>Clear, local, reversible, low-risk work.</p>
+            </div>
+          </article>
+          <article class="artifact-level" style="--height: 210px">
+            <small>LEVEL 1</small>
+            <div>
+              <h3>Behavior contract</h3>
+              <p><code>spec.md</code> + <code>verification.md</code> for normal product behavior changes.</p>
+            </div>
+          </article>
+          <article class="artifact-level" style="--height: 250px">
+            <small>LEVEL 2</small>
+            <div>
+              <h3>Implementation plan</h3>
+              <p><code>plan.md</code> only for multiple slices, migration, rollout, compatibility, or material risk.</p>
+            </div>
+          </article>
+          <article class="artifact-level" style="--height: 290px">
+            <small>LEVEL 3</small>
+            <div>
+              <h3>Initiative map</h3>
+              <p>Several coordinated outcomes and decision tracks that cannot remain one coherent spec.</p>
+            </div>
+          </article>
+          <article class="artifact-level" style="--height: 330px">
+            <small>SEPARATE GATE</small>
+            <div>
+              <h3>ADR</h3>
+              <p>A real trade-off whose result is durable, hard to reverse, and surprising without context.</p>
+            </div>
+          </article>
+        </div>
+
+        <div class="gate-grid">
+          <article class="gate">
+            <h3>Behavior gate</h3>
+            <p>The developer chooses unresolved product policy and accepts material behavior contracts.</p>
+          </article>
+          <article class="gate">
+            <h3>Plan gate</h3>
+            <p>A consequential multi-slice or migration plan is accepted before implementation.</p>
+          </article>
+          <article class="gate">
+            <h3>Decision gate</h3>
+            <p>The developer owns durable contested trade-offs after receiving a recommendation.</p>
+          </article>
+          <article class="gate">
+            <h3>Action gate</h3>
+            <p>Commit, push, PR, deploy, merge, publish, and external mutations require explicit authorization.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="practice">
+      <div class="shell">
+        <div class="section-heading">
+          <div>
+            <span class="section-index">06 · Team practice</span>
+            <h2>Try the workflow in a safe repository.</h2>
+          </div>
+          <p>
+            Use this checklist for a team walkthrough. Progress is stored only
+            in this browser on this device and can be reset at any time.
+          </p>
+        </div>
+
+        <div class="progress-panel">
+          <div>
+            <div class="progress-ring" id="progress-ring" style="--progress: 0deg" aria-label="0 percent complete">
+              <span id="progress-value">0%</span>
+            </div>
+            <button class="reset-button" type="button" id="reset-progress">Reset progress</button>
+          </div>
+          <div>
+            <h3>Suggested 30-minute team exercise</h3>
+            <div class="checklist">
+              <label class="check-item">
+                <input type="checkbox" data-progress-item="adopt">
+                <span>Open the installed walkthrough and identify the four kinds of human gate.</span>
+              </label>
+              <label class="check-item">
+                <input type="checkbox" data-progress-item="overview">
+                <span>Ask for a read-only repository overview and verify that no files change.</span>
+              </label>
+              <label class="check-item">
+                <input type="checkbox" data-progress-item="tiny">
+                <span>Request one clear tiny change and confirm that no planning artifacts appear.</span>
+              </label>
+              <label class="check-item">
+                <input type="checkbox" data-progress-item="fuzzy">
+                <span>Give a fuzzy feature request and assess whether the assistant asks only a material product question.</span>
+              </label>
+              <label class="check-item">
+                <input type="checkbox" data-progress-item="bug">
+                <span>Report a bug and verify diagnosis plus regression evidence precede the fix.</span>
+              </label>
+              <label class="check-item">
+                <input type="checkbox" data-progress-item="finish">
+                <span>Ask to finish without authorizing a commit, then separately authorize the commit and confirm it does not push.</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="alpha-note">
+          <strong>FEEDBACK</strong>
+          <p>
+            When a scenario feels wrong, capture the developer prompt, what the
+            assistant did, what you expected, and whether the issue was routing,
+            unnecessary ceremony, a missing human gate, or weak evidence. That
+            becomes a concrete behavior example the kit can validate.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell footer-inner">
+      <span>AI SDLC workflow walkthrough · alpha</span>
+      <span>Source of truth: <code>AGENTS.md</code>, <code>ai-sdlc.yaml</code>, and validated workflow examples.</span>
+    </div>
+  </footer>
+
+  <script>
+    const scenarios = {
+      overview: {
+        tag: "READ-ONLY",
+        title: "Understand an unfamiliar repository",
+        prompt: "Give me a read-only overview of this project: architecture, important workflows, and how to run it. Do not change files.",
+        response: "The assistant inspects project guidance, structure, entry points, and tests, then explains the system without editing it.",
+        route: ["inspect", "map", "explain"],
+        creates: "A concise repository map in the conversation.",
+        gate: "None. The request remains read-only.",
+        evidence: "Referenced files and runnable commands.",
+        forbidden: "Edit files or ask the developer to recite repository facts."
+      },
+      tiny: {
+        tag: "TINY CHANGE",
+        title: "Make one clear, local change",
+        prompt: "Change the settings dialog button from Save to Save changes and update the focused test.",
+        response: "The assistant makes the smallest change, runs the focused test, checks the diff, and reports readiness.",
+        route: ["inspect", "implement", "focused check", "finish"],
+        creates: "Code and focused verification evidence.",
+        gate: "None unless an external action is requested.",
+        evidence: "Focused test result and final diff scope.",
+        forbidden: "Create a feature folder, spec, plan, ADR, or ticket."
+      },
+      unknown: {
+        tag: "APPROACH UNKNOWN",
+        title: "Start with an outcome, not a design",
+        prompt: "I want users to access recent records offline, but I have no idea how to implement it.",
+        response: "The assistant inspects first, separates missing product behavior from technical uncertainty, and owns routine engineering choices.",
+        route: ["inspect", "settle behavior", "resolve evidence", "build", "finish"],
+        creates: "Behavior and verification contract after the product choice is settled.",
+        gate: "Choose unresolved product behavior; accept the contract.",
+        evidence: "Repository evidence, focused research, or a bounded measurement.",
+        forbidden: "Ask the developer to design routine implementation details."
+      },
+      fuzzy: {
+        tag: "PRODUCT SHAPING",
+        title: "Turn a fuzzy request into accepted behavior",
+        prompt: "Add team invitations.",
+        response: "The assistant inspects roles and existing flows, then asks only about unresolved product policy with a recommendation.",
+        route: ["inspect facts", "focused question", "draft contract", "accept", "implement"],
+        creates: "spec.md and verification.md; plan.md only if warranted.",
+        gate: "Choose invitation policy and accept the behavior contract.",
+        evidence: "Acceptance criteria mapped to verification.",
+        forbidden: "Implement material behavior before acceptance."
+      },
+      bug: {
+        tag: "DIAGNOSIS",
+        title: "Diagnose before changing product code",
+        prompt: "Checkout retries sometimes charge the customer twice. Find the cause and fix it.",
+        response: "The assistant reproduces the failure, traces the cause, adds a red-capable regression test, and makes the smallest causal fix.",
+        route: ["reproduce", "diagnose", "regression test", "causal fix", "finish"],
+        creates: "Regression test, minimal fix, and verification evidence.",
+        gate: "Usually none when expected behavior is already settled.",
+        evidence: "Red before fix, green after fix, affected suite passes.",
+        forbidden: "Guess, patch the first suspicious line, or leave broad instrumentation."
+      },
+      options: {
+        tag: "CONTESTED DECISION",
+        title: "Compare several defensible approaches",
+        prompt: "Polling, webhooks, and server-sent events all seem viable. Compare the consequences and recommend one.",
+        response: "The assistant verifies constraints, contrasts relevant perspectives, recommends one option, and leaves the durable choice to the developer.",
+        route: ["inspect constraints", "compare perspectives", "recommend", "decide"],
+        creates: "Decision summary; ADR only if the durability gate is met.",
+        gate: "Choose the durable trade-off.",
+        evidence: "Explicit consequences, constraints, recommendation, and downside.",
+        forbidden: "Let simulated perspectives decide policy."
+      },
+      prototype: {
+        tag: "EMPIRICAL QUESTION",
+        title: "Measure one technical unknown",
+        prompt: "We do not know whether IndexedDB meets the 100 ms query target. Build a throwaway prototype to measure it.",
+        response: "The assistant isolates the question, defines the measurement, runs the smallest experiment, and records the result without turning it into production code.",
+        route: ["define metric", "prototype", "measure", "record", "discard"],
+        creates: "Disposable experiment and measured conclusion.",
+        gate: "Agree on the question and success threshold when missing.",
+        evidence: "Reproducible measurement and stated limitations.",
+        forbidden: "Quietly promote prototype code into production."
+      },
+      initiative: {
+        tag: "INITIATIVE MAP",
+        title: "Map several coordinated outcomes",
+        prompt: "Build one customer platform across web, mobile, partner APIs, regional data residency, and usage-based billing.",
+        response: "The assistant proposes an initiative map, orders decision tracks, and returns each coherent outcome for its own accepted spec.",
+        route: ["guard", "map outcomes", "order dependencies", "shape each outcome"],
+        creates: "Initiative map, then one later contract per coherent outcome.",
+        gate: "Approve mapping; accept each later behavior contract.",
+        evidence: "Named outcomes, dependencies, unknowns, and next decision track.",
+        forbidden: "Write one enormous spec or split directly into technical task lists."
+      },
+      learn: {
+        tag: "LEARN & RETURN",
+        title: "Pause for focused learning without losing context",
+        prompt: "Pause and teach me expand-contract, then return to this migration decision.",
+        response: "The assistant preserves the current decision point, teaches only the needed concept, checks transfer, and returns to the exact workstream.",
+        route: ["preserve state", "teach", "check understanding", "resume"],
+        creates: "A transient, redacted handoff when needed.",
+        gate: "The original product or migration decision remains pending.",
+        evidence: "The developer can apply the concept to the current decision.",
+        forbidden: "Teach unrelated theory or lose the original workstream."
+      },
+      finish: {
+        tag: "FINISH",
+        title: "Verify before an authorized commit",
+        prompt: "Looks good. Commit it.",
+        response: "The assistant runs configured checks, reviews intent and standards, applies only necessary fixes, rechecks, and creates the authorized commit.",
+        route: ["checks", "review", "simplify if useful", "recheck", "commit"],
+        creates: "Verification evidence and the authorized Git commit.",
+        gate: "Commit is authorized; push, PR, deploy, and merge are separate.",
+        evidence: "Passing checks, final diff review, limitations, and commit state.",
+        forbidden: "Commit known-broken work or treat AI review as deterministic proof."
+      }
+    };
+
+    const scenarioButtons = [...document.querySelectorAll(".scenario-button")];
+    const routeFlow = document.querySelector("#route-flow");
+
+    function renderScenario(id) {
+      const scenario = scenarios[id];
+      if (!scenario) return;
+
+      document.querySelector("#route-tag").textContent = scenario.tag;
+      document.querySelector("#route-title").textContent = scenario.title;
+      document.querySelector("#route-prompt").textContent = scenario.prompt;
+      document.querySelector("#route-response").textContent = scenario.response;
+      document.querySelector("#route-creates").textContent = scenario.creates;
+      document.querySelector("#route-gate").textContent = scenario.gate;
+      document.querySelector("#route-evidence").textContent = scenario.evidence;
+      document.querySelector("#route-forbidden").textContent = scenario.forbidden;
+
+      routeFlow.replaceChildren();
+      scenario.route.forEach((step, index) => {
+        const node = document.createElement("span");
+        node.className = "route-node";
+        node.textContent = step;
+        routeFlow.append(node);
+        if (index < scenario.route.length - 1) {
+          const arrow = document.createElement("span");
+          arrow.className = "route-arrow";
+          arrow.setAttribute("aria-hidden", "true");
+          arrow.textContent = "→";
+          routeFlow.append(arrow);
+        }
+      });
+
+      scenarioButtons.forEach((button) => {
+        button.setAttribute(
+          "aria-pressed",
+          String(button.dataset.scenario === id)
+        );
+      });
+    }
+
+    scenarioButtons.forEach((button) => {
+      button.addEventListener("click", () => renderScenario(button.dataset.scenario));
+    });
+
+    async function copyText(text) {
+      if (navigator.clipboard?.writeText) {
+        try {
+          await navigator.clipboard.writeText(text);
+          return true;
+        } catch {
+          // Local files may not have clipboard permission; use the fallback.
+        }
+      }
+
+      const field = document.createElement("textarea");
+      field.value = text;
+      field.setAttribute("readonly", "");
+      field.style.position = "fixed";
+      field.style.opacity = "0";
+      document.body.append(field);
+      field.select();
+      const copied = document.execCommand("copy");
+      field.remove();
+      return copied;
+    }
+
+    document.querySelectorAll("[data-copy-target]").forEach((button) => {
+      button.addEventListener("click", async () => {
+        const target = document.getElementById(button.dataset.copyTarget);
+        if (!target) return;
+        const original = button.textContent;
+        const copied = await copyText(target.textContent.trim());
+        button.textContent = copied ? "Copied" : "Copy failed";
+        window.setTimeout(() => {
+          button.textContent = original;
+        }, 1400);
+      });
+    });
+
+    const progressItems = [...document.querySelectorAll("[data-progress-item]")];
+    const progressRing = document.querySelector("#progress-ring");
+    const progressValue = document.querySelector("#progress-value");
+    const storageKey = "ai-sdlc-walkthrough-progress";
+
+    function savedProgress() {
+      try {
+        return JSON.parse(localStorage.getItem(storageKey) || "[]");
+      } catch {
+        return [];
+      }
+    }
+
+    function updateProgress(save = true) {
+      const complete = progressItems.filter((item) => item.checked);
+      const percent = Math.round((complete.length / progressItems.length) * 100);
+      const degrees = Math.round((percent / 100) * 360);
+      progressValue.textContent = `${percent}%`;
+      progressRing.style.setProperty("--progress", `${degrees}deg`);
+      progressRing.setAttribute("aria-label", `${percent} percent complete`);
+      if (save) {
+        try {
+          localStorage.setItem(
+            storageKey,
+            JSON.stringify(complete.map((item) => item.dataset.progressItem))
+          );
+        } catch {
+          // The checklist still works when browser storage is unavailable.
+        }
+      }
+    }
+
+    const restored = new Set(savedProgress());
+    progressItems.forEach((item) => {
+      item.checked = restored.has(item.dataset.progressItem);
+      item.addEventListener("change", () => updateProgress());
+    });
+
+    document.querySelector("#reset-progress").addEventListener("click", () => {
+      progressItems.forEach((item) => {
+        item.checked = false;
+      });
+      updateProgress();
+    });
+
+    renderScenario("overview");
+    updateProgress(false);
+  </script>
+</body>
+</html>
