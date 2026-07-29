@@ -23,18 +23,20 @@ The intended distribution flow is:
 5. AI assistants read the committed `AGENTS.md`, skills, and project context
    directly from that project.
 
-The same command will later detect whether it should install, validate, or
-preview an update. Developers should not need separate commands or knowledge
-of this kit's internal repository.
-
-The command now has a local first-adoption alpha. It supports a clean Git
-worktree with no existing kit lock, previews the complete payload, requires
-confirmation, validates written hashes, and records `.ai/kit.lock.json`.
+The command distinguishes first adoption from same-version validation.
+First adoption supports a clean Git worktree with no existing kit lock,
+previews the complete payload, requires confirmation, verifies the installed
+payload hashes, and records `.ai/kit.lock.json`.
 Existing `AGENTS.md`, `CLAUDE.md`, and Copilot instructions are preserved and
 receive one clearly marked `ai-sdlc-workflow` region. The lock tracks only that
 region as shared ownership. Missing, duplicated, or changed markers and all
-other same-path collisions stop without changing files. Updating an installed
-kit remains a later increment.
+other same-path collisions stop without changing files.
+
+Re-running the same kit version is a read-only integrity check: it validates
+every lock-recorded kit-owned file and shared managed region, while leaving
+project-owned files such as `ai-sdlc.yaml` alone. A missing or changed managed
+unit fails validation and lists the affected path. Installing a different kit
+version and updating an installed kit remain out of scope for this alpha.
 
 The adopter maps recognized existing `package.json` scripts and explicit
 Python tool sections from `pyproject.toml` into `ai-sdlc.yaml`. It uses script
@@ -56,15 +58,43 @@ files. They are not a consistent cross-agent contract. Use `.gitignore` for
 generated repository noise, concise scoped instructions for focus, and each
 host's permissions or sandbox only for genuine sensitive-path enforcement.
 
-The public alpha release target is `@innovate-x/ai-sdlc`. After the first
-release is published, a repository maintainer will adopt it with:
+## Install the published alpha
+
+The public alpha is live as `@innovate-x/ai-sdlc`. Before adopting it, install
+Node.js 22 or newer and Git, run the command from the root of an existing Git
+repository, and commit the current project so the worktree is clean. A dirty
+worktree can be previewed, but the installer will not apply changes.
+
+A repository maintainer adopts the kit with:
 
 ```bash
 npx @innovate-x/ai-sdlc@alpha
 ```
 
-Until that release is published, a maintainer can test the command from this
-repository:
+Installing the repository kit is separate from installing and authenticating
+an AI assistant. The adoption command does not install Codex or another
+assistant, create an account, or sign it in. Set up and authenticate the
+assistant through its own supported flow before using the committed guidance.
+
+After confirmation, the installer re-reads the files it owns and compares
+their SHA-256 hashes with the release payload. That verifies the installation
+write; it does not run the repository's structural validator or project
+commands. Review the Git diff and detected command mapping, then explicitly
+run:
+
+```bash
+python scripts/validate_ai_kit.py
+```
+
+Run the applicable project checks listed in `ai-sdlc.yaml`, then commit the
+reviewed adoption. Re-running the same published version performs the
+lock-based read-only validation described above without prompting or writing.
+For a repository that publishes an artifact, also inspect the real package
+manifest (for example, `npm pack --dry-run --json`). Adoption adds internal
+workflow files; use the project's existing `files` or ignore policy to decide
+whether they belong in the published artifact.
+
+For installer development against this checkout, a maintainer can run:
 
 ```bash
 npm install
@@ -74,9 +104,8 @@ cd /path/to/project
 node /absolute/path/to/sdlc-workflow/dist/cli.js
 ```
 
-For a one-or-two-repository pilot that cannot run the local CLI, one maintainer
-may still apply a reviewed kit snapshot manually and complete
-`.ai/ADOPTION.md`:
+For an exceptional pilot that cannot run the published CLI, one maintainer may
+still apply a reviewed kit snapshot manually and complete `.ai/ADOPTION.md`:
 
 ```bash
 cp -R repo-template/. /path/to/project/
@@ -85,6 +114,22 @@ cp -R repo-template/. /path/to/project/
 This manual copy is a temporary maintainer task, not team onboarding. Run it
 from a reviewed kit release, inspect the resulting Git diff, and merge existing
 project commands and policies instead of overwriting them.
+
+## Isolation and live evaluation
+
+A disposable container with Node.js 22 or newer and Git is useful for testing
+first adoption against a clean, committed fixture without contaminating a
+developer worktree. The small executable behavior evaluator uses the locally
+signed-in Codex session on the host by default; CI uses its fake-agent path for
+deterministic coverage.
+
+The Pantry Ledger full-lifecycle simulation has a stricter verified topology:
+the complete harness and live assistant run inside a disposable container,
+with the kit source and authentication input read-only and only the scenario
+workspace/evidence mount writable. See
+[`simulations/pantry-ledger/README.md`](simulations/pantry-ledger/README.md)
+and its retained runbook. Keep authentication out of generic adoption-only
+containers and never copy it into retained evidence.
 
 The design has four rules:
 

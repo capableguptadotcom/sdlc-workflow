@@ -1,7 +1,7 @@
 # AI Developer Kit
 
-> Workflow alpha. The instructions and structural checks are installed;
-> executable cross-assistant behavior evaluation is the next milestone.
+> Workflow alpha. The repository guidance and structural checks are installed;
+> use them with project-specific validation and evidence.
 
 Describe the work normally. The assistant investigates the repository, asks only for decisions that belong to you, chooses the lightest reliable workflow, and shows evidence before calling the work ready.
 

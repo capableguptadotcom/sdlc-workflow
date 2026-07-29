@@ -7,6 +7,9 @@ import { join, resolve } from "node:path";
 import test from "node:test";
 
 const cli = resolve("dist/cli.js");
+const packageVersion = JSON.parse(
+  await readFile(resolve("package.json"), "utf8"),
+).version;
 
 async function repository() {
   const root = await mkdtemp(join(tmpdir(), "ai-sdlc-adopt-"));
@@ -23,13 +26,50 @@ async function repository() {
   return root;
 }
 
-function run(root, input = "n\n") {
-  return spawnSync(process.execPath, [cli], {
+function run(root, input = "n\n", args = []) {
+  return spawnSync(process.execPath, [cli, ...args], {
     cwd: root,
     input,
     encoding: "utf8",
   });
 }
+
+test("--help describes the CLI without requiring a Git repository", () => {
+  const result = spawnSync(process.execPath, [cli, "--help"], {
+    cwd: tmpdir(),
+    encoding: "utf8",
+  });
+
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /Usage: ai-sdlc/);
+  assert.match(result.stdout, /--help/);
+  assert.match(result.stdout, /--version/);
+  assert.match(result.stdout, /--dry-run/);
+  assert.match(result.stdout, /--yes/);
+  assert.equal(result.stderr, "");
+});
+
+test("--version prints the package version without requiring a Git repository", () => {
+  const result = spawnSync(process.execPath, [cli, "--version"], {
+    cwd: tmpdir(),
+    encoding: "utf8",
+  });
+
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(result.stdout, `${packageVersion}\n`);
+  assert.equal(result.stderr, "");
+});
+
+test("an unknown argument is rejected before repository discovery", () => {
+  const result = spawnSync(process.execPath, [cli, "--surprise"], {
+    cwd: tmpdir(),
+    encoding: "utf8",
+  });
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Unknown argument: --surprise/);
+  assert.doesNotMatch(result.stderr, /inside a Git repository/);
+});
 
 test("a denied preview makes no changes", async (t) => {
   const root = await repository();
@@ -40,6 +80,20 @@ test("a denied preview makes no changes", async (t) => {
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, /ADD\s+AGENTS\.md/);
   assert.match(result.stdout, /No files changed\./);
+  assert.equal(existsSync(join(root, "AGENTS.md")), false);
+  assert.equal(existsSync(join(root, ".ai", "kit.lock.json")), false);
+});
+
+test("--dry-run previews without prompting or changing files", async (t) => {
+  const root = await repository();
+  t.after(() => rm(root, { recursive: true, force: true }));
+
+  const result = run(root, "", ["--dry-run"]);
+
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /Adoption preview:/);
+  assert.match(result.stdout, /Dry run complete\. No files changed\./);
+  assert.doesNotMatch(result.stdout, /Apply this adoption/);
   assert.equal(existsSync(join(root, "AGENTS.md")), false);
   assert.equal(existsSync(join(root, ".ai", "kit.lock.json")), false);
 });
@@ -57,19 +111,23 @@ test("confirmation installs the reviewed payload and lock", async (t) => {
     existsSync(join(root, ".ai", "workflow-walkthrough.html")),
     true,
   );
-  assert.equal(existsSync(join(root, ".ai", "ADOPTION.md")), false);
+  assert.equal(existsSync(join(root, ".ai", "ADOPTION.md")), true);
   assert.equal(existsSync(join(root, ".ai", "kit-version.json")), false);
 
   const lock = JSON.parse(
     await readFile(join(root, ".ai", "kit.lock.json"), "utf8"),
   );
   assert.equal(lock.schema_version, 1);
-  assert.equal(lock.kit_version, "0.1.0-alpha.1");
+  assert.equal(lock.kit_version, packageVersion);
   assert.equal(lock.source.package, "@innovate-x/ai-sdlc");
   assert.match(lock.source.release_manifest_digest, /^[a-f0-9]{64}$/);
   assert.ok(
     lock.managed_units.some((unit) => unit.path === "AGENTS.md"),
     "lock should record installed workflow files",
+  );
+  assert.equal(
+    lock.managed_units.find((unit) => unit.path === ".ai/ADOPTION.md").ownership,
+    "project",
   );
   const agents = await readFile(join(root, "AGENTS.md"), "utf8");
   assert.match(agents, /<!-- ai-sdlc:workflow:start -->/);
@@ -85,6 +143,208 @@ test("confirmation installs the reviewed payload and lock", async (t) => {
   assert.match(result.stdout, /Adoption installed and verified\./);
 });
 
+test("--yes installs without prompting when safeguards pass", async (t) => {
+  const root = await repository();
+  t.after(() => rm(root, { recursive: true, force: true }));
+
+  const result = run(root, "", ["--yes"]);
+
+  assert.equal(result.status, 0, result.stderr);
+  assert.doesNotMatch(result.stdout, /Apply this adoption/);
+  assert.match(result.stdout, /Adoption installed and verified\./);
+  assert.equal(existsSync(join(root, ".ai", "kit.lock.json")), true);
+});
+
+test("a same-version rerun validates the installation and ignores project-owned configuration", async (t) => {
+  const root = await repository();
+  t.after(() => rm(root, { recursive: true, force: true }));
+
+  const installed = run(root, "yes\n");
+  assert.equal(installed.status, 0, installed.stderr);
+  const kitFile = join(root, ".agents", "skills", "develop", "SKILL.md");
+  const kitContent = await readFile(kitFile, "utf8");
+  const projectConfig = "# Project-owned AI SDLC configuration\n";
+  await writeFile(join(root, "ai-sdlc.yaml"), projectConfig);
+  const sharedPath = join(root, "AGENTS.md");
+  const managedInstructions = await readFile(sharedPath, "utf8");
+  const sharedWithProjectContent =
+    `# Project instructions\n\n${managedInstructions}\nProject footer\n`;
+  await writeFile(sharedPath, sharedWithProjectContent);
+
+  const result = run(root);
+
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /already installed/i);
+  assert.match(result.stdout, /validated/i);
+  assert.match(result.stdout, /no changes/i);
+  assert.doesNotMatch(result.stdout, /Apply this adoption/);
+  assert.equal(await readFile(kitFile, "utf8"), kitContent);
+  assert.equal(await readFile(join(root, "ai-sdlc.yaml"), "utf8"), projectConfig);
+  assert.equal(await readFile(sharedPath, "utf8"), sharedWithProjectContent);
+});
+
+test("a lock cannot self-authenticate coordinated kit tampering", async (t) => {
+  const root = await repository();
+  t.after(() => rm(root, { recursive: true, force: true }));
+
+  const installed = run(root, "yes\n");
+  assert.equal(installed.status, 0, installed.stderr);
+  const kitRelativePath = ".agents/skills/develop/SKILL.md";
+  const kitPath = join(root, ...kitRelativePath.split("/"));
+  const tamperedKit = "# Coordinated kit tampering\n";
+  await writeFile(kitPath, tamperedKit);
+  const lockPath = join(root, ".ai", "kit.lock.json");
+  const lock = JSON.parse(await readFile(lockPath, "utf8"));
+  const unit = lock.managed_units.find(
+    (candidate) => candidate.path === kitRelativePath,
+  );
+  unit.baseline_hash =
+    "4ea998ddb51c7a36f59de9e531f977ea89b22359f87df4d74693ee0725265da0";
+  const tamperedLock = `${JSON.stringify(lock, null, 2)}\n`;
+  await writeFile(lockPath, tamperedLock);
+
+  const result = run(root);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /\.agents\/skills\/develop\/SKILL\.md/);
+  assert.match(result.stderr, /no files were changed/i);
+  assert.equal(await readFile(kitPath, "utf8"), tamperedKit);
+  assert.equal(await readFile(lockPath, "utf8"), tamperedLock);
+});
+
+test("a lock cannot omit required release units", async (t) => {
+  const root = await repository();
+  t.after(() => rm(root, { recursive: true, force: true }));
+
+  const installed = run(root, "yes\n");
+  assert.equal(installed.status, 0, installed.stderr);
+  const lockPath = join(root, ".ai", "kit.lock.json");
+  const lock = JSON.parse(await readFile(lockPath, "utf8"));
+  lock.managed_units = [];
+  const emptyLock = `${JSON.stringify(lock, null, 2)}\n`;
+  await writeFile(lockPath, emptyLock);
+  const kitPath = join(root, ".agents", "skills", "develop", "SKILL.md");
+  const kitContent = await readFile(kitPath, "utf8");
+
+  const result = run(root);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /\.agents\/skills\/develop\/SKILL\.md/);
+  assert.match(result.stderr, /AGENTS\.md/);
+  assert.match(result.stderr, /no files were changed/i);
+  assert.equal(await readFile(lockPath, "utf8"), emptyLock);
+  assert.equal(await readFile(kitPath, "utf8"), kitContent);
+});
+
+test("a same-version rerun reports every drifted, missing, or malformed managed unit without changing files", async (t) => {
+  const root = await repository();
+  t.after(() => rm(root, { recursive: true, force: true }));
+
+  const installed = run(root, "yes\n");
+  assert.equal(installed.status, 0, installed.stderr);
+  const driftedPath = join(
+    root,
+    ".agents",
+    "skills",
+    "develop",
+    "SKILL.md",
+  );
+  const missingPath = join(
+    root,
+    ".agents",
+    "skills",
+    "review-change",
+    "SKILL.md",
+  );
+  const sharedPath = join(root, "AGENTS.md");
+  const drifted = "# Locally drifted kit file\n";
+  const malformed =
+    "# Project instructions\n\n<!-- ai-sdlc:workflow:start -->\nIncomplete\n";
+  await writeFile(driftedPath, drifted);
+  await rm(missingPath);
+  await writeFile(sharedPath, malformed);
+  const lock = await readFile(join(root, ".ai", "kit.lock.json"), "utf8");
+
+  const result = run(root);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /\.agents\/skills\/develop\/SKILL\.md/);
+  assert.match(result.stderr, /\.agents\/skills\/review-change\/SKILL\.md/);
+  assert.match(result.stderr, /AGENTS\.md/);
+  assert.match(result.stderr, /no files were changed/i);
+  assert.doesNotMatch(result.stdout, /Apply this adoption/);
+  assert.equal(await readFile(driftedPath, "utf8"), drifted);
+  assert.equal(existsSync(missingPath), false);
+  assert.equal(await readFile(sharedPath, "utf8"), malformed);
+  assert.equal(
+    await readFile(join(root, ".ai", "kit.lock.json"), "utf8"),
+    lock,
+  );
+});
+
+test("a malformed installation lock is named and leaves the repository unchanged", async (t) => {
+  const root = await repository();
+  t.after(() => rm(root, { recursive: true, force: true }));
+  const lockPath = join(root, ".ai", "kit.lock.json");
+  await mkdir(join(root, ".ai"), { recursive: true });
+  const malformed = "{ definitely not valid JSON\n";
+  await writeFile(lockPath, malformed);
+
+  const result = run(root);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /\.ai\/kit\.lock\.json/);
+  assert.match(result.stderr, /no files were changed/i);
+  assert.equal(await readFile(lockPath, "utf8"), malformed);
+  assert.equal(existsSync(join(root, "AGENTS.md")), false);
+});
+
+test("a malformed shared-unit lock record names the managed path", async (t) => {
+  const root = await repository();
+  t.after(() => rm(root, { recursive: true, force: true }));
+
+  const installed = run(root, "yes\n");
+  assert.equal(installed.status, 0, installed.stderr);
+  const lockPath = join(root, ".ai", "kit.lock.json");
+  const lock = JSON.parse(await readFile(lockPath, "utf8"));
+  const agents = lock.managed_units.find((unit) => unit.path === "AGENTS.md");
+  delete agents.start_marker;
+  const malformed = `${JSON.stringify(lock, null, 2)}\n`;
+  await writeFile(lockPath, malformed);
+
+  const result = run(root);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /AGENTS\.md/);
+  assert.match(result.stderr, /no files were changed/i);
+  assert.equal(await readFile(lockPath, "utf8"), malformed);
+});
+
+test("a different installed kit version is an explicit unsupported update", async (t) => {
+  const root = await repository();
+  t.after(() => rm(root, { recursive: true, force: true }));
+
+  const installed = run(root, "yes\n");
+  assert.equal(installed.status, 0, installed.stderr);
+  const lockPath = join(root, ".ai", "kit.lock.json");
+  const lock = JSON.parse(await readFile(lockPath, "utf8"));
+  lock.kit_version = "0.0.9";
+  const olderLock = `${JSON.stringify(lock, null, 2)}\n`;
+  await writeFile(lockPath, olderLock);
+  const kitPath = join(root, ".agents", "skills", "develop", "SKILL.md");
+  const kitContent = await readFile(kitPath, "utf8");
+
+  const result = run(root);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /unsupported update/i);
+  assert.match(result.stderr, /0\.0\.9/);
+  assert.ok(result.stderr.includes(packageVersion));
+  assert.doesNotMatch(result.stdout, /Apply this adoption/);
+  assert.equal(await readFile(lockPath, "utf8"), olderLock);
+  assert.equal(await readFile(kitPath, "utf8"), kitContent);
+});
+
 test("an existing same-path file stops the complete adoption", async (t) => {
   const root = await repository();
   t.after(() => rm(root, { recursive: true, force: true }));
@@ -96,10 +356,11 @@ test("an existing same-path file stops the complete adoption", async (t) => {
     cwd: root,
   });
 
-  const result = run(root, "y\n");
+  const result = run(root, "", ["--yes"]);
 
   assert.equal(result.status, 1);
   assert.match(result.stdout, /CONFLICT\s+\.agents\/skills\/develop\/SKILL\.md/);
+  assert.doesNotMatch(result.stdout, /Apply this adoption/);
   assert.match(result.stderr, /No files were changed/);
   assert.equal(
     await readFile(skill, "utf8"),
@@ -301,6 +562,11 @@ test("an existing Husky hook receives only cheap mapped checks", async (t) => {
   );
   assert.equal(unit.kind, "region");
   assert.equal(unit.region_id, "ai-sdlc-pre-commit");
+
+  const rerun = run(root);
+  assert.equal(rerun.status, 0, rerun.stderr);
+  assert.match(rerun.stdout, /already installed/i);
+  assert.match(rerun.stdout, /validated/i);
 });
 
 test("an existing Python pre-commit config remains the hook source of truth", async (t) => {
@@ -416,10 +682,11 @@ test("a dirty worktree can be previewed but not changed", async (t) => {
   t.after(() => rm(root, { recursive: true, force: true }));
   await writeFile(join(root, "local-work.txt"), "keep me\n");
 
-  const result = run(root, "y\n");
+  const result = run(root, "", ["--yes"]);
 
   assert.equal(result.status, 1);
   assert.match(result.stdout, /Worktree has uncommitted changes/);
+  assert.doesNotMatch(result.stdout, /Apply this adoption/);
   assert.match(result.stderr, /Apply blocked/);
   assert.equal(existsSync(join(root, "AGENTS.md")), false);
   assert.equal(await readFile(join(root, "local-work.txt"), "utf8"), "keep me\n");

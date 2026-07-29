@@ -1,6 +1,6 @@
 {
   "name": "@innovate-x/ai-sdlc",
-  "version": "0.1.0-alpha.1",
+  "version": "0.1.0-alpha.4",
   "description": "Adopt the shared AI SDLC workflow into an existing repository.",
   "keywords": [
     "ai",
@@ -23,7 +23,6 @@
   "files": [
     "dist",
     "repo-template",
-    "!repo-template/.ai/ADOPTION.md",
     "!repo-template/.ai/kit-version.json",
     "!repo-template/**/__pycache__/**",
     "!repo-template/**/*.py[cod]"

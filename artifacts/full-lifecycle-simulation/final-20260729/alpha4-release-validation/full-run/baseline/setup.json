@@ -1,0 +1,73 @@
+{
+  "seed": "<local-path-3>/tests/fixtures/pantry-ledger-seed",
+  "workspace": "<local-path-1>",
+  "commands": [
+    {
+      "command": [
+        "git",
+        "init",
+        "--quiet",
+        "--initial-branch=main"
+      ],
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "config",
+        "core.filemode",
+        "false"
+      ],
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "config",
+        "user.name",
+        "AI SDLC Simulation"
+      ],
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "config",
+        "user.email",
+        "simulation@example.invalid"
+      ],
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "add",
+        "-A"
+      ],
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "commit",
+        "--quiet",
+        "-m",
+        "Create Pantry Ledger seed"
+      ],
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "commit": "120443e633d511d25c8b593ba03eea3049681d17"
+}

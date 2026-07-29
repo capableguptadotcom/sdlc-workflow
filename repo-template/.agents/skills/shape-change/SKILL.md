@@ -60,6 +60,14 @@ acceptance criteria. Ask the human to review the draft. Only explicit
 confirmation changes `status` to `accepted` and records `accepted_at` and
 `accepted_via`.
 
+Answers to discovery questions, “all decisions are settled,” or an earlier
+request to take work end to end are not acceptance of a specification the
+human has not yet reviewed. After producing or materially revising a draft,
+show the contract and stop at its review boundary. A new specification's
+creation turn ends with `status: draft`; changing `draft` to `accepted`
+requires a later explicit human message that refers to the rendered contract.
+Do not mark it accepted, plan, or implement in the creation turn.
+
 A material edit to accepted behavior, scope, criteria, invariants, failure
 policy, or risk returns the spec to `draft`, pauses affected implementation,
 and requires downstream plan, task, and evidence reconciliation. Do not

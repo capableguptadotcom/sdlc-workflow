@@ -10,6 +10,8 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
+from datetime import datetime, timezone
 from pathlib import Path
 
 
@@ -18,6 +20,18 @@ TEMPLATE = ROOT / "repo-template"
 CASES_PATH = TEMPLATE / "evals" / "executable-cases.json"
 RESULT_SCHEMA = TEMPLATE / "evals" / "behavior-result.schema.json"
 FIXTURES = ROOT / "tests" / "fixtures"
+GENERATED_OUTPUT_FILES = (
+    "agent-result.json",
+    "agent-events.jsonl",
+    "agent-stderr.txt",
+    "turn-2-agent-result.json",
+    "turn-2-agent-events.jsonl",
+    "turn-2-agent-stderr.txt",
+    "resolved-result.schema.json",
+    "turn-2-resolved-result.schema.json",
+    "transcript.json",
+    "report.json",
+)
 
 
 def default_agent_command() -> list[str]:
@@ -39,8 +53,13 @@ def complete_agent_command(
         ".bat",
         ".cmd",
     }:
-        script = "& " + " ".join(
+        invocation = "& " + " ".join(
             f"'{part.replace(chr(39), chr(39) * 2)}'" for part in command
+        )
+        script = (
+            "$OutputEncoding = [Console]::OutputEncoding = "
+            "[Text.UTF8Encoding]::new(); "
+            + invocation
         )
         return [
             shutil.which("powershell.exe") or "powershell.exe",
@@ -62,6 +81,8 @@ def run(
         cwd=cwd,
         capture_output=True,
         text=True,
+        encoding="utf-8",
+        errors="replace",
         input=input_text,
         check=False,
     )
@@ -115,6 +136,66 @@ def thread_id_from(events: str) -> str | None:
     return None
 
 
+def redact_known_paths(
+    value: object,
+    replacements: list[tuple[str, str]],
+) -> object:
+    if isinstance(value, str):
+        redacted = value
+        for source, replacement in sorted(
+            replacements,
+            key=lambda item: len(item[0]),
+            reverse=True,
+        ):
+            redacted = redacted.replace(source, replacement)
+            redacted = redacted.replace(source.replace("\\", "/"), replacement)
+        return redacted
+    if isinstance(value, list):
+        return [redact_known_paths(item, replacements) for item in value]
+    if isinstance(value, dict):
+        return {
+            key: redact_known_paths(item, replacements)
+            for key, item in value.items()
+        }
+    return value
+
+
+def redact_jsonl(
+    events: str,
+    replacements: list[tuple[str, str]],
+) -> str:
+    lines = []
+    for line in events.splitlines():
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError:
+            lines.append(str(redact_known_paths(line, replacements)))
+            continue
+        lines.append(
+            json.dumps(
+                redact_known_paths(event, replacements),
+                ensure_ascii=False,
+            )
+        )
+    return "\n".join(lines) + ("\n" if events else "")
+
+
+def observed_command_attempts(events: str) -> list[str]:
+    commands = []
+    for line in events.splitlines():
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        item = event.get("item", {})
+        command = item.get("command")
+        if item.get("type") == "command_execution" and command:
+            command = str(command)
+            if command not in commands:
+                commands.append(command)
+    return commands
+
+
 def evaluate_turn(
     scenario_id: str,
     expectations: dict,
@@ -123,6 +204,7 @@ def evaluate_turn(
     changes: list[str],
     commit_count: int,
     committed_files: list[str],
+    observed_commands: list[str],
 ) -> dict:
     violations: list[str] = []
     agent_result = {}
@@ -172,7 +254,7 @@ def evaluate_turn(
             violations.append(
                 f"missing human gate terms: {missing_gate_terms}"
             )
-        commands = "\n".join(agent_result.get("commands_run", [])).lower()
+        commands = "\n".join(observed_commands).lower()
         forbidden_commands = [
             term
             for term in expectations.get("forbidden_command_terms", [])
@@ -180,7 +262,7 @@ def evaluate_turn(
         ]
         if forbidden_commands:
             violations.append(
-                f"agent reported forbidden commands: {forbidden_commands}"
+                f"agent attempted forbidden commands: {forbidden_commands}"
             )
 
     unexpected_changes = sorted(
@@ -213,17 +295,20 @@ def evaluate_turn(
         "changed_files": changes,
         "commit_count": commit_count,
         "committed_files": committed_files,
+        "observed_commands": observed_commands,
         "agent_result": agent_result,
     }
 
 
 def main() -> int:
+    started_at = datetime.now(timezone.utc)
+    started_monotonic = time.monotonic()
     parser = argparse.ArgumentParser()
     parser.add_argument("--scenario", required=True)
     parser.add_argument(
         "--agent-command",
         nargs="+",
-        default=default_agent_command(),
+        default=None,
         help="Executable prefix used in place of 'codex'.",
     )
     parser.add_argument(
@@ -250,20 +335,57 @@ def main() -> int:
             f"unknown scenario {args.scenario!r}; choose from {sorted(cases)}"
         )
     case = cases[args.scenario]
+    result_schema = json.loads(RESULT_SCHEMA.read_text(encoding="utf-8"))
+    visible_modes = result_schema["properties"]["visible_modes"]["items"]["enum"]
+    terminal_states = result_schema["properties"]["terminal_state"]["enum"]
+    semantic_label_guidance = (
+        "In the structured result, visible_modes and terminal_state are "
+        "AI-SDLC semantic labels, not Codex UI or message-channel labels. "
+        f"Use visible_modes only from {visible_modes!r} and terminal_state only "
+        f"from {terminal_states!r}."
+    )
 
     output_dir = args.output_dir.resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
+    for name in GENERATED_OUTPUT_FILES:
+        generated_path = output_dir / name
+        if generated_path.is_file() or generated_path.is_symlink():
+            generated_path.unlink()
     agent_result_path = output_dir / "agent-result.json"
     stdout_path = output_dir / "agent-events.jsonl"
     stderr_path = output_dir / "agent-stderr.txt"
+    transcript_path = output_dir / "transcript.json"
+    turn_schema_path = output_dir / "resolved-result.schema.json"
+    turn_schema_path.write_text(
+        json.dumps(result_schema, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    if args.codex_package_version:
+        codex_selection = "npx-package"
+        agent_command = npx_agent_command(args.codex_package_version)
+    elif args.agent_command:
+        codex_selection = "explicit-command"
+        agent_command = args.agent_command
+    else:
+        codex_selection = "installed-cli"
+        agent_command = default_agent_command()
+    package_metadata = json.loads(
+        (ROOT / "package.json").read_text(encoding="utf-8")
+    )
+    commit_result = run(["git", "rev-parse", "HEAD"], ROOT)
+    kit_source_commit = (
+        commit_result.stdout.strip() if commit_result.returncode == 0 else None
+    )
 
     with tempfile.TemporaryDirectory(prefix="ai-sdlc-eval-") as temp_dir:
         workspace = Path(temp_dir) / "workspace"
-        shutil.copytree(TEMPLATE, workspace)
+        copy_ignore = shutil.ignore_patterns("__pycache__", "*.pyc")
+        shutil.copytree(TEMPLATE, workspace, ignore=copy_ignore)
         shutil.copytree(
             FIXTURES / case["fixture"],
             workspace,
             dirs_exist_ok=True,
+            ignore=copy_ignore,
         )
 
         for command in (
@@ -296,32 +418,36 @@ def main() -> int:
             f"Evaluation scenario: {case['id']}\n\n"
             f"Developer request:\n{case['prompt']}\n\n"
             "Follow the repository instructions. Your final response must match "
-            "the provided JSON schema and report what you actually did."
+            "the provided JSON schema and report what you actually did. "
+            f"{semantic_label_guidance}"
         )
-        agent_command = (
-            npx_agent_command(args.codex_package_version)
-            if args.codex_package_version
-            else args.agent_command
-        )
-        has_follow_up = bool(args.all_turns and case.get("follow_up"))
-        command = complete_agent_command(agent_command, [
-            "exec",
-            *([] if has_follow_up else ["--ephemeral"]),
-            "--ignore-user-config",
-            "-m",
-            args.model,
-            "--json",
+        global_agent_arguments = [
+            "--ask-for-approval",
+            "never",
             "--sandbox",
             case["sandbox"],
-            "--skip-git-repo-check",
+            "-m",
+            args.model,
             "-C",
             str(workspace),
-            "--output-schema",
-            str(RESULT_SCHEMA),
-            "-o",
-            str(agent_result_path),
-            prompt,
-        ])
+        ]
+        has_follow_up = bool(args.all_turns and case.get("follow_up"))
+        command = complete_agent_command(
+            agent_command,
+            [
+                *global_agent_arguments,
+                "exec",
+                *([] if has_follow_up else ["--ephemeral"]),
+                "--ignore-user-config",
+                "--json",
+                "--skip-git-repo-check",
+                "--output-schema",
+                str(turn_schema_path),
+                "-o",
+                str(agent_result_path),
+                prompt,
+            ],
+        )
         try:
             agent = run(command, workspace)
         except OSError as exc:
@@ -331,8 +457,19 @@ def main() -> int:
                 stdout="",
                 stderr=str(exc),
             )
-        stdout_path.write_text(agent.stdout, encoding="utf-8")
-        stderr_path.write_text(agent.stderr, encoding="utf-8")
+        path_replacements = [
+            (str(workspace), "<workspace>"),
+            (str(output_dir), "<output-dir>"),
+            (str(ROOT), "<kit-source>"),
+        ]
+        stdout_path.write_text(
+            redact_jsonl(agent.stdout, path_replacements),
+            encoding="utf-8",
+        )
+        stderr_path.write_text(
+            str(redact_known_paths(agent.stderr, path_replacements)),
+            encoding="utf-8",
+        )
 
         changes, commit_count, committed_files = repository_state(workspace)
         turns = [
@@ -344,7 +481,23 @@ def main() -> int:
                 changes,
                 commit_count,
                 committed_files,
+                observed_command_attempts(agent.stdout),
             )
+        ]
+        transcript_messages = [
+            {
+                "turn": 1,
+                "role": "human",
+                "content": redact_known_paths(prompt, path_replacements),
+            },
+            {
+                "turn": 1,
+                "role": "assistant",
+                "content": redact_known_paths(
+                    turns[0]["agent_result"],
+                    path_replacements,
+                ),
+            },
         ]
 
         if has_follow_up and turns[0]["passed"]:
@@ -359,28 +512,38 @@ def main() -> int:
                 follow_result_path = output_dir / "turn-2-agent-result.json"
                 follow_stdout_path = output_dir / "turn-2-agent-events.jsonl"
                 follow_stderr_path = output_dir / "turn-2-agent-stderr.txt"
+                follow_schema_path = (
+                    output_dir / "turn-2-resolved-result.schema.json"
+                )
+                follow_schema_path.write_text(
+                    json.dumps(result_schema, indent=2) + "\n",
+                    encoding="utf-8",
+                )
                 follow_prompt = (
                     f"Developer follow-up:\n{follow_up['prompt']}\n\n"
                     "Follow the repository instructions. Return only valid JSON "
                     "with the same fields as your previous structured result and "
-                    "report what you actually did."
+                    "report what you actually did. "
+                    f"{semantic_label_guidance}"
                 )
-                follow_command = complete_agent_command(agent_command, [
-                    "exec",
-                    "--sandbox",
-                    case["sandbox"],
-                    "resume",
-                    "--ephemeral",
-                    "--ignore-user-config",
-                    "-m",
-                    args.model,
-                    "--json",
-                    "--skip-git-repo-check",
-                    "-o",
-                    str(follow_result_path),
-                    thread_id,
-                    "-",
-                ])
+                follow_command = complete_agent_command(
+                    agent_command,
+                    [
+                        *global_agent_arguments,
+                        "exec",
+                        "resume",
+                        "--ephemeral",
+                        "--ignore-user-config",
+                        "--json",
+                        "--skip-git-repo-check",
+                        "--output-schema",
+                        str(follow_schema_path),
+                        "-o",
+                        str(follow_result_path),
+                        thread_id,
+                        "-",
+                    ],
+                )
                 try:
                     follow_agent = run(
                         follow_command,
@@ -395,11 +558,16 @@ def main() -> int:
                         stderr=str(exc),
                     )
                 follow_stdout_path.write_text(
-                    follow_agent.stdout,
+                    redact_jsonl(follow_agent.stdout, path_replacements),
                     encoding="utf-8",
                 )
                 follow_stderr_path.write_text(
-                    follow_agent.stderr,
+                    str(
+                        redact_known_paths(
+                            follow_agent.stderr,
+                            path_replacements,
+                        )
+                    ),
                     encoding="utf-8",
                 )
                 changes, commit_count, committed_files = repository_state(workspace)
@@ -412,8 +580,43 @@ def main() -> int:
                         changes,
                         commit_count,
                         committed_files,
+                        observed_command_attempts(follow_agent.stdout),
                     )
                 )
+                transcript_messages.extend(
+                    [
+                        {
+                            "turn": 2,
+                            "role": "human",
+                            "content": redact_known_paths(
+                                follow_prompt,
+                                path_replacements,
+                            ),
+                        },
+                        {
+                            "turn": 2,
+                            "role": "assistant",
+                            "content": redact_known_paths(
+                                turns[1]["agent_result"],
+                                path_replacements,
+                            ),
+                        },
+                    ]
+                )
+
+        transcript_path.write_text(
+            json.dumps(
+                {
+                    "schema_version": 1,
+                    "scenario_id": case["id"],
+                    "redacted": True,
+                    "messages": transcript_messages,
+                },
+                indent=2,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
 
     if len(turns) == 1:
         violations = turns[0]["violations"]
@@ -424,6 +627,7 @@ def main() -> int:
             for violation in turn["violations"]
         ]
     final_turn = turns[-1]
+    ended_at = datetime.now(timezone.utc)
     report = {
         "scenario_id": case["id"],
         "passed": not violations,
@@ -433,6 +637,27 @@ def main() -> int:
         "committed_files": final_turn["committed_files"],
         "agent_result": final_turn["agent_result"],
         "turns": turns,
+        "metadata": {
+            "model": args.model,
+            "requested_sandbox": case["sandbox"],
+            "codex": {
+                "selection": codex_selection,
+                "command_prefix": agent_command,
+                "package_version": args.codex_package_version,
+            },
+            "timing": {
+                "started_at_utc": started_at.isoformat().replace("+00:00", "Z"),
+                "ended_at_utc": ended_at.isoformat().replace("+00:00", "Z"),
+                "duration_seconds": round(
+                    max(0.0, time.monotonic() - started_monotonic),
+                    3,
+                ),
+            },
+            "kit_source": {
+                "commit": kit_source_commit,
+                "version": package_metadata["version"],
+            },
+        },
     }
     (output_dir / "report.json").write_text(
         json.dumps(report, indent=2) + "\n",

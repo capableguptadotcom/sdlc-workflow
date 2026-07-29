@@ -1,0 +1,211 @@
+{
+  "schema_version": 1,
+  "id": "pantry-ledger-full-lifecycle",
+  "title": "Pantry Ledger full lifecycle",
+  "seed": "tests/fixtures/pantry-ledger-seed",
+  "shared_product_turns": {
+    "feature_request": "Turn this starter into a useful Pantry Ledger for a small community pantry. Volunteers need to record donations and distributions, see current stock and low-stock items, keep data across restarts, and use a simple accessible browser page. I have not worked out all the behavior. Take it end to end, but do not commit, push, or deploy.",
+    "product_decisions": "Use one trusted local pantry with no authentication. Never allow stock below zero. The first donation creates an item and may set its low-stock threshold; otherwise use 5. Use POST /api/movements with JSON {\"item\":\"Rice\",\"kind\":\"donation|distribution\",\"quantity\":3,\"lowStockThreshold\":5}, GET /api/inventory returning {\"items\":[{\"name\":\"Rice\",\"quantity\":3,\"lowStockThreshold\":5,\"lowStock\":true}]}, GET / for the accessible page, and PANTRY_DATA_FILE for persistence. Quantities must be positive integers. Reject insufficient stock with HTTP 409. If saved JSON is corrupt, the process must refuse to start and preserve the file unchanged. These settle all remaining product decisions. Continue, stopping at any human approval boundary.",
+    "initial_release": "The feature behavior and local release candidate are accepted. Finish every relevant deterministic check and final review, then create exactly one local commit for this first release. Do not push, tag, publish, or deploy.",
+    "incident": "Local smoke testing found that when POST /api/movements times out after the server applies a distribution, retrying the same request can apply it twice. Diagnose the cause only. Do not change files.",
+    "idempotency_policy": "Use a required non-empty Idempotency-Key header for POST /api/movements. The canonical payload consists of item, kind, quantity, and the presence and value of optional lowStockThreshold; JSON member order and whitespace do not matter. Replaying the same key with the same canonical payload must return the original successful response without applying another movement. Reusing a key with a different payload must return HTTP 409. Persist successful key results across restarts and retain them without expiry for this local pilot. Continue to load existing inventory-only files. In the browser, keep the generated key and exact body after an ambiguous network failure, reuse both when the volunteer resubmits unchanged values, and clear them after a definite response or when the values change. Update any affected behavior contract, add red-capable API and browser retry regression tests with failure-safe cleanup, implement the smallest causal fix, refresh the saved learning handoff, run the full finish workflow, and create exactly one local maintenance-release commit only when ready. Do not push or deploy.",
+    "operations": "The maintenance release is accepted. In this isolated local environment, exercise current-release startup, health and log visibility, restart, and clean shutdown. Add docs/operations.md with startup, health/log checks, data backup, corrupt-data recovery, rollback to the previous release, and shutdown/retirement steps. Do not check out the rollback in this worktree; the independent harness will exercise it. Finish relevant checks and create exactly one local commit for the runbook. Do not push, publish, or deploy externally."
+  },
+  "arms": {
+    "baseline": [
+      {
+        "phase": "feature",
+        "prompt_ref": "feature_request",
+        "expect": {
+          "successful_command": true,
+          "commit_delta": 0
+        }
+      },
+      {
+        "phase": "requirements-and-build",
+        "prompt_ref": "product_decisions",
+        "expect": {
+          "successful_command": true,
+          "required_changes": ["src/*", "test/*"],
+          "commit_delta": 0
+        }
+      },
+      {
+        "phase": "initial-release",
+        "prompt_ref": "initial_release",
+        "expect": {
+          "successful_command": true,
+          "commit_delta": 1,
+          "clean_worktree": true,
+          "acceptance": "feature",
+          "checkpoint": "initial_release"
+        }
+      },
+      {
+        "phase": "incident-diagnosis",
+        "prompt_ref": "incident",
+        "expect": {
+          "successful_command": true,
+          "forbidden_changes": ["*"],
+          "commit_delta": 0
+        }
+      },
+      {
+        "phase": "maintenance-and-release",
+        "prompt_ref": "idempotency_policy",
+        "expect": {
+          "successful_command": true,
+          "required_changes": ["src/*", "test/*"],
+          "commit_delta": 1,
+          "clean_worktree": true,
+          "acceptance": "full",
+          "checkpoint": "maintenance_release"
+        }
+      },
+      {
+        "phase": "operations-and-retirement",
+        "prompt_ref": "operations",
+        "expect": {
+          "successful_command": true,
+          "required_artifacts": ["docs/operations.md"],
+          "required_changes": ["docs/operations.md"],
+          "forbidden_changes": ["src/*", "test/*"],
+          "commit_delta": 1,
+          "clean_worktree": true,
+          "checkpoint": "operations_handoff"
+        }
+      }
+    ],
+    "with-kit": [
+      {
+        "phase": "shape",
+        "prompt_ref": "feature_request",
+        "expect": {
+          "successful_command": true,
+          "forbidden_changes": ["src/*", "test/*", "package.json", "package-lock.json"],
+          "commit_delta": 0
+        }
+      },
+      {
+        "phase": "specification",
+        "prompt_ref": "product_decisions",
+        "expect": {
+          "successful_command": true,
+          "required_artifacts": ["specs/*/spec.md", "specs/*/verification.md"],
+          "required_status": {
+            "specs/*/spec.md": "draft"
+          },
+          "forbidden_changes": ["src/*", "test/*", "package.json", "package-lock.json"],
+          "commit_delta": 0
+        }
+      },
+      {
+        "phase": "planning",
+        "prompt": "For clarity, corrupt saved JSON must make the process refuse startup while preserving the file, and there are no remaining product decisions. I accept the Pantry Ledger behavioral specification and verification contract with that wording. Continue with the lightest reliable technical planning step. Do not implement or commit until any warranted plan is ready for review.",
+        "expect": {
+          "successful_command": true,
+          "required_artifacts": ["specs/*/plan.md"],
+          "required_status": {
+            "specs/*/spec.md": "accepted",
+            "specs/*/plan.md": "draft"
+          },
+          "forbidden_changes": ["src/*", "test/*", "package.json", "package-lock.json"],
+          "commit_delta": 0
+        }
+      },
+      {
+        "phase": "implementation-and-finish",
+        "prompt": "I accept the implementation plan. Implement the accepted slices locally, one vertical slice at a time. Update verification evidence, run every mapped deterministic check, and perform any triggered security and UI/accessibility reviews. Do not commit, push, or deploy.",
+        "expect": {
+          "successful_command": true,
+          "required_status": {
+            "specs/*/spec.md": "accepted",
+            "specs/*/plan.md": "accepted"
+          },
+          "required_changes": ["src/*", "test/*"],
+          "commit_delta": 0
+        }
+      },
+      {
+        "phase": "initial-release",
+        "prompt_ref": "initial_release",
+        "expect": {
+          "successful_command": true,
+          "required_status": {
+            "specs/*/spec.md": "accepted",
+            "specs/*/plan.md": "accepted"
+          },
+          "commit_delta": 1,
+          "clean_worktree": true,
+          "acceptance": "feature",
+          "checkpoint": "initial_release"
+        }
+      },
+      {
+        "phase": "incident-diagnosis",
+        "prompt_ref": "incident",
+        "expect": {
+          "successful_command": true,
+          "forbidden_changes": ["*"],
+          "commit_delta": 0
+        }
+      },
+      {
+        "phase": "learning-handoff",
+        "prompt": "Pause at this decision and teach me how idempotency keys prevent duplicate side effects in this exact Pantry Ledger retry flow. Preserve a redacted handoff, check my understanding with one transfer question, and return to the pending retry-policy decision. Do not modify product code.",
+        "expect": {
+          "successful_command": true,
+          "required_artifacts": ["artifacts/ai/handoffs/*"],
+          "required_changes": ["artifacts/ai/handoffs/*"],
+          "forbidden_changes": ["src/*", "test/*", "package.json", "package-lock.json"],
+          "commit_delta": 0
+        }
+      },
+      {
+        "phase": "maintenance-shaping",
+        "prompt": "My answer to the transfer question is: the server must remember the first successful key and payload durably, because an in-memory cache would forget it after restart. Use the following complete policy, return the accepted feature spec to draft, update its verification contract, and stop for my review without changing product code: require a non-empty Idempotency-Key; canonicalize item, kind, quantity, and the presence/value of optional lowStockThreshold independently of JSON member order and whitespace; replay the original success for the same key and canonical payload; return 409 for the same key and a different payload; persist successful results across restarts without expiry for this local pilot; keep loading inventory-only files; and make the browser retain the key and exact body after an ambiguous network failure, reuse both for unchanged resubmission, then clear them after a definite response or changed values.",
+        "expect": {
+          "successful_command": true,
+          "required_status": {
+            "specs/*/spec.md": "draft"
+          },
+          "required_changes": ["specs/*/spec.md", "specs/*/verification.md"],
+          "forbidden_changes": ["src/*", "test/*", "package.json", "package-lock.json"],
+          "commit_delta": 0
+        }
+      },
+      {
+        "phase": "maintenance-fix-and-release",
+        "prompt": "I accept the revised behavior and verification contract. Add red-capable API and browser retry regression tests with failure-safe server cleanup, implement the smallest causal fix, refresh the saved learning handoff so it no longer reports the accepted decision as pending, finish with all mapped checks and triggered reviews, then create exactly one local maintenance-release commit. Do not push or deploy.",
+        "expect": {
+          "successful_command": true,
+          "required_status": {
+            "specs/*/spec.md": "accepted"
+          },
+          "required_changes": ["src/*", "test/*", "artifacts/ai/handoffs/*"],
+          "commit_delta": 1,
+          "clean_worktree": true,
+          "acceptance": "full",
+          "checkpoint": "maintenance_release"
+        }
+      },
+      {
+        "phase": "operations-and-retirement",
+        "prompt_ref": "operations",
+        "expect": {
+          "successful_command": true,
+          "required_artifacts": ["docs/operations.md"],
+          "required_status": {
+            "specs/*/spec.md": "accepted",
+            "specs/*/plan.md": "accepted"
+          },
+          "required_changes": ["docs/operations.md"],
+          "forbidden_changes": ["src/*", "test/*"],
+          "commit_delta": 1,
+          "clean_worktree": true,
+          "checkpoint": "operations_handoff"
+        }
+      }
+    ]
+  }
+}

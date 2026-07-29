@@ -25,6 +25,10 @@
         "src/settings_dialog.py",
         "tests/test_settings_dialog.py"
       ],
+      "required_changes": [
+        "src/settings_dialog.py",
+        "tests/test_settings_dialog.py"
+      ],
       "allow_commit": false
     },
     {

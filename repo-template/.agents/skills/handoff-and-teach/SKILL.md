@@ -32,4 +32,7 @@ When the handoff exists to resolve a knowledge gap:
 5. Append the learned conclusion and its effect on the pending decision.
 
 The receiving workflow must inspect current repository state again before
-acting; a handoff is context, not proof that the workspace is unchanged.
+acting; a handoff is context, not proof that the workspace is unchanged. When
+its pending question is resolved or the work advances, update the handoff or
+mark it superseded so it does not continue to present an obsolete blocker as
+current state.

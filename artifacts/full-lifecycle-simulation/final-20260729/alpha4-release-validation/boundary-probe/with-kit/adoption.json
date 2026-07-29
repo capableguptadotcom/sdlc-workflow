@@ -1,0 +1,21 @@
+{
+  "command": [
+    "/usr/local/bin/npm",
+    "exec",
+    "--yes",
+    "--package",
+    "<local-path-3>/artifacts/full-lifecycle-simulation/candidate-package/alpha.4-runtime-cleanup/innovate-x-ai-sdlc-0.1.0-alpha.4.tgz",
+    "--",
+    "ai-sdlc",
+    "--yes"
+  ],
+  "status": 0,
+  "stdout": "AI SDLC 0.1.0-alpha.4\nRepository: <local-path-1>\nDetected project commands: lint, unit_test, build, security\nHook integration: No existing hook manager detected; no hook tooling was installed.\nAdoption preview:\n  ADD       .agents/skills/develop/references/initiative-mapping.md\n  ADD       .agents/skills/develop/SKILL.md\n  ADD       .agents/skills/diagnose-failure/SKILL.md\n  ADD       .agents/skills/finish/SKILL.md\n  ADD       .agents/skills/handoff-and-teach/SKILL.md\n  ADD       .agents/skills/implement-slice/SKILL.md\n  ADD       .agents/skills/learn/SKILL.md\n  ADD       .agents/skills/plan-change/SKILL.md\n  ADD       .agents/skills/review-change/SKILL.md\n  ADD       .agents/skills/review-web-motion/references/motion-standards.md\n  ADD       .agents/skills/review-web-motion/SKILL.md\n  ADD       .agents/skills/security-review/references/review-axes.md\n  ADD       .agents/skills/security-review/SKILL.md\n  ADD       .agents/skills/shape-change/references/decision-resolution.md\n  ADD       .agents/skills/shape-change/SKILL.md\n  ADD       .agents/skills/simplify-change/SKILL.md\n  ADD       .agents/skills/ui-quality/references/interface-checks.md\n  ADD       .agents/skills/ui-quality/SKILL.md\n  ADD       .ai/ADOPTION.md\n  ADD       .ai/ARTIFACTS.md\n  ADD       .ai/README.md\n  ADD       .ai/skills-catalog.json\n  ADD       .ai/skills.lock.json\n  ADD       .ai/templates/adr.md\n  ADD       .ai/templates/CONTEXT-MAP.md\n  ADD       .ai/templates/CONTEXT.md\n  ADD       .ai/templates/initiative-map.md\n  ADD       .ai/workflow-walkthrough.html\n  ADD       .claude/commands/develop.md\n  ADD       .claude/commands/diagnose-failure.md\n  ADD       .claude/commands/finish.md\n  ADD       .claude/commands/handoff-and-teach.md\n  ADD       .claude/commands/implement-slice.md\n  ADD       .claude/commands/learn.md\n  ADD       .claude/commands/plan-change.md\n  ADD       .claude/commands/review-change.md\n  ADD       .claude/commands/review-web-motion.md\n  ADD       .claude/commands/security-review.md\n  ADD       .claude/commands/shape-change.md\n  ADD       .claude/commands/simplify-change.md\n  ADD       .claude/commands/ui-quality.md\n  ADD       .github/copilot-instructions.md\n  ADD       .github/PULL_REQUEST_TEMPLATE.md\n  ADD       .github/workflows/ai-guidance.yml\n  UPDATE    AGENTS.md\n  ADD       ai-sdlc.yaml\n  ADD       CLAUDE.md\n  ADD       evals/behavior-cases.json\n  ADD       evals/behavior-result.schema.json\n  ADD       evals/dialogue-cases.json\n  ADD       evals/executable-cases.json\n  ADD       evals/routing-cases.json\n  ADD       evals/walkthrough-draft.md\n  ADD       scripts/render_walkthrough.py\n  ADD       scripts/validate_ai_kit.py\n  ADD       specs/_template/plan.md\n  ADD       specs/_template/spec.md\n  ADD       specs/_template/tasks.md\n  ADD       specs/_template/verification.md\n  ADD       THIRD_PARTY_NOTICES.md\n  ADD       .ai/kit.lock.json\n\nAdoption installed and verified.\nNext: review the Git diff and detected commands in ai-sdlc.yaml, then follow .ai/ADOPTION.md.\n",
+  "stderr": "npm notice\nnpm notice New major version of npm available! 10.9.8 -> 12.0.1\nnpm notice Changelog: https://github.com/npm/cli/releases/tag/v12.0.1\nnpm notice To update run: npm install -g npm@12.0.1\nnpm notice\n",
+  "validator": {
+    "status": 0,
+    "stdout": "WARNING: ai-sdlc.yaml still contains empty command lists; complete adoption\nValidated kit structure for 13 skills, 35 routing case definitions, 25 behavior case definitions, and 12 dialogue case definitions.\n",
+    "stderr": ""
+  },
+  "commit": "96b40a879bac6648ffe8c66744fef7244ddbc8fd"
+}

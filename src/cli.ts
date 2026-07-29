@@ -11,8 +11,8 @@ import {
   unlink,
   writeFile,
 } from "node:fs/promises";
-import { dirname, join, relative, resolve, sep } from "node:path";
-import { stdin, stdout } from "node:process";
+import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
+import { argv, stdin, stdout } from "node:process";
 import { createInterface } from "node:readline/promises";
 import { fileURLToPath } from "node:url";
 
@@ -39,6 +39,13 @@ type PackageMetadata = {
   version: string;
 };
 
+type CliOptions = {
+  dryRun: boolean;
+  help: boolean;
+  version: boolean;
+  yes: boolean;
+};
+
 type CommandRole =
   | "format"
   | "lint"
@@ -60,6 +67,17 @@ type ManagedRegionTarget = {
   atomicGroup: string;
 };
 
+type ManagedUnitDefinition = {
+  path: string;
+  kind: "file" | "region";
+  baseline_hash: string;
+  ownership: "kit" | "project" | "shared";
+  atomic_group: string;
+  region_id?: string;
+  start_marker?: string;
+  end_marker?: string;
+};
+
 type HookIntegration = {
   regions: ManagedRegionTarget[];
   message: string;
@@ -67,7 +85,7 @@ type HookIntegration = {
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const templateRoot = join(packageRoot, "repo-template");
-const excludedPaths = new Set([".ai/ADOPTION.md", ".ai/kit-version.json"]);
+const excludedPaths = new Set([".ai/kit-version.json"]);
 const regionStart = "<!-- ai-sdlc:workflow:start -->";
 const regionEnd = "<!-- ai-sdlc:workflow:end -->";
 const hookRegionStart = "# ai-sdlc:pre-commit:start";
@@ -94,6 +112,43 @@ function hash(content: Buffer | string): string {
 
 function portablePath(path: string): string {
   return path.split(sep).join("/");
+}
+
+function parseArguments(args: string[]): CliOptions {
+  const options: CliOptions = {
+    dryRun: false,
+    help: false,
+    version: false,
+    yes: false,
+  };
+  for (const argument of args) {
+    if (argument === "--dry-run") {
+      options.dryRun = true;
+    } else if (argument === "--help") {
+      options.help = true;
+    } else if (argument === "--version") {
+      options.version = true;
+    } else if (argument === "--yes") {
+      options.yes = true;
+    } else {
+      throw new Error(`Unknown argument: ${argument}`);
+    }
+  }
+  return options;
+}
+
+function help(): string {
+  return [
+    "Usage: ai-sdlc [options]",
+    "",
+    "Adopt the AI SDLC workflow into the current Git repository.",
+    "",
+    "Options:",
+    "  --dry-run  Preview adoption without prompting or changing files",
+    "  --yes      Apply without prompting when safeguards pass",
+    "  --help     Show this help",
+    "  --version  Show the CLI version",
+  ].join("\n");
 }
 
 function occurrences(content: string, marker: string): number {
@@ -399,7 +454,7 @@ async function detectHookIntegration(
 }
 
 function ownership(path: string): "kit" | "project" | "shared" {
-  if (path === "ai-sdlc.yaml") {
+  if (path === "ai-sdlc.yaml" || path === ".ai/ADOPTION.md") {
     return "project";
   }
   if (sharedPaths.has(path)) {
@@ -415,7 +470,7 @@ function releaseDigest(files: PayloadFile[]): string {
   return hash(manifest);
 }
 
-function managedUnit(file: PayloadFile): Record<string, unknown> {
+function managedUnit(file: PayloadFile): ManagedUnitDefinition {
   const common = {
     path: file.path,
     ownership: ownership(file.path),
@@ -445,7 +500,7 @@ function managedUnit(file: PayloadFile): Record<string, unknown> {
 
 function managedProjectRegionUnit(
   target: ManagedRegionTarget,
-): Record<string, unknown> {
+): ManagedUnitDefinition {
   const region = managedRegion(
     target.content,
     target.startMarker,
@@ -550,21 +605,210 @@ async function confirmed(): Promise<boolean> {
   }
 }
 
+function validationFailure(paths: string[]): number {
+  console.error(
+    `Installed AI SDLC validation failed; no files were changed:\n${paths
+      .map((path) => `  ${path}`)
+      .join("\n")}`,
+  );
+  return 1;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function managedDestination(root: string, path: string): string | null {
+  if (path.length === 0) {
+    return null;
+  }
+  const destination = resolve(root, path);
+  const fromRoot = relative(root, destination);
+  if (
+    fromRoot.length === 0 ||
+    fromRoot === ".." ||
+    fromRoot.startsWith(`..${sep}`) ||
+    isAbsolute(fromRoot)
+  ) {
+    return null;
+  }
+  return destination;
+}
+
+function matchesReleaseUnit(
+  value: unknown,
+  expected: ManagedUnitDefinition,
+): boolean {
+  if (!isRecord(value)) {
+    return false;
+  }
+  if (
+    value.path !== expected.path ||
+    value.ownership !== expected.ownership ||
+    value.kind !== expected.kind ||
+    value.baseline_hash !== expected.baseline_hash
+  ) {
+    return false;
+  }
+  return (
+    expected.kind === "file" ||
+    (value.start_marker === expected.start_marker &&
+      value.end_marker === expected.end_marker)
+  );
+}
+
+async function validateExistingInstallation(
+  root: string,
+  lockContent: Buffer,
+  metadata: PackageMetadata,
+  releasePayload: PayloadFile[],
+): Promise<number> {
+  let lock: unknown;
+  try {
+    lock = JSON.parse(lockContent.toString("utf8")) as unknown;
+  } catch {
+    return validationFailure([".ai/kit.lock.json"]);
+  }
+  if (!isRecord(lock) || typeof lock.kit_version !== "string") {
+    return validationFailure([".ai/kit.lock.json"]);
+  }
+  if (lock.kit_version !== metadata.version) {
+    console.error(
+      `Unsupported update: this repository has AI SDLC ${lock.kit_version}, but this CLI is ${metadata.version}.`,
+    );
+    return 1;
+  }
+  if (!Array.isArray(lock.managed_units)) {
+    return validationFailure([".ai/kit.lock.json"]);
+  }
+
+  const invalid = new Set<string>();
+  if (
+    lock.schema_version !== 1 ||
+    !isRecord(lock.source) ||
+    lock.source.package !== metadata.name ||
+    lock.source.cli_version !== metadata.version ||
+    lock.source.release_manifest_digest !== releaseDigest(releasePayload)
+  ) {
+    invalid.add(".ai/kit.lock.json");
+  }
+  const requiredUnits = releasePayload
+    .map(managedUnit)
+    .filter((unit) => unit.ownership !== "project");
+  for (const expected of requiredUnits) {
+    if (
+      !lock.managed_units.some((unit) =>
+        matchesReleaseUnit(unit, expected),
+      )
+    ) {
+      invalid.add(expected.path);
+    }
+  }
+  const releaseKitPaths = new Set(
+    requiredUnits
+      .filter((unit) => unit.ownership === "kit")
+      .map((unit) => unit.path),
+  );
+  for (const unit of lock.managed_units) {
+    if (!isRecord(unit)) {
+      invalid.add(".ai/kit.lock.json");
+      continue;
+    }
+    const path =
+      typeof unit.path === "string" && unit.path.length > 0
+        ? unit.path
+        : ".ai/kit.lock.json";
+    if (unit.ownership === "project") {
+      continue;
+    }
+    if (
+      unit.ownership === "kit" &&
+      !releaseKitPaths.has(path)
+    ) {
+      invalid.add(path);
+      continue;
+    }
+    const destination =
+      typeof unit.path === "string"
+        ? managedDestination(root, unit.path)
+        : null;
+    const expectedKind = unit.ownership === "kit" ? "file" : "region";
+    const validMarkers =
+      expectedKind === "file" ||
+      (typeof unit.start_marker === "string" &&
+        unit.start_marker.length > 0 &&
+        typeof unit.end_marker === "string" &&
+        unit.end_marker.length > 0 &&
+        unit.start_marker !== unit.end_marker);
+    if (
+      (unit.ownership !== "kit" && unit.ownership !== "shared") ||
+      unit.kind !== expectedKind ||
+      typeof unit.baseline_hash !== "string" ||
+      !/^[a-f0-9]{64}$/.test(unit.baseline_hash) ||
+      !validMarkers ||
+      destination === null
+    ) {
+      invalid.add(path);
+      continue;
+    }
+    const current = await existingContent(destination);
+    if (!(current instanceof Buffer)) {
+      invalid.add(path);
+      continue;
+    }
+    const observed =
+      unit.kind === "region"
+        ? managedRegion(
+            current,
+            unit.start_marker as string,
+            unit.end_marker as string,
+          )
+        : current;
+    if (observed === null || hash(observed) !== unit.baseline_hash) {
+      invalid.add(path);
+    }
+  }
+
+  if (invalid.size > 0) {
+    return validationFailure([...invalid]);
+  }
+
+  console.log(
+    `AI SDLC ${metadata.version} is already installed. Validated all kit-owned files and shared managed regions; no changes were made.`,
+  );
+  return 0;
+}
+
 async function main(): Promise<number> {
   const metadata = JSON.parse(
     await readFile(join(packageRoot, "package.json"), "utf8"),
   ) as PackageMetadata;
+  const options = parseArguments(argv.slice(2));
+  if (options.help) {
+    console.log(help());
+    return 0;
+  }
+  if (options.version) {
+    console.log(metadata.version);
+    return 0;
+  }
   const root = repositoryRoot();
   const lockPath = join(root, ".ai", "kit.lock.json");
+  const releasePayload = await collectPayload();
 
-  if ((await existingContent(lockPath)) !== null) {
-    console.error(
-      "This repository already has an AI SDLC lock. Update handling is not part of this alpha slice.",
+  const existingLock = await existingContent(lockPath);
+  if (existingLock !== null) {
+    if (!(existingLock instanceof Buffer)) {
+      return validationFailure([".ai/kit.lock.json"]);
+    }
+    return validateExistingInstallation(
+      root,
+      existingLock,
+      metadata,
+      releasePayload,
     );
-    return 1;
   }
 
-  const releasePayload = await collectPayload();
   const commands = await detectProjectCommands(root);
   const payload = configureProjectCommands(releasePayload, commands);
   const hookIntegration = await detectHookIntegration(root, commands);
@@ -660,13 +904,18 @@ async function main(): Promise<number> {
     return 1;
   }
 
+  if (options.dryRun) {
+    console.log("\nDry run complete. No files changed.");
+    return 0;
+  }
+
   if (worktreeStatus(root)) {
     console.log("\nWorktree has uncommitted changes; preview remains read-only.");
     console.error("Apply blocked. Commit or stash the existing work, then rerun.");
     return 1;
   }
 
-  if (!(await confirmed())) {
+  if (!options.yes && !(await confirmed())) {
     console.log("\nNo files changed.");
     return 0;
   }
@@ -752,7 +1001,7 @@ async function main(): Promise<number> {
 
   console.log("\nAdoption installed and verified.");
   console.log(
-    "Next: review the Git diff and detected commands in ai-sdlc.yaml.",
+    "Next: review the Git diff and detected commands in ai-sdlc.yaml, then follow .ai/ADOPTION.md.",
   );
   return 0;
 }

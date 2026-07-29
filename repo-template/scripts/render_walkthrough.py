@@ -97,8 +97,8 @@ def render_developer_walkthrough(data: dict) -> str:
     lines = [
         "# AI Developer Kit",
         "",
-        "> Workflow alpha. The instructions and structural checks are installed;",
-        "> executable cross-assistant behavior evaluation is the next milestone.",
+        "> Workflow alpha. The repository guidance and structural checks are installed;",
+        "> use them with project-specific validation and evidence.",
         "",
         mental_model["promise"],
         "",

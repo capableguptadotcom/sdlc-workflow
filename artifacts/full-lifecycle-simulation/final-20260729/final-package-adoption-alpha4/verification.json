@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-07-29T06:57:36.5006849Z",
+  "passed": true,
+  "network": "none",
+  "tooling_image": {
+    "tag": "ai-sdlc-tooling:node22-python3-20260729",
+    "id": "sha256:604eae0fd280e6e8cb2d0ce82e8837c4053c5f70759415db564f72cb588b5696",
+    "parent_id": "sha256:7103076e03c8f669b840240948877549442da73ebda90771b4b878b0357f24e0",
+    "parent_digest": "node@sha256:5647be709086c696ff32edaaf1c70cd26d1da6ab2b39c32f3c7b4c4a31957e37"
+  },
+  "candidate": {
+    "name": "@innovate-x/ai-sdlc",
+    "version": "0.1.0-alpha.4",
+    "published": false,
+    "sha256": "9bd25aeb8b04f390db4451a69d1890039cf8bf27099b68b8e82a6e403fb91b8f"
+  },
+  "seed_commit": "f9da9273477904a26ef1c97ef0fac5a636c0856c",
+  "repository_bundle_sha256": "ead02b5707a2f2ba14f9389ef53266a3b82fea4e9da3432d3258a252ad2ce314",
+  "checks": {
+    "dry_run_no_write": true,
+    "non_interactive_apply": true,
+    "installed_version": "0.1.0-alpha.4",
+    "validator": "13 skills, 35 routing, 25 behavior, 12 dialogue",
+    "project_tests": "1/1 passed",
+    "git_diff_check": true,
+    "same_version_rerun_unchanged": true
+  },
+  "target_pack_manifest": {
+    "entry_count": 65,
+    "packed_bytes": 67507,
+    "unpacked_bytes": 258582,
+    "shasum": "7b2fc9f7ac283fad93c5cc94aac534d350e376be",
+    "integrity": "sha512-nbMIyyo+d+77wAxgcrwtWQSXLQqVL6L6g2xPbV2L6t6UbmfYxudqQqcief16f+5XlMJYVMmlIaycsm/qx5xqrQ=="
+  }
+}

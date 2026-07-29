@@ -33,6 +33,45 @@ class ValidateAiKitTests(unittest.TestCase):
             check=False,
         )
 
+    def test_finish_requires_failure_safe_runtime_cleanup(self) -> None:
+        finish = (
+            TEMPLATE / ".agents" / "skills" / "finish" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        behavior = json.loads(
+            (TEMPLATE / "evals" / "behavior-cases.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        cases = [
+            case
+            for case in behavior["cases"]
+            if case.get("id") == "finish-runtime-process-cleanup"
+        ]
+
+        self.assertIn("failure-safe cleanup", finish)
+        self.assertIn("terminal event", finish)
+        self.assertIn("not-ready", finish)
+        self.assertEqual(1, len(cases))
+        self.assertIn(
+            "stops every started process even when a check fails",
+            cases[0]["assertions"],
+        )
+        self.assertIn(
+            "does not report ready while any command lacks a terminal event",
+            cases[0]["assertions"],
+        )
+
+    def test_validator_does_not_create_import_bytecode(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            project = self.copy_template(temp_dir)
+            cache = project / "scripts" / "__pycache__"
+            shutil.rmtree(cache, ignore_errors=True)
+
+            result = self.run_validator(project)
+
+            self.assertEqual(0, result.returncode, result.stderr)
+            self.assertFalse(cache.exists())
+
     def test_feature_spec_requires_verification_companion(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             project = self.copy_template(temp_dir)

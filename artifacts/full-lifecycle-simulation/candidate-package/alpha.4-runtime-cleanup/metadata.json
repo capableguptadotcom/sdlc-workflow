@@ -1,0 +1,13 @@
+{
+  "package": "@innovate-x/ai-sdlc",
+  "version": "0.1.0-alpha.4",
+  "published": false,
+  "purpose": "Release candidate containing failure-safe cleanup and terminal-event requirements for runtime verification.",
+  "tarball": "innovate-x-ai-sdlc-0.1.0-alpha.4.tgz",
+  "sha1": "def64041fc66573b054c55064125c9a7d14275e3",
+  "sha256": "9bd25aeb8b04f390db4451a69d1890039cf8bf27099b68b8e82a6e403fb91b8f",
+  "integrity": "sha512-AkDN5PBxxVtW6IcpArkNmxp8ZbEfr3l0o6pc5Eft0h1Aknu4qfPJ6vYP/LIZ/N3yQRFVAuE4Ao4YOsNWW0+FVQ==",
+  "packed_bytes": 79997,
+  "unpacked_bytes": 306537,
+  "file_count": 65
+}
