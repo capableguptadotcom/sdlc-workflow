@@ -1,0 +1,341 @@
+[
+  {
+    "id": "pantry-ledger@0.0.0",
+    "name": "pantry-ledger",
+    "version": "0.0.0",
+    "size": 67507,
+    "unpackedSize": 258582,
+    "shasum": "7b2fc9f7ac283fad93c5cc94aac534d350e376be",
+    "integrity": "sha512-nbMIyyo+d+77wAxgcrwtWQSXLQqVL6L6g2xPbV2L6t6UbmfYxudqQqcief16f+5XlMJYVMmlIaycsm/qx5xqrQ==",
+    "filename": "pantry-ledger-0.0.0.tgz",
+    "files": [
+      {
+        "path": ".agents/skills/develop/references/initiative-mapping.md",
+        "size": 1131,
+        "mode": 420
+      },
+      {
+        "path": ".agents/skills/develop/SKILL.md",
+        "size": 3438,
+        "mode": 420
+      },
+      {
+        "path": ".agents/skills/diagnose-failure/SKILL.md",
+        "size": 1971,
+        "mode": 420
+      },
+      {
+        "path": ".agents/skills/finish/SKILL.md",
+        "size": 2658,
+        "mode": 420
+      },
+      {
+        "path": ".agents/skills/handoff-and-teach/SKILL.md",
+        "size": 1688,
+        "mode": 420
+      },
+      {
+        "path": ".agents/skills/implement-slice/SKILL.md",
+        "size": 1812,
+        "mode": 420
+      },
+      {
+        "path": ".agents/skills/learn/SKILL.md",
+        "size": 1140,
+        "mode": 420
+      },
+      {
+        "path": ".agents/skills/plan-change/SKILL.md",
+        "size": 1999,
+        "mode": 420
+      },
+      {
+        "path": ".agents/skills/review-change/SKILL.md",
+        "size": 1668,
+        "mode": 420
+      },
+      {
+        "path": ".agents/skills/review-web-motion/references/motion-standards.md",
+        "size": 1251,
+        "mode": 420
+      },
+      {
+        "path": ".agents/skills/review-web-motion/SKILL.md",
+        "size": 1450,
+        "mode": 420
+      },
+      {
+        "path": ".agents/skills/security-review/references/review-axes.md",
+        "size": 1351,
+        "mode": 420
+      },
+      {
+        "path": ".agents/skills/security-review/SKILL.md",
+        "size": 1556,
+        "mode": 420
+      },
+      {
+        "path": ".agents/skills/shape-change/references/decision-resolution.md",
+        "size": 1398,
+        "mode": 420
+      },
+      {
+        "path": ".agents/skills/shape-change/SKILL.md",
+        "size": 3701,
+        "mode": 420
+      },
+      {
+        "path": ".agents/skills/simplify-change/SKILL.md",
+        "size": 1160,
+        "mode": 420
+      },
+      {
+        "path": ".agents/skills/ui-quality/references/interface-checks.md",
+        "size": 2891,
+        "mode": 420
+      },
+      {
+        "path": ".agents/skills/ui-quality/SKILL.md",
+        "size": 2606,
+        "mode": 420
+      },
+      {
+        "path": ".ai/ADOPTION.md",
+        "size": 2375,
+        "mode": 420
+      },
+      {
+        "path": ".ai/ARTIFACTS.md",
+        "size": 2135,
+        "mode": 420
+      },
+      {
+        "path": ".ai/kit.lock.json",
+        "size": 15201,
+        "mode": 420
+      },
+      {
+        "path": ".ai/README.md",
+        "size": 6353,
+        "mode": 420
+      },
+      {
+        "path": ".ai/skills-catalog.json",
+        "size": 3775,
+        "mode": 420
+      },
+      {
+        "path": ".ai/skills.lock.json",
+        "size": 2025,
+        "mode": 420
+      },
+      {
+        "path": ".ai/templates/adr.md",
+        "size": 301,
+        "mode": 420
+      },
+      {
+        "path": ".ai/templates/CONTEXT-MAP.md",
+        "size": 176,
+        "mode": 420
+      },
+      {
+        "path": ".ai/templates/CONTEXT.md",
+        "size": 222,
+        "mode": 420
+      },
+      {
+        "path": ".ai/templates/initiative-map.md",
+        "size": 269,
+        "mode": 420
+      },
+      {
+        "path": ".ai/workflow-walkthrough.html",
+        "size": 75203,
+        "mode": 420
+      },
+      {
+        "path": ".claude/commands/develop.md",
+        "size": 216,
+        "mode": 420
+      },
+      {
+        "path": ".claude/commands/diagnose-failure.md",
+        "size": 191,
+        "mode": 420
+      },
+      {
+        "path": ".claude/commands/finish.md",
+        "size": 172,
+        "mode": 420
+      },
+      {
+        "path": ".claude/commands/handoff-and-teach.md",
+        "size": 189,
+        "mode": 420
+      },
+      {
+        "path": ".claude/commands/implement-slice.md",
+        "size": 190,
+        "mode": 420
+      },
+      {
+        "path": ".claude/commands/learn.md",
+        "size": 192,
+        "mode": 420
+      },
+      {
+        "path": ".claude/commands/plan-change.md",
+        "size": 193,
+        "mode": 420
+      },
+      {
+        "path": ".claude/commands/review-change.md",
+        "size": 191,
+        "mode": 420
+      },
+      {
+        "path": ".claude/commands/review-web-motion.md",
+        "size": 205,
+        "mode": 420
+      },
+      {
+        "path": ".claude/commands/security-review.md",
+        "size": 180,
+        "mode": 420
+      },
+      {
+        "path": ".claude/commands/shape-change.md",
+        "size": 196,
+        "mode": 420
+      },
+      {
+        "path": ".claude/commands/simplify-change.md",
+        "size": 185,
+        "mode": 420
+      },
+      {
+        "path": ".claude/commands/ui-quality.md",
+        "size": 188,
+        "mode": 420
+      },
+      {
+        "path": ".github/copilot-instructions.md",
+        "size": 271,
+        "mode": 420
+      },
+      {
+        "path": ".github/PULL_REQUEST_TEMPLATE.md",
+        "size": 618,
+        "mode": 420
+      },
+      {
+        "path": ".github/workflows/ai-guidance.yml",
+        "size": 738,
+        "mode": 420
+      },
+      {
+        "path": "AGENTS.md",
+        "size": 6312,
+        "mode": 493
+      },
+      {
+        "path": "CLAUDE.md",
+        "size": 419,
+        "mode": 420
+      },
+      {
+        "path": "README.md",
+        "size": 341,
+        "mode": 493
+      },
+      {
+        "path": "THIRD_PARTY_NOTICES.md",
+        "size": 861,
+        "mode": 420
+      },
+      {
+        "path": "ai-sdlc.yaml",
+        "size": 1448,
+        "mode": 420
+      },
+      {
+        "path": "evals/behavior-cases.json",
+        "size": 7986,
+        "mode": 420
+      },
+      {
+        "path": "evals/behavior-result.schema.json",
+        "size": 1693,
+        "mode": 420
+      },
+      {
+        "path": "evals/dialogue-cases.json",
+        "size": 36634,
+        "mode": 420
+      },
+      {
+        "path": "evals/executable-cases.json",
+        "size": 3415,
+        "mode": 420
+      },
+      {
+        "path": "evals/routing-cases.json",
+        "size": 8449,
+        "mode": 420
+      },
+      {
+        "path": "evals/walkthrough-draft.md",
+        "size": 12506,
+        "mode": 420
+      },
+      {
+        "path": "package.json",
+        "size": 427,
+        "mode": 493
+      },
+      {
+        "path": "scripts/render_walkthrough.py",
+        "size": 5962,
+        "mode": 420
+      },
+      {
+        "path": "scripts/validate_ai_kit.py",
+        "size": 21487,
+        "mode": 420
+      },
+      {
+        "path": "specs/_template/plan.md",
+        "size": 586,
+        "mode": 420
+      },
+      {
+        "path": "specs/_template/spec.md",
+        "size": 708,
+        "mode": 420
+      },
+      {
+        "path": "specs/_template/tasks.md",
+        "size": 454,
+        "mode": 420
+      },
+      {
+        "path": "specs/_template/verification.md",
+        "size": 375,
+        "mode": 420
+      },
+      {
+        "path": "src/server.js",
+        "size": 762,
+        "mode": 493
+      },
+      {
+        "path": "test/server.test.js",
+        "size": 738,
+        "mode": 493
+      }
+    ],
+    "entryCount": 65,
+    "bundled": []
+  }
+]

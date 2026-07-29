@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "mode": "full",
+  "checks": [
+    "accessible, interactive inventory UI",
+    "ambiguous UI retry reuses its request identity and definite responses retire it",
+    "missing Idempotency-Key is rejected without side effects",
+    "donation and inventory use the default threshold 5",
+    "optional threshold presence and value participate in canonical conflicts",
+    "canonical same-key replay returns the original response",
+    "same key with a different payload conflicts",
+    "zero, negative, fractional, and insufficient movements preserve stock",
+    "inventory and canonical replay persist across restart",
+    "inventory-only legacy data remains readable",
+    "corrupt data refuses service and is preserved"
+  ]
+}
+{
+  "passed": true,
+  "rollback_data_sha256": "da0db56e82cb7b90d05f1a238e6c896e569f49039e3fed7dd16f7eb83733ff5c",
+  "checks": [
+    "current release persisted inventory and idempotency state",
+    "previous release read health and inventory without changing data bytes",
+    "current release replayed the durable key without duplicating stock"
+  ]
+}

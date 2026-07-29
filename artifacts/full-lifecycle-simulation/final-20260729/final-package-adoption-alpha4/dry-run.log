@@ -1,0 +1,69 @@
+0.1.0-alpha.4
+AI SDLC 0.1.0-alpha.4
+Repository: /workspace
+Detected project commands: lint, unit_test, build, security
+Hook integration: No existing hook manager detected; no hook tooling was installed.
+Adoption preview:
+  ADD       .agents/skills/develop/references/initiative-mapping.md
+  ADD       .agents/skills/develop/SKILL.md
+  ADD       .agents/skills/diagnose-failure/SKILL.md
+  ADD       .agents/skills/finish/SKILL.md
+  ADD       .agents/skills/handoff-and-teach/SKILL.md
+  ADD       .agents/skills/implement-slice/SKILL.md
+  ADD       .agents/skills/learn/SKILL.md
+  ADD       .agents/skills/plan-change/SKILL.md
+  ADD       .agents/skills/review-change/SKILL.md
+  ADD       .agents/skills/review-web-motion/references/motion-standards.md
+  ADD       .agents/skills/review-web-motion/SKILL.md
+  ADD       .agents/skills/security-review/references/review-axes.md
+  ADD       .agents/skills/security-review/SKILL.md
+  ADD       .agents/skills/shape-change/references/decision-resolution.md
+  ADD       .agents/skills/shape-change/SKILL.md
+  ADD       .agents/skills/simplify-change/SKILL.md
+  ADD       .agents/skills/ui-quality/references/interface-checks.md
+  ADD       .agents/skills/ui-quality/SKILL.md
+  ADD       .ai/ADOPTION.md
+  ADD       .ai/ARTIFACTS.md
+  ADD       .ai/README.md
+  ADD       .ai/skills-catalog.json
+  ADD       .ai/skills.lock.json
+  ADD       .ai/templates/adr.md
+  ADD       .ai/templates/CONTEXT-MAP.md
+  ADD       .ai/templates/CONTEXT.md
+  ADD       .ai/templates/initiative-map.md
+  ADD       .ai/workflow-walkthrough.html
+  ADD       .claude/commands/develop.md
+  ADD       .claude/commands/diagnose-failure.md
+  ADD       .claude/commands/finish.md
+  ADD       .claude/commands/handoff-and-teach.md
+  ADD       .claude/commands/implement-slice.md
+  ADD       .claude/commands/learn.md
+  ADD       .claude/commands/plan-change.md
+  ADD       .claude/commands/review-change.md
+  ADD       .claude/commands/review-web-motion.md
+  ADD       .claude/commands/security-review.md
+  ADD       .claude/commands/shape-change.md
+  ADD       .claude/commands/simplify-change.md
+  ADD       .claude/commands/ui-quality.md
+  ADD       .github/copilot-instructions.md
+  ADD       .github/PULL_REQUEST_TEMPLATE.md
+  ADD       .github/workflows/ai-guidance.yml
+  UPDATE    AGENTS.md
+  ADD       ai-sdlc.yaml
+  ADD       CLAUDE.md
+  ADD       evals/behavior-cases.json
+  ADD       evals/behavior-result.schema.json
+  ADD       evals/dialogue-cases.json
+  ADD       evals/executable-cases.json
+  ADD       evals/routing-cases.json
+  ADD       evals/walkthrough-draft.md
+  ADD       scripts/render_walkthrough.py
+  ADD       scripts/validate_ai_kit.py
+  ADD       specs/_template/plan.md
+  ADD       specs/_template/spec.md
+  ADD       specs/_template/tasks.md
+  ADD       specs/_template/verification.md
+  ADD       THIRD_PARTY_NOTICES.md
+  ADD       .ai/kit.lock.json
+
+Dry run complete. No files changed.

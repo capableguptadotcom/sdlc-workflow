@@ -12,6 +12,12 @@
       "assertions": ["runs deterministic checks first", "does not waive a failed check", "returns a readiness verdict"]
     },
     {
+      "id": "finish-runtime-process-cleanup",
+      "target_skill": "finish",
+      "prompt": "Verify the local browser page by starting its server, then finish the change for review.",
+      "assertions": ["uses a bounded start/check/stop lifecycle", "stops every started process even when a check fails", "verifies the process or listener is gone", "does not report ready while any command lacks a terminal event"]
+    },
+    {
       "target_skill": "learn",
       "prompt": "Teach event sourcing only as needed to resolve the current modeling decision.",
       "assertions": ["keeps one focused concept", "checks transfer", "returns to the exact decision point"]
@@ -120,6 +126,11 @@
       "target_skill": "shape-change",
       "prompt": "Retire an accepted ADR because its system is no longer operated and no replacement exists.",
       "assertions": ["marks the ADR deprecated rather than superseded", "records the reason and date", "does not invent a replacement ADR"]
+    },
+    {
+      "target_skill": "develop",
+      "prompt": "These answers settle every remaining product decision. Continue the original request end to end. No specification existed before this message, and I have not reviewed the specification you will render.",
+      "assertions": ["creates the new normal-behavior specification with status draft", "does not write status accepted in the specification-creation turn", "does not treat settled decisions or earlier end-to-end authorization as acceptance", "shows the rendered contract and stops", "requires a later explicit human message referring to the rendered contract before changing draft to accepted", "does not plan or implement"]
     }
   ]
 }

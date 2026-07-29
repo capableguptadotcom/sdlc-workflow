@@ -9,6 +9,8 @@ import re
 import sys
 from pathlib import Path
 
+sys.dont_write_bytecode = True
+
 from render_walkthrough import render_developer_walkthrough, render_walkthrough
 
 

@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "scenario_id": "pantry-ledger-full-lifecycle",
+  "arms": {
+    "baseline": {
+      "passed": false,
+      "full_lifecycle_completed": false,
+      "turns_completed": 5,
+      "total_duration_seconds": 694.857,
+      "setup_duration_seconds": 1.387,
+      "workflow_duration_seconds": 693.47,
+      "commands_observed": 26,
+      "command_attempts": 26,
+      "commands_interrupted": 0,
+      "commands_failed": 1,
+      "commit_delta": 2,
+      "specifications": 0,
+      "plans": 0,
+      "verification_artifacts": 0,
+      "handoffs": 0,
+      "test_files_added": 0,
+      "tests": 0,
+      "final_test_status": 0,
+      "external_acceptance_status": 1,
+      "input_tokens": 1107264,
+      "output_tokens": 28841
+    },
+    "with-kit": {
+      "passed": true,
+      "full_lifecycle_completed": true,
+      "turns_completed": 10,
+      "total_duration_seconds": 1302.328,
+      "setup_duration_seconds": 6.442,
+      "workflow_duration_seconds": 1295.886,
+      "commands_observed": 69,
+      "command_attempts": 69,
+      "commands_interrupted": 0,
+      "commands_failed": 9,
+      "commit_delta": 3,
+      "specifications": 1,
+      "plans": 1,
+      "verification_artifacts": 1,
+      "handoffs": 1,
+      "test_files_added": 0,
+      "tests": 0,
+      "final_test_status": 0,
+      "external_acceptance_status": 0,
+      "input_tokens": 2675372,
+      "output_tokens": 51318
+    }
+  },
+  "interpretation_note": "Counts are descriptive evidence, not a causal quality verdict; the arms intentionally contain different numbers of workflow and approval turns. Test artifact counts are test files added, not test cases. Review each transcript, patch, and deterministic command result."
+}

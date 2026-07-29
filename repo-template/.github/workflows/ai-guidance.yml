@@ -13,7 +13,6 @@ on:
       - evals/**
       - scripts/validate_ai_kit.py
   push:
-    branches: [main]
     paths:
       - AGENTS.md
       - CLAUDE.md

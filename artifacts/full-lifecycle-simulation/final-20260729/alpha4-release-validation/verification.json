@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-07-29T06:57:36.5006849Z",
+  "release_decision": "ready",
+  "candidate": {
+    "name": "@innovate-x/ai-sdlc",
+    "version": "0.1.0-alpha.4",
+    "published": false,
+    "sha256": "9bd25aeb8b04f390db4451a69d1890039cf8bf27099b68b8e82a6e403fb91b8f",
+    "sha1": "def64041fc66573b054c55064125c9a7d14275e3",
+    "integrity": "sha512-AkDN5PBxxVtW6IcpArkNmxp8ZbEfr3l0o6pc5Eft0h1Aknu4qfPJ6vYP/LIZ/N3yQRFVAuE4Ao4YOsNWW0+FVQ==",
+    "files": 65,
+    "packed_bytes": 79997,
+    "unpacked_bytes": 306537
+  },
+  "source_gates": {
+    "node_tests": "33/33 passed",
+    "python_tests": "66/66 passed",
+    "validator": "13 skills, 35 routing, 25 behavior, 12 dialogue",
+    "walkthrough_scenarios": 6,
+    "npm_audit_vulnerabilities": 0,
+    "git_diff_check": true
+  },
+  "clean_offline_adoption": {
+    "passed": true,
+    "network": "none",
+    "same_version_rerun_unchanged": true
+  },
+  "approval_boundary_probe": {
+    "passed": true,
+    "turn_limit": 2,
+    "product_changes": 0,
+    "commits": 0
+  },
+  "paired_lifecycle": {
+    "baseline": {
+      "passed": false,
+      "turns_completed": 5,
+      "commands": 26,
+      "interrupted_commands": 0,
+      "external_acceptance_status": 1,
+      "failure": "Persisted-format compatibility failed the independent restart oracle, so operations and rollback were not reached."
+    },
+    "with_kit": {
+      "passed": true,
+      "full_lifecycle_completed": true,
+      "turns_completed": 10,
+      "commands": 69,
+      "interrupted_commands": 0,
+      "intentional_or_corrected_failed_commands": 9,
+      "all_phase_gates_passed": true,
+      "commit_delta": 3,
+      "seed_commit": "c8cda4c06f4afca357b805ecfeb499199638c36a",
+      "initial_release": "3878fd2272501e2da336e5e85e41a73a27bfc115",
+      "maintenance_release": "9b64e1bc33a6115f94b355118e0b476532d2a53b",
+      "operations_handoff": "82dae9d755a8a392f17d66adc37ae6bc21dadba4",
+      "final_tests_status": 0,
+      "external_acceptance_status": 0,
+      "clean_release_checkout_status": 0,
+      "operations_runbook_status": 0,
+      "cross_version_rollback_status": 0,
+      "lifecycle_invariants_status": 0,
+      "final_worktree_clean": true
+    }
+  },
+  "independent_offline_replay": {
+    "network": "none",
+    "full_acceptance_passed": true,
+    "rollback_acceptance_passed": true
+  },
+  "repack_verification": {
+    "passed": true,
+    "repacked_sha256": "9bd25aeb8b04f390db4451a69d1890039cf8bf27099b68b8e82a6e403fb91b8f",
+    "matches_retained_candidate": true
+  },
+  "evidence_hygiene": {
+    "text_secret_and_host_path_scan_passed": true,
+    "files": 1149,
+    "bytes": 3374573
+  },
+  "controlled_inputs": {
+    "runner_sha256": "22e4d01f567e71960102ab82a3f06a74bd37c681fb5cb94433ceaf06edb98fa9",
+    "scenario_sha256": "ca2020c62ac42bc4dc1fbb8a6882ce21c8ac68c656feecc6396da8ebb7378d13",
+    "product_oracle_sha256": "2e2726e5d158634da1b5c1e2835a64dca72be8f88e9479aeac4a6dc93e2083ba",
+    "rollback_oracle_sha256": "6510d969bcc59cc974e2256135c8400c87e42e38583672f1ef1e6b9ee2e60021",
+    "container_image": "node@sha256:5647be709086c696ff32edaaf1c70cd26d1da6ab2b39c32f3c7b4c4a31957e37",
+    "model": "gpt-5.6-terra",
+    "codex_package": "0.145.0"
+  },
+  "retained_bundles": {
+    "with_kit_sha256": "3662bae694c34a1ef56335468cb794696f082c87f5a5d2866e308bd486612f00",
+    "baseline_sha256": "c617e12a192b159980d746682cba778fd0bca10a95b3a50cf34644202b6e11b6"
+  }
+}

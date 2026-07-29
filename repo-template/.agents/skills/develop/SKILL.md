@@ -37,6 +37,13 @@ by inspection. Announce the selected mode in plain language.
 7. Follow `../implement-slice/SKILL.md` for one accepted slice at a time, then
    follow `../finish/SKILL.md`.
 
+When shaping creates and renders a new normal-behavior specification, the only
+status transition allowed in that turn is `nonexistent` to `draft`; show the
+contract and stop. Settled discovery answers and earlier end-to-end
+authorization are not acceptance. Moving `draft` to `accepted` requires a
+later explicit human message that refers to the rendered contract. Do not plan
+or implement before that later acceptance.
+
 For explanation-only requests, inspect and answer without creating artifacts or
 entering an implementation route.
 

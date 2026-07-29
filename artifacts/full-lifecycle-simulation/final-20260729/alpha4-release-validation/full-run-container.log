@@ -1,0 +1,37 @@
+START baseline: setup completed in 1.387s
+TURN baseline 1/6: feature
+DONE baseline 1: agent=0 test=0 duration=165.369s
+TURN baseline 2/6: requirements-and-build
+DONE baseline 2: agent=0 test=0 duration=143.516s
+TURN baseline 3/6: initial-release
+DONE baseline 3: agent=0 test=0 duration=50.132s
+TURN baseline 4/6: incident-diagnosis
+DONE baseline 4: agent=0 test=0 duration=29.705s
+TURN baseline 5/6: maintenance-and-release
+DONE baseline 5: agent=0 test=0 duration=270.343s
+VERIFY baseline: running release gates
+VERIFIED baseline: passed=False
+START with-kit: setup completed in 6.442s
+TURN with-kit 1/10: shape
+DONE with-kit 1: agent=0 test=0 duration=19.566s
+TURN with-kit 2/10: specification
+DONE with-kit 2: agent=0 test=0 duration=81.911s
+TURN with-kit 3/10: planning
+DONE with-kit 3: agent=0 test=0 duration=71.139s
+TURN with-kit 4/10: implementation-and-finish
+DONE with-kit 4: agent=0 test=0 duration=199.967s
+TURN with-kit 5/10: initial-release
+DONE with-kit 5: agent=0 test=0 duration=75.544s
+TURN with-kit 6/10: incident-diagnosis
+DONE with-kit 6: agent=0 test=0 duration=63.476s
+TURN with-kit 7/10: learning-handoff
+DONE with-kit 7: agent=0 test=0 duration=45.055s
+TURN with-kit 8/10: maintenance-shaping
+DONE with-kit 8: agent=0 test=0 duration=107.123s
+TURN with-kit 9/10: maintenance-fix-and-release
+DONE with-kit 9: agent=0 test=0 duration=277.155s
+TURN with-kit 10/10: operations-and-retirement
+DONE with-kit 10: agent=0 test=0 duration=191.693s
+VERIFY with-kit: running release gates
+VERIFIED with-kit: passed=True
+FAIL: pantry-ledger-full-lifecycle (baseline, with-kit)

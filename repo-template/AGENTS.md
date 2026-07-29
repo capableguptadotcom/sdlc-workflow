@@ -36,6 +36,11 @@ override this file only for its subtree.
 - Normal behavior changes create `spec.md` and `verification.md`. Create
   `plan.md` only for multiple dependency-ordered slices, migration,
   compatibility, rollout, or material risk.
+- In the turn that creates and renders a new normal-behavior specification, its
+  only allowed status transition is `nonexistent` to `draft`. Settled discovery
+  answers and earlier end-to-end authorization are not acceptance. Moving
+  `draft` to `accepted` requires a later explicit human message that refers to
+  the rendered contract; do not plan or implement before that message.
 - Use an initiative map only when several coordinated outcomes or decision
   tracks cannot remain one coherent spec or discovery session.
 - Create tracker tickets only for independently assignable or resumable slices,

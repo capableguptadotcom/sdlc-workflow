@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "scenario_id": "pantry-ledger-full-lifecycle",
+  "arms": {
+    "with-kit": {
+      "passed": true,
+      "full_lifecycle_completed": false,
+      "turns_completed": 2,
+      "total_duration_seconds": 210.358,
+      "setup_duration_seconds": 11.058,
+      "workflow_duration_seconds": 199.3,
+      "commands_observed": 8,
+      "command_attempts": 8,
+      "commands_interrupted": 0,
+      "commands_failed": 1,
+      "commit_delta": 0,
+      "specifications": 1,
+      "plans": 0,
+      "verification_artifacts": 1,
+      "handoffs": 0,
+      "test_files_added": 0,
+      "tests": 0,
+      "final_test_status": 0,
+      "external_acceptance_status": 1,
+      "input_tokens": 240657,
+      "output_tokens": 4906
+    }
+  },
+  "interpretation_note": "Counts are descriptive evidence, not a causal quality verdict; the arms intentionally contain different numbers of workflow and approval turns. Test artifact counts are test files added, not test cases. Review each transcript, patch, and deterministic command result."
+}
