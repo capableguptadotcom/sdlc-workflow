@@ -1,0 +1,1476 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="The evidence-backed field guide to adopting and operating AI SDLC v0.1.0-alpha.4.">
+  <title>AI SDLC Field Guide · From first install to operated software</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --canvas: #f4f1ea;
+      --surface: #fffdf8;
+      --surface-2: #eeebe3;
+      --ink: #17221f;
+      --muted: #5f6965;
+      --line: #d6d2c8;
+      --brand: #0e6655;
+      --brand-strong: #084a3d;
+      --brand-soft: #d9eee8;
+      --accent: #c65d33;
+      --accent-soft: #f8e5dc;
+      --gold: #8b6a13;
+      --gold-soft: #f5ebc8;
+      --danger: #a33a35;
+      --danger-soft: #f7dfdc;
+      --code: #111b19;
+      --code-ink: #e9f4ef;
+      --shadow: 0 18px 50px rgba(29, 44, 39, .08);
+      --radius: 18px;
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --serif: Georgia, "Times New Roman", serif;
+    }
+
+    html[data-theme="dark"] {
+      color-scheme: dark;
+      --canvas: #0d1513;
+      --surface: #121d1a;
+      --surface-2: #192622;
+      --ink: #edf5f1;
+      --muted: #a9b8b2;
+      --line: #2d403a;
+      --brand: #69c8ae;
+      --brand-strong: #9ee1ce;
+      --brand-soft: #193d34;
+      --accent: #f19970;
+      --accent-soft: #44291f;
+      --gold: #e1c261;
+      --gold-soft: #3d341c;
+      --danger: #f08c84;
+      --danger-soft: #432523;
+      --code: #08100e;
+      --code-ink: #e9f4ef;
+      --shadow: 0 18px 50px rgba(0, 0, 0, .25);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      background:
+        linear-gradient(rgba(14, 102, 85, .035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(14, 102, 85, .035) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 32px 32px;
+      color: var(--ink);
+      font-family: var(--sans);
+      line-height: 1.65;
+    }
+
+    a { color: var(--brand); text-underline-offset: 3px; }
+    a:hover { color: var(--brand-strong); }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    :focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+    .skip-link {
+      position: fixed; left: 1rem; top: -5rem; z-index: 100;
+      padding: .65rem 1rem; background: var(--ink); color: var(--surface);
+      border-radius: 0 0 10px 10px;
+    }
+    .skip-link:focus { top: 0; }
+
+    .topbar {
+      position: sticky; top: 0; z-index: 40;
+      display: flex; align-items: center; justify-content: space-between;
+      min-height: 58px; padding: .55rem clamp(1rem, 4vw, 3rem);
+      border-bottom: 1px solid var(--line);
+      background: color-mix(in srgb, var(--canvas) 90%, transparent);
+      backdrop-filter: blur(14px);
+    }
+    .wordmark {
+      display: flex; align-items: center; gap: .7rem;
+      color: var(--ink); text-decoration: none; font-weight: 800;
+      letter-spacing: -.02em;
+    }
+    .mark {
+      display: grid; place-items: center; width: 30px; height: 30px;
+      color: var(--surface); background: var(--brand); border-radius: 9px;
+      font: 800 13px/1 var(--mono);
+    }
+    .top-actions { display: flex; gap: .5rem; }
+    .icon-button, .small-button {
+      border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+      border-radius: 10px; padding: .48rem .72rem;
+    }
+    .icon-button:hover, .small-button:hover { border-color: var(--brand); }
+
+    .hero {
+      position: relative; overflow: hidden;
+      padding: clamp(4rem, 9vw, 8rem) clamp(1.2rem, 6vw, 6rem) 4rem;
+      border-bottom: 1px solid var(--line);
+      background: color-mix(in srgb, var(--surface) 75%, transparent);
+    }
+    .hero::after {
+      content: "EVIDENCE > VIBES";
+      position: absolute; right: -1.5rem; top: 2rem;
+      color: color-mix(in srgb, var(--brand) 8%, transparent);
+      font: 900 clamp(3rem, 11vw, 9rem)/1 var(--mono);
+      transform: rotate(-6deg); pointer-events: none; white-space: nowrap;
+    }
+    .hero-inner { position: relative; z-index: 1; max-width: 1160px; margin: auto; }
+    .eyebrow {
+      margin: 0 0 1rem; color: var(--brand);
+      font: 800 .78rem/1.4 var(--mono); letter-spacing: .14em; text-transform: uppercase;
+    }
+    h1, h2, h3, h4 { line-height: 1.16; text-wrap: balance; }
+    h1 {
+      max-width: 920px; margin: 0;
+      font-family: var(--serif); font-size: clamp(3.1rem, 8vw, 7.3rem);
+      font-weight: 500; letter-spacing: -.055em;
+    }
+    .hero-lede {
+      max-width: 760px; margin: 1.6rem 0 0;
+      color: var(--muted); font-size: clamp(1.05rem, 2vw, 1.32rem);
+    }
+    .hero-meta {
+      display: flex; flex-wrap: wrap; gap: .65rem; margin-top: 1.8rem;
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: .45rem;
+      padding: .38rem .7rem; border: 1px solid var(--line); border-radius: 99px;
+      background: var(--surface); color: var(--muted); font-size: .84rem; font-weight: 700;
+    }
+    .badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--brand); }
+    .badge.alpha::before { background: var(--accent); }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: .8rem; margin-top: 2rem; }
+    .button {
+      display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+      padding: .82rem 1.05rem; border: 1px solid var(--brand);
+      border-radius: 12px; background: var(--brand); color: #fff;
+      font-weight: 800; text-decoration: none;
+    }
+    .button:hover { background: var(--brand-strong); color: #fff; }
+    .button.secondary { background: transparent; color: var(--brand); }
+    .button.secondary:hover { background: var(--brand-soft); }
+
+    .layout {
+      display: grid; grid-template-columns: 255px minmax(0, 900px);
+      gap: clamp(2rem, 5vw, 5rem); max-width: 1240px;
+      margin: 0 auto; padding: 3rem clamp(1rem, 4vw, 3rem) 7rem;
+    }
+    .sidebar { position: sticky; top: 82px; align-self: start; max-height: calc(100vh - 100px); overflow: auto; }
+    .sidebar label {
+      display: block; margin-bottom: .45rem;
+      color: var(--muted); font-size: .72rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
+    }
+    .search {
+      width: 100%; padding: .62rem .72rem; margin-bottom: 1rem;
+      border: 1px solid var(--line); border-radius: 10px;
+      background: var(--surface); color: var(--ink);
+    }
+    .sidebar nav { display: grid; gap: .15rem; }
+    .sidebar nav a {
+      padding: .45rem .65rem; border-left: 2px solid transparent;
+      color: var(--muted); text-decoration: none; font-size: .9rem; border-radius: 0 8px 8px 0;
+    }
+    .sidebar nav a:hover, .sidebar nav a.active {
+      color: var(--brand-strong); background: var(--brand-soft); border-left-color: var(--brand);
+    }
+    .sidebar-note {
+      margin-top: 1.2rem; padding: .8rem; border: 1px solid var(--line);
+      border-radius: 12px; color: var(--muted); background: var(--surface); font-size: .8rem;
+    }
+
+    main { min-width: 0; }
+    .chapter {
+      scroll-margin-top: 85px; padding: 0 0 4.8rem; margin-bottom: 4.8rem;
+      border-bottom: 1px solid var(--line);
+    }
+    .chapter:last-child { border: 0; }
+    .chapter-number {
+      display: inline-block; color: var(--accent);
+      font: 800 .76rem/1 var(--mono); letter-spacing: .1em;
+    }
+    h2 { margin: .55rem 0 1rem; font-family: var(--serif); font-size: clamp(2rem, 4vw, 3.3rem); font-weight: 500; letter-spacing: -.035em; }
+    h3 { margin: 2rem 0 .7rem; font-size: 1.35rem; }
+    h4 { margin: 1.4rem 0 .45rem; font-size: 1rem; }
+    .lede { max-width: 760px; color: var(--muted); font-size: 1.08rem; }
+    .kicker {
+      margin: 1.6rem 0; padding: 1rem 1.1rem; border-left: 4px solid var(--brand);
+      background: var(--brand-soft); border-radius: 0 12px 12px 0;
+      font-family: var(--serif); font-size: 1.12rem;
+    }
+
+    .grid-2, .grid-3, .metric-grid {
+      display: grid; gap: 1rem; margin: 1.2rem 0;
+    }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .metric-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .card {
+      padding: 1.15rem; border: 1px solid var(--line); border-radius: var(--radius);
+      background: var(--surface); box-shadow: 0 8px 24px rgba(29, 44, 39, .035);
+    }
+    .card h3, .card h4 { margin-top: 0; }
+    .card p:last-child, .card ul:last-child { margin-bottom: 0; }
+    .metric {
+      padding: 1rem; border-top: 3px solid var(--brand);
+      border-radius: 12px; background: var(--surface);
+    }
+    .metric strong { display: block; font: 700 1.75rem/1 var(--serif); }
+    .metric span { display: block; margin-top: .35rem; color: var(--muted); font-size: .78rem; }
+
+    .notice {
+      margin: 1.2rem 0; padding: 1rem 1.1rem; border: 1px solid var(--line);
+      border-radius: 14px; background: var(--surface);
+    }
+    .notice strong { color: var(--brand-strong); }
+    .notice.warning { background: var(--gold-soft); border-color: color-mix(in srgb, var(--gold) 38%, var(--line)); }
+    .notice.danger { background: var(--danger-soft); border-color: color-mix(in srgb, var(--danger) 35%, var(--line)); }
+
+    .code-wrap {
+      position: relative; margin: 1rem 0 1.4rem; overflow: hidden;
+      border: 1px solid color-mix(in srgb, var(--line) 60%, #000);
+      border-radius: 14px; background: var(--code);
+    }
+    .code-label {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: .45rem .65rem .3rem .9rem; color: #98aaa4;
+      border-bottom: 1px solid #2b3935; font: 700 .7rem/1 var(--mono);
+      text-transform: uppercase; letter-spacing: .08em;
+    }
+    .copy {
+      border: 1px solid #3a4c46; border-radius: 7px; background: #17231f;
+      color: #d7e7e1; padding: .3rem .55rem; font: 700 .7rem/1 var(--mono);
+    }
+    pre {
+      margin: 0; padding: 1rem; overflow: auto; color: var(--code-ink);
+      font: .84rem/1.6 var(--mono); tab-size: 2; white-space: pre;
+    }
+    code { font-family: var(--mono); }
+    :not(pre) > code {
+      padding: .12rem .35rem; border: 1px solid var(--line); border-radius: 6px;
+      background: var(--surface-2); font-size: .9em;
+    }
+
+    .checklist { display: grid; gap: .7rem; margin: 1rem 0; }
+    .check {
+      display: grid; grid-template-columns: 24px 1fr; gap: .6rem; align-items: start;
+      padding: .75rem .85rem; border: 1px solid var(--line); border-radius: 12px;
+      background: var(--surface);
+    }
+    .check input { width: 18px; height: 18px; margin-top: .2rem; accent-color: var(--brand); }
+    .check:has(input:checked) { opacity: .7; background: var(--brand-soft); }
+    .progress {
+      height: 8px; margin: 1rem 0; overflow: hidden; border-radius: 99px;
+      background: var(--surface-2);
+    }
+    .progress span { display: block; height: 100%; width: 0; background: var(--brand); transition: width .2s ease; }
+
+    .flow {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: .5rem;
+      margin: 1.4rem 0;
+    }
+    .flow-step {
+      position: relative; padding: .8rem .65rem; text-align: center;
+      border: 1px solid var(--line); border-radius: 12px; background: var(--surface);
+      font-size: .78rem; font-weight: 800;
+    }
+    .flow-step:not(:last-child)::after {
+      content: "→"; position: absolute; right: -.48rem; top: 50%; z-index: 2;
+      color: var(--accent); transform: translate(50%, -50%);
+    }
+
+    .timeline { position: relative; margin: 1.4rem 0 0 1rem; padding-left: 1.4rem; border-left: 2px solid var(--line); }
+    .turn { position: relative; margin: 0 0 1rem; padding: 1rem; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+    .turn::before {
+      content: ""; position: absolute; left: -1.86rem; top: 1.25rem; width: 11px; height: 11px;
+      border: 3px solid var(--canvas); border-radius: 50%; background: var(--brand);
+    }
+    .turn-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem; }
+    .turn-head strong { font-size: .95rem; }
+    .turn-tag { color: var(--muted); font: 700 .7rem/1 var(--mono); text-transform: uppercase; }
+    .dialogue {
+      margin: .7rem 0 0; padding: .7rem .8rem; border-radius: 10px;
+      background: var(--surface-2); color: var(--muted); font-size: .88rem;
+    }
+    .dialogue b { color: var(--ink); }
+
+    table { width: 100%; border-collapse: collapse; margin: 1.2rem 0; background: var(--surface); font-size: .9rem; }
+    th, td { padding: .75rem; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: var(--surface-2); font-size: .76rem; text-transform: uppercase; letter-spacing: .05em; }
+    td.good { color: var(--brand-strong); font-weight: 700; }
+    td.bad { color: var(--danger); font-weight: 700; }
+    .table-scroll { overflow-x: auto; border-radius: 14px; }
+
+    details {
+      margin: .7rem 0; border: 1px solid var(--line); border-radius: 13px;
+      background: var(--surface);
+    }
+    summary { padding: .85rem 1rem; cursor: pointer; font-weight: 800; }
+    details > div { padding: 0 1rem 1rem; }
+    details[open] summary { color: var(--brand-strong); }
+
+    .bars { display: grid; gap: 1rem; margin: 1.2rem 0; }
+    .bar-row { display: grid; grid-template-columns: 120px 1fr 72px; gap: .7rem; align-items: center; }
+    .bar-track { height: 22px; overflow: hidden; background: var(--surface-2); border-radius: 7px; }
+    .bar-fill { height: 100%; background: var(--brand); }
+    .bar-fill.baseline { background: var(--accent); }
+    .bar-value { font: 700 .75rem/1 var(--mono); text-align: right; }
+
+    .prompt-card { position: relative; }
+    .prompt-card .route { color: var(--accent); font: 800 .72rem/1 var(--mono); text-transform: uppercase; letter-spacing: .08em; }
+    .prompt-card blockquote { margin: .8rem 0; padding-left: .8rem; border-left: 3px solid var(--line); font-family: var(--serif); }
+    .prompt-card p { font-size: .88rem; color: var(--muted); }
+
+    .architecture {
+      display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: .6rem; align-items: stretch;
+      margin: 1.4rem 0;
+    }
+    .architecture .node {
+      padding: 1rem; border: 1px solid var(--line); border-radius: 14px; background: var(--surface);
+    }
+    .architecture .arrow { align-self: center; color: var(--accent); font-size: 1.4rem; }
+
+    .footer {
+      padding: 2.5rem clamp(1rem, 5vw, 4rem); border-top: 1px solid var(--line);
+      background: var(--surface); color: var(--muted);
+    }
+    .footer-inner { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; max-width: 1160px; margin: auto; }
+    .footer strong { color: var(--ink); }
+    .print-only { display: none; }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; max-height: none; }
+      .sidebar nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .metric-grid { grid-template-columns: repeat(2, 1fr); }
+      .grid-3 { grid-template-columns: 1fr; }
+      .flow { grid-template-columns: 1fr; }
+      .flow-step:not(:last-child)::after { content: "↓"; right: 50%; top: auto; bottom: -.75rem; transform: translate(50%, 50%); }
+      .architecture { grid-template-columns: 1fr; }
+      .architecture .arrow { justify-self: center; transform: rotate(90deg); }
+    }
+    @media (max-width: 620px) {
+      .grid-2, .metric-grid { grid-template-columns: 1fr; }
+      .sidebar nav { grid-template-columns: 1fr; }
+      .hero { padding-top: 3.2rem; }
+      .topbar #expand-all { display: none; }
+      .topbar { padding-inline: .75rem; }
+      .top-actions .icon-button { padding: .42rem .58rem; }
+      .bar-row { grid-template-columns: 88px 1fr; }
+      .bar-value { grid-column: 2; text-align: left; }
+      .topbar .version-label { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition-duration: .001ms !important; animation-duration: .001ms !important; }
+    }
+    @media print {
+      body { background: #fff; color: #111; font-size: 10pt; }
+      .topbar, .sidebar, .hero-actions, .copy, #theme-toggle, #expand-all { display: none !important; }
+      .hero { padding: 1rem 0 2rem; }
+      .hero::after { display: none; }
+      .layout { display: block; max-width: none; padding: 1rem 0; }
+      .chapter { break-before: page; margin: 0; padding: 1rem 0; }
+      .card, .turn, details { break-inside: avoid; box-shadow: none; }
+      details > div { display: block !important; }
+      a { color: #111; text-decoration: none; }
+      a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 8pt; word-break: break-all; }
+      .print-only { display: block; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to tutorial</a>
+
+  <header class="topbar">
+    <a class="wordmark" href="#top" aria-label="AI SDLC Field Guide home">
+      <span class="mark">AI</span>
+      <span>AI SDLC <span class="version-label">Field Guide</span></span>
+    </a>
+    <div class="top-actions">
+      <button class="icon-button" id="expand-all" type="button">Expand details</button>
+      <button class="icon-button" id="theme-toggle" type="button" aria-label="Switch color theme">Dark mode</button>
+    </div>
+  </header>
+
+  <section class="hero" id="top">
+    <div class="hero-inner">
+      <p class="eyebrow">Public alpha · v0.1.0-alpha.4 · Experiment-backed</p>
+      <h1>From a vague request to operated software.</h1>
+      <p class="hero-lede">
+        The practical guide to installing AI SDLC, working with an AI assistant,
+        preserving human decisions, proving behavior, handling incidents, and
+        finishing with evidence. Built from the actual Pantry Ledger lifecycle,
+        including the failures that changed the kit.
+      </p>
+      <div class="hero-meta" aria-label="Release facts">
+        <span class="badge alpha">Public alpha</span>
+        <span class="badge">10-turn lifecycle passed</span>
+        <span class="badge">99 automated source tests</span>
+        <span class="badge">npm provenance</span>
+      </div>
+      <div class="hero-actions">
+        <a class="button" href="#start">Start in 10 minutes →</a>
+        <a class="button secondary" href="#case-study">Read the real experiment</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="layout">
+    <aside class="sidebar" aria-label="Tutorial navigation">
+      <label for="guide-search">Find in this guide</label>
+      <input class="search" id="guide-search" type="search" placeholder="Try “rollback” or “Docker”">
+      <nav id="guide-nav">
+        <a href="#orientation">What this is</a>
+        <a href="#start">10-minute start</a>
+        <a href="#isolation">Isolated lab</a>
+        <a href="#mental-model">Mental model</a>
+        <a href="#case-study">Pantry Ledger</a>
+        <a href="#evidence">Experiment results</a>
+        <a href="#prompts">Prompt cookbook</a>
+        <a href="#models">Build with models</a>
+        <a href="#pain-points">Pain points</a>
+        <a href="#operations">Lifecycle operations</a>
+        <a href="#troubleshooting">Troubleshooting</a>
+        <a href="#reference">Reference</a>
+      </nav>
+      <div class="sidebar-note">
+        <strong>Reading strategy</strong><br>
+        New user: chapters 1–4.<br>
+        Team lead: 5–10.<br>
+        Kit builder: read all, then follow the evidence links.
+      </div>
+    </aside>
+
+    <main id="main">
+      <section class="chapter" id="orientation" data-search-section>
+        <span class="chapter-number">01 · ORIENTATION</span>
+        <h2>A repository contract, not another chatbot.</h2>
+        <p class="lede">
+          AI SDLC installs a governed development workflow into an existing Git
+          repository. Your assistant reads that committed contract and follows it.
+          The kit does not install, authenticate, or replace the assistant.
+        </p>
+
+        <div class="grid-2">
+          <article class="card">
+            <h3>What it gives you</h3>
+            <ul>
+              <li>A durable root <code>AGENTS.md</code> contract.</li>
+              <li>Thirteen focused skills with three memorable front doors.</li>
+              <li>Progressive specifications, plans, ADRs, and evidence.</li>
+              <li>Repository-specific command mapping in <code>ai-sdlc.yaml</code>.</li>
+              <li>Deterministic validation and behavioral evaluation fixtures.</li>
+              <li>Thin adapters for different assistant surfaces.</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>What it does not give you</h3>
+            <ul>
+              <li>A model account, API key, or Codex sign-in.</li>
+              <li>A promise that model output is deterministic.</li>
+              <li>Automatic deployment, monitoring, or production access.</li>
+              <li>Permission to commit, push, publish, or delete.</li>
+              <li>A replacement for tests, CI, code owners, or human judgment.</li>
+              <li>Cross-version kit upgrades in this alpha.</li>
+            </ul>
+          </article>
+        </div>
+
+        <p class="kicker">
+          The invariant is “no evidence, no merge”—not “no AI chat, no merge.”
+          Assistants propose and execute bounded work; repositories preserve
+          decisions and deterministic systems decide whether evidence exists.
+        </p>
+
+        <div class="flow" aria-label="AI SDLC evidence flow">
+          <div class="flow-step">Human intent</div>
+          <div class="flow-step">Reviewable contract</div>
+          <div class="flow-step">Bounded implementation</div>
+          <div class="flow-step">Independent checks</div>
+          <div class="flow-step">Human release decision</div>
+        </div>
+
+        <div class="notice warning">
+          <strong>Alpha expectation:</strong> use this release for fresh-adoption
+          pilots. It is publicly available and provenance-backed, but an existing
+          alpha.1 installation cannot be upgraded in place to alpha.4.
+        </div>
+      </section>
+
+      <section class="chapter" id="start" data-search-section>
+        <span class="chapter-number">02 · FIRST ADOPTION</span>
+        <h2>Your first ten minutes.</h2>
+        <p class="lede">
+          Start from a real repository with an initial commit. Preview first,
+          apply deliberately, inspect the diff, run both kit and project checks,
+          then commit the contract like ordinary source code.
+        </p>
+
+        <h3>Preflight</h3>
+        <div class="code-wrap">
+          <div class="code-label"><span>Terminal · repository root</span><button class="copy" type="button">Copy</button></div>
+          <pre><code>node --version       # v22 or newer
+git --version
+git status --short  # must be empty before apply</code></pre>
+        </div>
+
+        <div class="notice">
+          If this is a new project, create the first commit before adoption.
+          That baseline is the installer’s rollback boundary and makes the
+          generated diff reviewable.
+        </div>
+
+        <h3>Preview, apply, validate</h3>
+        <div class="code-wrap">
+          <div class="code-label"><span>Terminal · public alpha</span><button class="copy" type="button">Copy</button></div>
+          <pre><code># Preview: inspect actions, write nothing
+npx @innovate-x/ai-sdlc@alpha --dry-run
+
+# Apply without an interactive confirmation prompt
+npx @innovate-x/ai-sdlc@alpha --yes
+
+# Validate the installed structure and artifacts
+python scripts/validate_ai_kit.py
+
+# Review ownership, project command mapping, and package impact
+git diff --stat
+git diff
+
+# Run the commands the installer mapped into ai-sdlc.yaml
+# Example only—use your repository's actual commands
+npm test
+npm run lint
+
+# Commit only after review
+git add AGENTS.md CLAUDE.md .github .agents .ai specs \
+  scripts ai-sdlc.yaml
+git commit -m "chore: adopt AI SDLC workflow"
+
+# Same version becomes a read-only integrity check
+npx @innovate-x/ai-sdlc@alpha --yes</code></pre>
+        </div>
+
+        <h3>Adoption checklist</h3>
+        <div class="progress" aria-label="Adoption progress"><span id="adoption-progress"></span></div>
+        <div class="checklist" id="adoption-checklist">
+          <label class="check"><input type="checkbox" data-check="clean"><span>Initial commit exists and the worktree is clean.</span></label>
+          <label class="check"><input type="checkbox" data-check="preview"><span><code>--dry-run</code> reviewed; proposed collisions and managed regions understood.</span></label>
+          <label class="check"><input type="checkbox" data-check="mapping"><span>Applicable project commands in <code>ai-sdlc.yaml</code> are accurate.</span></label>
+          <label class="check"><input type="checkbox" data-check="contract"><span>Repository-specific facts in <code>AGENTS.md</code> are proven, not generic assumptions.</span></label>
+          <label class="check"><input type="checkbox" data-check="validate"><span>Kit validator and mapped project commands pass.</span></label>
+          <label class="check"><input type="checkbox" data-check="manifest"><span>If the repository publishes a package, its real manifest has been inspected.</span></label>
+          <label class="check"><input type="checkbox" data-check="assistant"><span>The chosen AI assistant is installed and authenticated separately.</span></label>
+          <label class="check"><input type="checkbox" data-check="rerun"><span>Same-version rerun validates the lock without changing bytes.</span></label>
+        </div>
+
+        <details>
+          <summary>What the installer owns—and what remains yours</summary>
+          <div>
+            <p>
+              Kit-owned files are recorded in <code>.ai/kit.lock.json</code>.
+              Existing shared instruction files receive a clearly marked managed
+              region instead of being replaced. Project-specific configuration,
+              including your edited <code>ai-sdlc.yaml</code>, stays project-owned.
+            </p>
+            <p>
+              A missing, duplicated, or modified managed region fails safely.
+              A non-managed same-path collision aborts the atomic adoption. The
+              alpha chooses safety over guessing how to merge unrelated content.
+            </p>
+          </div>
+        </details>
+      </section>
+
+      <section class="chapter" id="isolation" data-search-section>
+        <span class="chapter-number">03 · ISOLATED LAB</span>
+        <h2>Get a real first impression without risking a real project.</h2>
+        <p class="lede">
+          The release experiment used separate committed repositories and
+          disposable containers. You can reproduce the essential adoption path
+          with a local throwaway Git repository, then add Docker when you need a
+          stricter environmental boundary.
+        </p>
+
+        <div class="grid-2">
+          <article class="card">
+            <h3>Level 1 · disposable repository</h3>
+            <p>Best for learning the file layout and conversational workflow.</p>
+            <div class="code-wrap">
+              <div class="code-label"><span>PowerShell</span><button class="copy" type="button">Copy</button></div>
+              <pre><code>$lab = Join-Path $env:TEMP "ai-sdlc-lab"
+New-Item -ItemType Directory -Force $lab | Out-Null
+Set-Location $lab
+npm init -y
+New-Item -ItemType Directory src,test | Out-Null
+git init
+git config user.email "lab@example.invalid"
+git config user.name "AI SDLC Lab"
+git add .
+git commit -m "seed: empty lab"
+npx @innovate-x/ai-sdlc@alpha --dry-run
+npx @innovate-x/ai-sdlc@alpha --yes</code></pre>
+            </div>
+          </article>
+          <article class="card">
+            <h3>Level 2 · offline Docker apply</h3>
+            <p>
+              Best for release validation. Fetch the tarball first, then disable
+              network access during the actual adoption.
+            </p>
+            <div class="code-wrap">
+              <div class="code-label"><span>Host preparation</span><button class="copy" type="button">Copy</button></div>
+              <pre><code>mkdir ai-sdlc-lab-package
+npm pack @innovate-x/ai-sdlc@alpha \
+  --pack-destination ai-sdlc-lab-package</code></pre>
+            </div>
+          </article>
+        </div>
+
+        <h3>A small reproducible tooling image</h3>
+        <p>
+          Build once while networking is available. The final container runs
+          with <code>--network none</code>; only the lab workspace is writable.
+        </p>
+        <div class="code-wrap">
+          <div class="code-label"><span>Dockerfile.ai-sdlc-lab</span><button class="copy" type="button">Copy</button></div>
+          <pre><code>FROM node:22-bookworm
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends git python3 ripgrep \
+ && rm -rf /var/lib/apt/lists/*
+WORKDIR /workspace</code></pre>
+        </div>
+        <div class="code-wrap">
+          <div class="code-label"><span>Bash · run after creating a committed lab repository</span><button class="copy" type="button">Copy</button></div>
+          <pre><code>docker build -f Dockerfile.ai-sdlc-lab -t ai-sdlc-lab:node22 .
+
+docker run --rm --network none \
+  -v "$PWD/pantry-ledger-lab:/workspace" \
+  -v "$PWD/ai-sdlc-lab-package:/candidate:ro" \
+  ai-sdlc-lab:node22 bash -lc '
+    set -euo pipefail
+    npm install --global --ignore-scripts /candidate/*.tgz
+    ai-sdlc --dry-run
+    test ! -e .ai/kit.lock.json
+    ai-sdlc --yes
+    python3 -B scripts/validate_ai_kit.py
+    git diff --check
+    ai-sdlc --yes
+  '</code></pre>
+        </div>
+
+        <h3>The experiment’s trust boundary</h3>
+        <div class="architecture" aria-label="Isolation architecture">
+          <div class="node"><strong>Read-only inputs</strong><br><small>kit source, pinned package, assistant authentication</small></div>
+          <div class="arrow">→</div>
+          <div class="node"><strong>Disposable container</strong><br><small>Node 22, Git, Python, ripgrep, bounded local permissions</small></div>
+          <div class="arrow">→</div>
+          <div class="node"><strong>Durable outputs</strong><br><small>scenario workspace and redacted evidence only</small></div>
+        </div>
+        <div class="notice danger">
+          Never copy an authentication file into retained evidence. In the full
+          simulation it was mounted read-only, transcripts and stderr were
+          path-redacted, and retained material was scanned for token patterns.
+        </div>
+      </section>
+
+      <section class="chapter" id="mental-model" data-search-section>
+        <span class="chapter-number">04 · THE WORKFLOW</span>
+        <h2>Describe the work normally. Structure appears only when earned.</h2>
+        <p class="lede">
+          Developers should not memorize thirteen skills. Three front doors
+          cover the routine journey, while the assistant routes internally
+          according to uncertainty, risk, and lifecycle state.
+        </p>
+
+        <div class="grid-3">
+          <article class="card">
+            <p class="eyebrow">Build</p>
+            <h3><code>develop</code></h3>
+            <p>Orient, shape, plan only when needed, implement bounded slices, and verify.</p>
+          </article>
+          <article class="card">
+            <p class="eyebrow">Complete</p>
+            <h3><code>finish</code></h3>
+            <p>Run mapped checks, review the verified diff, surface limitations, then honor the requested Git boundary.</p>
+          </article>
+          <article class="card">
+            <p class="eyebrow">Understand</p>
+            <h3><code>learn</code></h3>
+            <p>Pause, teach in context, preserve a redacted handoff, test transfer, and return to the pending decision.</p>
+          </article>
+        </div>
+
+        <h3>Routing is based on the kind of uncertainty</h3>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Your situation</th><th>Expected route</th><th>What should not happen</th></tr></thead>
+            <tbody>
+              <tr><td>“Explain this repository.”</td><td>Read-only orientation</td><td>No files changed; no ceremonial plan.</td></tr>
+              <tr><td>“Rename this label and update its test.”</td><td>Tiny direct change</td><td>No feature specification.</td></tr>
+              <tr><td>“Add team invitations.”</td><td>Inspect, then shape unresolved product behavior</td><td>No implementation before rendered spec acceptance.</td></tr>
+              <tr><td>“I know the outcome but not how.”</td><td>Agent investigates and recommends</td><td>Developer is not asked to make routine engineering decisions.</td></tr>
+              <tr><td>“Polling, SSE, and webhooks all look reasonable.”</td><td>Focused comparison or simulated perspectives</td><td>No organization-wide initiative map for one choice.</td></tr>
+              <tr><td>“Will this meet a 200 ms target?”</td><td>Bounded throwaway prototype</td><td>No production architecture built to answer an experiment.</td></tr>
+              <tr><td>“Identity, billing, regions, migration, and rollout.”</td><td>Initiative map</td><td>No opaque one-shot implementation.</td></tr>
+              <tr><td>“Diagnose this; do not fix it.”</td><td>Evidence-first diagnosis</td><td>No product code edits.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Progressive artifacts</h3>
+        <div class="grid-2">
+          <article class="card">
+            <h4>Inline brief</h4>
+            <p>Tiny, local, obvious work. State intent and verification in the conversation.</p>
+          </article>
+          <article class="card">
+            <h4><code>spec.md</code> + <code>verification.md</code></h4>
+            <p>Observable behavior, failure rules, and how independent checks will prove it.</p>
+          </article>
+          <article class="card">
+            <h4><code>plan.md</code></h4>
+            <p>Only when implementation spans meaningful slices or sequencing matters.</p>
+          </article>
+          <article class="card">
+            <h4>ADR or initiative map</h4>
+            <p>Only for durable trade-offs or several coordinated outcomes.</p>
+          </article>
+        </div>
+
+        <p class="kicker">
+          Draft creation and human acceptance are separate turns. “You answered
+          my questions” is not the same as “you reviewed and accepted the
+          rendered contract.”
+        </p>
+      </section>
+
+      <section class="chapter" id="case-study" data-search-section>
+        <span class="chapter-number">05 · REAL WALKTHROUGH</span>
+        <h2>The Pantry Ledger, turn by turn.</h2>
+        <p class="lede">
+          The alpha.4 experiment began with a one-route Node server and ended
+          with a persistent inventory application, retry-safe maintenance
+          release, operations runbook, rollback proof, and retirement guidance.
+          Every assistant turn ran inside the isolated environment.
+        </p>
+
+        <div class="timeline">
+          <article class="turn">
+            <div class="turn-head"><strong>1 · Shape the product</strong><span class="turn-tag">No code</span></div>
+            <div class="dialogue"><b>Human:</b> “Turn this starter into a useful Pantry Ledger… I have not worked out all the behavior.”</div>
+            <div class="dialogue"><b>Assistant:</b> Inspects first, identifies whole-number stock as the highest-leverage product question, and recommends a default.</div>
+          </article>
+          <article class="turn">
+            <div class="turn-head"><strong>2 · Render a draft contract</strong><span class="turn-tag">Draft only</span></div>
+            <div class="dialogue"><b>Human:</b> Settles API, persistence, validation, stock, corrupt-data, and accessibility behavior.</div>
+            <div class="dialogue"><b>Assistant:</b> Creates draft <code>spec.md</code> and <code>verification.md</code>; changes no product code; asks for explicit acceptance.</div>
+          </article>
+          <article class="turn">
+            <div class="turn-head"><strong>3 · Plan the smallest reliable slices</strong><span class="turn-tag">Accepted spec</span></div>
+            <div class="dialogue"><b>Human:</b> Explicitly accepts the rendered behavior contract.</div>
+            <div class="dialogue"><b>Assistant:</b> Drafts three vertical slices: persistence, safe movement behavior, accessible page and docs. Stops again.</div>
+          </article>
+          <article class="turn">
+            <div class="turn-head"><strong>4 · Implement and verify</strong><span class="turn-tag">Accepted plan</span></div>
+            <div class="dialogue"><b>Human:</b> Accepts the plan and authorizes local implementation, not Git or deployment.</div>
+            <div class="dialogue"><b>Assistant:</b> Implements, fixes a red test matcher, runs tests/lint/build/audit/whitespace, and performs triggered security and UI reviews.</div>
+          </article>
+          <article class="turn">
+            <div class="turn-head"><strong>5 · Create the local release</strong><span class="turn-tag">One commit</span></div>
+            <div class="dialogue"><b>Human:</b> Accepts behavior and authorizes exactly one local commit.</div>
+            <div class="dialogue"><b>Assistant:</b> Adds a bounded live smoke test with verified shutdown, reviews the final scope, then creates only the authorized commit.</div>
+          </article>
+          <article class="turn">
+            <div class="turn-head"><strong>6 · Diagnose an incident</strong><span class="turn-tag">Read-only</span></div>
+            <div class="dialogue"><b>Human:</b> Reports duplicate distribution after a timeout; asks for diagnosis only.</div>
+            <div class="dialogue"><b>Assistant:</b> Reproduces “applied but response unseen,” proves the API lacks request identity, and leaves the worktree clean.</div>
+          </article>
+          <article class="turn">
+            <div class="turn-head"><strong>7 · Teach at the decision</strong><span class="turn-tag">Learn</span></div>
+            <div class="dialogue"><b>Human:</b> Pauses to understand idempotency keys.</div>
+            <div class="dialogue"><b>Assistant:</b> Explains the exact Rice retry, saves a redacted handoff, asks a transfer question, and returns to the pending policy.</div>
+          </article>
+          <article class="turn">
+            <div class="turn-head"><strong>8 · Return accepted behavior to draft</strong><span class="turn-tag">Maintenance shaping</span></div>
+            <div class="dialogue"><b>Human:</b> Defines header, canonicalization, replay, mismatch, persistence, legacy compatibility, and browser retry policy.</div>
+            <div class="dialogue"><b>Assistant:</b> Updates only the spec and verification contract, then stops for review—again, no product code.</div>
+          </article>
+          <article class="turn">
+            <div class="turn-head"><strong>9 · Make the causal fix</strong><span class="turn-tag">Red → green</span></div>
+            <div class="dialogue"><b>Human:</b> Accepts the revised contract and authorizes one maintenance commit.</div>
+            <div class="dialogue"><b>Assistant:</b> First proves the gaps with failing tests, then adds durable replay state and browser identity retention, runs bounded live probes, reviews, and commits.</div>
+          </article>
+          <article class="turn">
+            <div class="turn-head"><strong>10 · Operate, rollback, retire</strong><span class="turn-tag">Runbook</span></div>
+            <div class="dialogue"><b>Human:</b> Requests startup, health/log visibility, restart, shutdown, backup, recovery, rollback, and retirement guidance.</div>
+            <div class="dialogue"><b>Assistant:</b> Corrects a shell-wrapper lifecycle test, verifies process shutdown, documents rollback data caveats, runs all checks, and creates one docs commit.</div>
+          </article>
+        </div>
+
+        <p>
+          Read the complete preserved conversation:
+          <a href="artifacts/full-lifecycle-simulation/final-20260729/alpha4-release-validation/full-run/with-kit/transcript.md">alpha.4 human/assistant transcript</a>.
+        </p>
+      </section>
+
+      <section class="chapter" id="evidence" data-search-section>
+        <span class="chapter-number">06 · RESULTS &amp; DISCUSSION</span>
+        <h2>Slower in one run. Safer at the boundary that mattered.</h2>
+        <p class="lede">
+          Both arms used the same seed, product request, decisions, model,
+          runtime, and independent oracles. The no-kit baseline was faster and
+          cheaper, but stopped when an independent restart check found its
+          maintenance release could not read the persisted data shape.
+        </p>
+
+        <div class="metric-grid">
+          <div class="metric"><strong>10/10</strong><span>with-kit lifecycle turns completed</span></div>
+          <div class="metric"><strong>69</strong><span>terminal command attempts; zero interrupted</span></div>
+          <div class="metric"><strong>3</strong><span>authorized commits across release lifecycle</span></div>
+          <div class="metric"><strong>0</strong><span>independent acceptance failures with kit</span></div>
+        </div>
+
+        <div class="bars" aria-label="Experiment comparison">
+          <div class="bar-row"><strong>Turns</strong><div class="bar-track"><div class="bar-fill baseline" style="width:50%"></div></div><span class="bar-value">5 baseline</span></div>
+          <div class="bar-row"><strong>Turns</strong><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-value">10 with kit</span></div>
+          <div class="bar-row"><strong>Commands</strong><div class="bar-track"><div class="bar-fill baseline" style="width:38%"></div></div><span class="bar-value">26 baseline</span></div>
+          <div class="bar-row"><strong>Commands</strong><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-value">69 with kit</span></div>
+          <div class="bar-row"><strong>Tokens</strong><div class="bar-track"><div class="bar-fill baseline" style="width:41%"></div></div><span class="bar-value">1.11M input</span></div>
+          <div class="bar-row"><strong>Tokens</strong><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-value">2.68M input</span></div>
+        </div>
+
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Outcome</th><th>Without kit</th><th>With AI SDLC</th></tr></thead>
+            <tbody>
+              <tr><td>Full lifecycle</td><td class="bad">Stopped after turn 5</td><td class="good">Completed all 10 turns</td></tr>
+              <tr><td>Local project tests</td><td>Passed</td><td>Passed</td></tr>
+              <tr><td>Independent restart/data oracle</td><td class="bad">Failed</td><td class="good">Passed</td></tr>
+              <tr><td>Reviewable behavior contract</td><td>None</td><td>Spec + verification evidence</td></tr>
+              <tr><td>Technical plan</td><td>None</td><td>One bounded plan</td></tr>
+              <tr><td>Operations and rollback</td><td>Withheld after acceptance failure</td><td>Exercised and documented</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>What the result does—and does not—prove</h3>
+        <div class="grid-2">
+          <article class="card">
+            <h4>Supported conclusion</h4>
+            <p>
+              In this controlled project, the repository contract caused the
+              assistant to preserve explicit human acceptance, run stronger
+              lifecycle checks, discover a persistence compatibility defect,
+              and finish operations/rollback work that the baseline could not.
+            </p>
+          </article>
+          <article class="card">
+            <h4>Unsupported conclusion</h4>
+            <p>
+              One stochastic pair does not prove universal productivity gains
+              or statistical causality. Turn counts differ by design because
+              the with-kit arm includes human approval boundaries.
+            </p>
+          </article>
+        </div>
+
+        <div class="notice warning">
+          Nine with-kit commands failed deliberately during red tests, negative
+          probes, or corrected attempts. This is healthy evidence: every command
+          had a terminal state, none was interrupted, and the owning turn
+          resolved the failure before its gate passed.
+        </div>
+      </section>
+
+      <section class="chapter" id="prompts" data-search-section>
+        <span class="chapter-number">07 · PROMPT COOKBOOK</span>
+        <h2>Useful requests sound like ordinary engineering.</h2>
+        <p class="lede">
+          Include intent, important constraints, and authorization boundaries.
+          Do not prescribe internal skill names unless you are testing routing.
+          The assistant should absorb routine technical decisions and return
+          product policy or durable trade-offs to you.
+        </p>
+
+        <div class="grid-2">
+          <article class="card prompt-card">
+            <span class="route">Orientation</span>
+            <blockquote>“Give me an architecture overview. Explain the request path and where tests prove it. Do not modify files.”</blockquote>
+            <p>Expected: inspect, explain, cite files, remain read-only.</p>
+          </article>
+          <article class="card prompt-card">
+            <span class="route">Tiny change</span>
+            <blockquote>“Rename the Save button to Save draft and update its existing test. Keep this local; do not commit.”</blockquote>
+            <p>Expected: direct bounded change, no feature spec.</p>
+          </article>
+          <article class="card prompt-card">
+            <span class="route">Fuzzy feature</span>
+            <blockquote>“Add team invitations. I know the goal but not the behavior. Inspect first, recommend defaults, and stop at human approval boundaries.”</blockquote>
+            <p>Expected: focused product questions, then a rendered draft.</p>
+          </article>
+          <article class="card prompt-card">
+            <span class="route">Unknown approach</span>
+            <blockquote>“We need offline read access. I do not know how to build it. Investigate the repository and recommend the lightest reliable approach.”</blockquote>
+            <p>Expected: agent-owned technical investigation; no initiative by reflex.</p>
+          </article>
+          <article class="card prompt-card">
+            <span class="route">Diagnosis only</span>
+            <blockquote>“Checkout sometimes creates two orders after a timeout. Diagnose the cause only. Do not change files.”</blockquote>
+            <p>Expected: reproduce, isolate, explain evidence, clean worktree.</p>
+          </article>
+          <article class="card prompt-card">
+            <span class="route">Test-first fix</span>
+            <blockquote>“I accept the retry contract. Add a regression that fails for the causal bug, make the smallest fix, run mapped checks, but do not commit.”</blockquote>
+            <p>Expected: red evidence before implementation, then full verification.</p>
+          </article>
+          <article class="card prompt-card">
+            <span class="route">Finish</span>
+            <blockquote>“Finish this change for human review. Run every relevant mapped check and triggered review. Report limitations. Do not commit.”</blockquote>
+            <p>Expected: evidence-backed verdict, no authorization expansion.</p>
+          </article>
+          <article class="card prompt-card">
+            <span class="route">Learn</span>
+            <blockquote>“Pause here and teach me why this migration needs dual reads. Save a redacted handoff, ask one transfer question, then return to the decision.”</blockquote>
+            <p>Expected: contextual teaching without losing workflow state.</p>
+          </article>
+          <article class="card prompt-card">
+            <span class="route">Operations</span>
+            <blockquote>“Exercise startup, health, logs, restart, and clean shutdown locally. Add backup, recovery, rollback, and retirement steps. Do not deploy.”</blockquote>
+            <p>Expected: bounded lifecycle probe and honest scope limits.</p>
+          </article>
+          <article class="card prompt-card">
+            <span class="route">Large initiative</span>
+            <blockquote>“Introduce multi-region identity, billing failover, data migration, and staged rollout. Map the initiative before proposing implementation.”</blockquote>
+            <p>Expected: coordinated outcomes and dependencies, not one giant plan.</p>
+          </article>
+        </div>
+
+        <h3>A strong prompt contract</h3>
+        <div class="code-wrap">
+          <div class="code-label"><span>Reusable shape</span><button class="copy" type="button">Copy</button></div>
+          <pre><code>Goal:
+  What useful outcome should exist?
+
+Known behavior and constraints:
+  What is already settled?
+
+Uncertainty:
+  What do I need the assistant to investigate or return to me?
+
+Evidence:
+  What must pass or be demonstrated?
+
+Authorization:
+  May it edit? commit? push? publish? deploy? delete?</code></pre>
+        </div>
+      </section>
+
+      <section class="chapter" id="models" data-search-section>
+        <span class="chapter-number">08 · BUILDING WITH OPENAI MODELS</span>
+        <h2>The model is a reasoning engine inside a controlled system.</h2>
+        <p class="lede">
+          AI SDLC itself is model-agnostic repository guidance. The retained
+          release experiment used Codex CLI 0.145.0 with
+          <code>gpt-5.6-terra</code> as a fixed experimental identity. If you
+          build your own assistant, combine a model with repository context,
+          narrowly authorized tools, structured outputs, and independent evals.
+        </p>
+
+        <div class="architecture" aria-label="Model integration architecture">
+          <div class="node"><strong>Repository truth</strong><br><small>AGENTS.md, specs, ADRs, commands, current diff</small></div>
+          <div class="arrow">→</div>
+          <div class="node"><strong>OpenAI model</strong><br><small>instructions, conversation state, tool selection</small></div>
+          <div class="arrow">→</div>
+          <div class="node"><strong>Deterministic boundary</strong><br><small>schemas, command events, tests, policy, human gates</small></div>
+        </div>
+
+        <h3>1. Put durable behavior in the repository</h3>
+        <p>
+          Keep stable instructions in <code>AGENTS.md</code>, not only in a
+          hidden system prompt. The same reviewed contract can then guide Codex,
+          Claude, Copilot, or a custom assistant. Agent-specific files should be
+          thin adapters, not competing policy copies.
+        </p>
+
+        <h3>2. Use the Responses API for a custom OpenAI integration</h3>
+        <p>
+          OpenAI recommends the
+          <a href="https://developers.openai.com/api/docs/guides/migrate-to-responses">Responses API for new projects</a>.
+          It supports multi-turn state and tool-using agent loops. A minimal
+          reasoning call can keep the repository contract separate from the
+          current developer request:
+        </p>
+        <div class="code-wrap">
+          <div class="code-label"><span>JavaScript · conceptual assistant seam</span><button class="copy" type="button">Copy</button></div>
+          <pre><code>import OpenAI from "openai";
+import { readFile } from "node:fs/promises";
+
+const openai = new OpenAI();
+const contract = await readFile("AGENTS.md", "utf8");
+
+const response = await openai.responses.create({
+  model: process.env.OPENAI_MODEL || "gpt-5.6",
+  instructions: contract,
+  input: [
+    {
+      role: "user",
+      content: "Diagnose the duplicate order after timeout. Do not change files."
+    }
+  ],
+  store: false
+});
+
+console.log(response.output_text);</code></pre>
+        </div>
+        <div class="notice">
+          This minimal example generates guidance; it is not yet a coding agent.
+          A real implementation must add repository read/search tools, a bounded
+          command runner, patch application, permission checks, event capture,
+          timeouts, cleanup ownership, and filesystem auditing.
+        </div>
+
+        <h3>3. Make machine-facing results structured</h3>
+        <p>
+          Human prose can vary; pipeline decisions should not. OpenAI’s
+          <a href="https://developers.openai.com/api/docs/guides/structured-outputs">Structured Outputs</a>
+          can constrain model responses to JSON Schema. AI SDLC’s behavior
+          harness uses this principle for stable route, mode, verdict, question,
+          artifact, command, and limitation fields—then scores actual filesystem
+          and command events independently.
+        </p>
+        <div class="code-wrap">
+          <div class="code-label"><span>Example result contract</span><button class="copy" type="button">Copy</button></div>
+          <pre><code>{
+  "mode": "diagnose",
+  "verdict": "ready",
+  "human_gate": "none",
+  "files_changed": [],
+  "commands_run": ["npm test"],
+  "limitations": [
+    "Reproduced with a disconnected local client, not a production proxy."
+  ]
+}</code></pre>
+        </div>
+
+        <h3>4. Separate discovery, audit, policy, and authority</h3>
+        <div class="grid-2">
+          <article class="card">
+            <h4>Model-owned</h4>
+            <ul>
+              <li>Inspect relevant repository context.</li>
+              <li>Recommend routine technical choices.</li>
+              <li>Generate candidate implementation and review findings.</li>
+              <li>Explain uncertainty and known limitations.</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h4>System- or human-owned</h4>
+            <ul>
+              <li>Tool permissions, sandbox, budgets, and timeouts.</li>
+              <li>Test, scan, lock, and policy enforcement.</li>
+              <li>Product acceptance and durable trade-offs.</li>
+              <li>Commit, push, publish, deployment, and destructive actions.</li>
+            </ul>
+          </article>
+        </div>
+
+        <h3>5. Evaluate trajectories, not eloquence</h3>
+        <p>
+          OpenAI’s
+          <a href="https://developers.openai.com/tracks/ai-application-development#constructing-evals">evaluation guidance</a>
+          emphasizes repeatable feedback loops. For coding workflows, score
+          what the assistant did: actual tool calls, files changed, artifact
+          state, Git state, test outcomes, interrupted processes, and whether it
+          crossed an authorization boundary.
+        </p>
+
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Weak measurement</th><th>Stronger measurement</th></tr></thead>
+            <tbody>
+              <tr><td>“The answer sounded careful.”</td><td>Forbidden files unchanged; no unauthorized command event.</td></tr>
+              <tr><td>Assistant says “tests passed.”</td><td>Captured terminal event with exit 0 and bounded duration.</td></tr>
+              <tr><td>JSON says “diagnose.”</td><td>Filesystem audit confirms no product changes.</td></tr>
+              <tr><td>Model says “ready.”</td><td>Independent product oracle, clean checkout, and rollback gate pass.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>6. Treat cost as an observable trade-off</h3>
+        <p>
+          The with-kit experiment used more turns and roughly 2.4× the input
+          tokens of the baseline. Spend context on high-risk boundaries, not on
+          ritual. Use smaller or faster models for routing and deterministic
+          preparation only after evals show they preserve behavior; reserve
+          stronger reasoning for complex shaping, diagnosis, migration, or
+          review.
+        </p>
+      </section>
+
+      <section class="chapter" id="pain-points" data-search-section>
+        <span class="chapter-number">09 · WHAT BROKE</span>
+        <h2>The failures are part of the product.</h2>
+        <p class="lede">
+          The kit moved from alpha.1 to alpha.4 because stronger oracles kept
+          invalidating earlier green results. A later, better test always wins
+          over a convenient narrative.
+        </p>
+
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Pain point</th><th>Observed impact</th><th>Disposition in alpha.4</th></tr></thead>
+            <tbody>
+              <tr><td>Uncommitted first project</td><td>Safe refusal surprised the user.</td><td>Prerequisite and recovery are explicit.</td></tr>
+              <tr><td>Flat preview of ~60 files</td><td>Review fatigue.</td><td><code>--dry-run</code> is repeatable; grouped preview remains deferred.</td></tr>
+              <tr><td>No safe rerun</td><td>Existing lock always failed.</td><td>Same-version rerun is a read-only integrity check.</td></tr>
+              <tr><td>Missing automation flags</td><td>No help/version/preview/noninteractive path.</td><td><code>--help</code>, <code>--version</code>, <code>--dry-run</code>, <code>--yes</code>.</td></tr>
+              <tr><td>Personal assistant config leaked into eval</td><td>Unsupported settings/model stopped the run.</td><td>Ignore user config; model and CLI version are explicit inputs.</td></tr>
+              <tr><td>Sandbox looked green while commands failed</td><td><code>bwrap</code> errors were hidden by final prose.</td><td>At least one successful repository command required; actual events scored.</td></tr>
+              <tr><td>Draft answers treated as acceptance</td><td>Implementation began before contract review.</td><td>Draft creation and explicit acceptance must occur in separate turns.</td></tr>
+              <tr><td>Long-running server command</td><td>Phase called ready with no terminal event.</td><td>Bounded start/check/stop ownership; interrupted commands fail the gate.</td></tr>
+              <tr><td>Browser retry regenerated identity</td><td>Ambiguous timeout could duplicate stock movement.</td><td>Retain exact key/body until a definite response or changed values.</td></tr>
+              <tr><td>Project tests passed but migration failed</td><td>Previous data shape was unreadable.</td><td>Independent restart and cross-version rollback oracles.</td></tr>
+              <tr><td>Oracle overfit implementation details</td><td>Valid <code>dataset</code>, module script, selectors, and markup failed.</td><td>Focused oracle fidelity regressions; old failures preserved.</td></tr>
+              <tr><td>Windows/Linux line endings</td><td>65 files appeared dirty in Linux.</td><td>Linux run initializes with <code>core.autocrlf=false</code>; artifact difference disclosed.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Still deferred or explicitly out of scope</h3>
+        <div class="grid-2">
+          <article class="card">
+            <h4>Deferred product work</h4>
+            <ul>
+              <li>Cross-version kit update transactions.</li>
+              <li>Automatic merge policy for brownfield same-path collisions.</li>
+              <li>Grouped preview UX.</li>
+              <li>Role-aware wording for optional empty command warnings.</li>
+              <li>Codex 0.145.0 Windows conversation-resume sandbox behavior.</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h4>Scope boundaries</h4>
+            <ul>
+              <li>No real production deployment or monitoring stack.</li>
+              <li>No manual browser, screen-reader, zoom, or viewport certification.</li>
+              <li>No destructive retirement.</li>
+              <li>Live model turns require OpenAI network access.</li>
+              <li>One experiment pair is not a statistical benchmark.</li>
+            </ul>
+          </article>
+        </div>
+
+        <p>
+          The complete ledger contains 55 entries:
+          <a href="artifacts/full-lifecycle-simulation/pain-points.md">pain-points.md</a>.
+        </p>
+      </section>
+
+      <section class="chapter" id="operations" data-search-section>
+        <span class="chapter-number">10 · THE WHOLE LIFECYCLE</span>
+        <h2>“Done” includes the life after merge.</h2>
+        <p class="lede">
+          AI SDLC is most useful when the same contract survives feature work,
+          incident learning, maintenance, release, operations, rollback, and
+          retirement. The Pantry Ledger experiment explicitly exercised that arc.
+        </p>
+
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Lifecycle phase</th><th>Required evidence</th><th>Human boundary</th></tr></thead>
+            <tbody>
+              <tr><td>Discovery</td><td>Repository facts, unresolved behavior, explicit assumptions</td><td>Product policy</td></tr>
+              <tr><td>Specification</td><td>Observable scenarios, failures, acceptance oracle</td><td>Rendered spec acceptance</td></tr>
+              <tr><td>Planning</td><td>Small vertical slices and verification sequence</td><td>Plan acceptance when warranted</td></tr>
+              <tr><td>Implementation</td><td>Red/green tests, mapped commands, triggered reviews</td><td>Scope and irreversible choices</td></tr>
+              <tr><td>Release</td><td>Clean checkout, manifest, provenance, final verdict</td><td>Commit/push/tag/publish/deploy</td></tr>
+              <tr><td>Incident</td><td>Reproduction, causal explanation, clean diagnosis boundary</td><td>Fix authorization</td></tr>
+              <tr><td>Maintenance</td><td>Revised accepted behavior, compatibility and migration checks</td><td>Changed contract acceptance</td></tr>
+              <tr><td>Operations</td><td>Startup, health, logs, restart, backup, shutdown</td><td>Environment access</td></tr>
+              <tr><td>Rollback</td><td>Previous release reads current data; no hidden destructive write</td><td>Rollback execution</td></tr>
+              <tr><td>Retirement</td><td>Data disposition, listener/process removal, archived guidance</td><td>Destructive action authorization</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Release integrity chain</h3>
+        <div class="flow" aria-label="Release integrity chain">
+          <div class="flow-step">Reviewed PR</div>
+          <div class="flow-step">Merged commit</div>
+          <div class="flow-step">Immutable tag</div>
+          <div class="flow-step">OIDC publish</div>
+          <div class="flow-step">Public install</div>
+        </div>
+        <ul>
+          <li>Release tag: <a href="https://github.com/capableguptadotcom/sdlc-workflow/releases/tag/v0.1.0-alpha.4"><code>v0.1.0-alpha.4</code></a>.</li>
+          <li>npm package: <a href="https://www.npmjs.com/package/@innovate-x/ai-sdlc/v/0.1.0-alpha.4"><code>@innovate-x/ai-sdlc@0.1.0-alpha.4</code></a>.</li>
+          <li>Tagged source commit: <code>cf1a0cf65406b5b60072451c44135bd11a139610</code>.</li>
+          <li>Trusted publishing uses GitHub Actions OIDC; traditional publishing tokens are disabled.</li>
+          <li>The registry artifact carries npm/SLSA provenance.</li>
+        </ul>
+      </section>
+
+      <section class="chapter" id="troubleshooting" data-search-section>
+        <span class="chapter-number">11 · TROUBLESHOOTING</span>
+        <h2>When the safe behavior feels like a blocker.</h2>
+
+        <details open>
+          <summary>“The installer says my worktree is dirty.”</summary>
+          <div>
+            <p>
+              Preview is allowed; apply is not. Commit or deliberately stash
+              your project changes, confirm <code>git status --short</code> is
+              empty, then rerun. This prevents adoption files from being mixed
+              with unrelated work and makes rollback intelligible.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>“A file already exists at a kit-owned path.”</summary>
+          <div>
+            <p>
+              The alpha aborts atomically instead of guessing. Shared root
+              instruction files have explicit managed-region support; arbitrary
+              same-path files do not. Review the collision and choose ownership
+              manually in a branch.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>“The validator warns about empty command lists.”</summary>
+          <div>
+            <p>
+              Confirm whether that role applies. The installer maps recognized
+              Node script names and explicit Python tool configuration; it does
+              not guess ambiguous roles. Fill applicable commands and accept
+              that truly absent roles remain empty. The current warning is
+              accurate but intentionally conservative.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>“My repository already uses Husky or pre-commit.”</summary>
+          <div>
+            <p>
+              Existing managers remain the source of truth. Husky composition
+              occurs only for an explicit <code>precommit</code>,
+              <code>pre-commit</code>, or <code>lint:staged</code> script. A
+              Python pre-commit config is preserved. When both managers exist,
+              composition is skipped to avoid duplicate checks.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>“I already installed alpha.1. Can I run @alpha?”</summary>
+          <div>
+            <p>
+              Not as an in-place update. Pin
+              <code>npx @innovate-x/ai-sdlc@0.1.0-alpha.1</code> for its
+              same-version validation, or evaluate alpha.4 in a fresh branch or
+              repository. The CLI rejects a different installed version before
+              writes.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>“The assistant used a different route than expected.”</summary>
+          <div>
+            <p>
+              Check actual behavior before checking its label. Did it edit when
+              asked only to diagnose? Did it implement before explicit
+              acceptance? Add a focused dialogue or executable regression for a
+              real failure. Do not leak the expected answer into the model prompt
+              or schema; that makes the evaluation self-fulfilling.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>“A test server never stopped.”</summary>
+          <div>
+            <p>
+              Treat this as a failed phase even if the final prose says ready.
+              Own process startup, bound the health probe, register cleanup
+              before assertions, stop in a failure-safe path, and verify both
+              process exit and listener removal.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>“Adoption changed what my npm package would publish.”</summary>
+          <div>
+            <p>
+              Inspect <code>npm pack --dry-run --json</code>. Adopted workflow
+              files can dramatically enlarge a default manifest. Use the
+              project’s existing <code>files</code> or ignore policy to make an
+              explicit inclusion decision; a successful pack command alone is
+              not a privacy review.
+            </p>
+          </div>
+        </details>
+      </section>
+
+      <section class="chapter" id="reference" data-search-section>
+        <span class="chapter-number">12 · SOURCE MAP</span>
+        <h2>Follow the evidence, reproduce the claim.</h2>
+        <p class="lede">
+          This guide synthesizes the product-design, enforcement, skills,
+          implementation, evaluation, and release conversations with the
+          retained alpha.4 repository evidence. These are the primary sources.
+        </p>
+
+        <div class="grid-2">
+          <article class="card">
+            <h3>Using the kit</h3>
+            <ul>
+              <li><a href="README.md">Repository README</a></li>
+              <li><a href="repo-template/.ai/ADOPTION.md">Adoption checklist</a></li>
+              <li><a href="repo-template/.ai/workflow-walkthrough.html">Installed interactive walkthrough</a></li>
+              <li><a href="repo-template/AGENTS.md">Installed repository contract</a></li>
+              <li><a href="repo-template/ai-sdlc.yaml">Command and gate configuration</a></li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Experiment evidence</h3>
+            <ul>
+              <li><a href="artifacts/full-lifecycle-simulation/method.md">Simulation method</a></li>
+              <li><a href="artifacts/full-lifecycle-simulation/pain-points.md">55-entry pain-point ledger</a></li>
+              <li><a href="artifacts/full-lifecycle-simulation/final-20260729/alpha4-release-validation/release-report.md">Alpha.4 release decision</a></li>
+              <li><a href="artifacts/full-lifecycle-simulation/final-20260729/alpha4-release-validation/full-run/comparison.md">Paired comparison</a></li>
+              <li><a href="artifacts/full-lifecycle-simulation/final-20260729/alpha4-release-validation/runbook.md">Reproduction runbook</a></li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Governance and design</h3>
+            <ul>
+              <li><a href="plan.md">Accepted product and implementation plan</a></li>
+              <li><a href="governance/OPERATING_MODEL.md">Operating model</a></li>
+              <li><a href="research/SKILL_AUDIT.md">Skill audit and provenance</a></li>
+              <li><a href="repo-template/evals/dialogue-cases.json">Canonical dialogue cases</a></li>
+              <li><a href="repo-template/evals/behavior-cases.json">Behavior cases</a></li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>OpenAI architecture sources</h3>
+            <ul>
+              <li><a href="https://developers.openai.com/api/docs/guides/migrate-to-responses">Responses API guidance</a></li>
+              <li><a href="https://developers.openai.com/api/docs/guides/tools">OpenAI tool use</a></li>
+              <li><a href="https://developers.openai.com/api/docs/guides/structured-outputs">Structured Outputs</a></li>
+              <li><a href="https://developers.openai.com/tracks/ai-application-development#constructing-evals">Evaluation-driven AI development</a></li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="notice warning">
+          <strong>Release status, July 29, 2026:</strong> alpha.4 is public and
+          intended for fresh-adoption pilots. The retained release report was
+          written before the authorized publish operation, so its statements
+          that the candidate was “unpublished” describe the gate at that moment.
+          The GitHub release and npm registry are the current publication record.
+        </div>
+
+        <h3>The shortest accurate summary</h3>
+        <p class="kicker">
+          Install the contract into a clean repository. Describe work normally.
+          Let complexity earn artifacts. Keep product acceptance and external
+          authority human. Measure actions, not claims. Preserve failures.
+          Finish with independent evidence and an operable rollback story.
+        </p>
+        <p class="print-only">Generated as a self-contained HTML field guide. Interactive checkboxes and controls are omitted from print.</p>
+      </section>
+    </main>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div><strong>AI SDLC Field Guide</strong><br>Evidence-backed guidance for v0.1.0-alpha.4.</div>
+      <div>License: MIT · <a href="https://github.com/capableguptadotcom/sdlc-workflow">Source repository</a></div>
+    </div>
+  </footer>
+
+  <script>
+    (() => {
+      const root = document.documentElement;
+      const themeButton = document.getElementById("theme-toggle");
+      const savedTheme = localStorage.getItem("ai-sdlc-guide-theme");
+      const preferredDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+      function applyTheme(theme) {
+        root.dataset.theme = theme;
+        themeButton.textContent = theme === "dark" ? "Light mode" : "Dark mode";
+        themeButton.setAttribute("aria-label", `Switch to ${theme === "dark" ? "light" : "dark"} theme`);
+      }
+      applyTheme(savedTheme || (preferredDark ? "dark" : "light"));
+      themeButton.addEventListener("click", () => {
+        const next = root.dataset.theme === "dark" ? "light" : "dark";
+        applyTheme(next);
+        localStorage.setItem("ai-sdlc-guide-theme", next);
+      });
+
+      document.querySelectorAll(".code-wrap").forEach((wrap) => {
+        const button = wrap.querySelector(".copy");
+        const code = wrap.querySelector("code");
+        if (!button || !code) return;
+        button.addEventListener("click", async () => {
+          try {
+            await navigator.clipboard.writeText(code.textContent);
+            const old = button.textContent;
+            button.textContent = "Copied";
+            setTimeout(() => { button.textContent = old; }, 1400);
+          } catch {
+            button.textContent = "Select text";
+          }
+        });
+      });
+
+      const details = Array.from(document.querySelectorAll("details"));
+      const expandButton = document.getElementById("expand-all");
+      let expanded = false;
+      expandButton.addEventListener("click", () => {
+        expanded = !expanded;
+        details.forEach((item) => { item.open = expanded; });
+        expandButton.textContent = expanded ? "Collapse details" : "Expand details";
+      });
+
+      const checks = Array.from(document.querySelectorAll("[data-check]"));
+      const progress = document.getElementById("adoption-progress");
+      function updateChecks() {
+        const completed = checks.filter((box) => box.checked).length;
+        progress.style.width = `${(completed / checks.length) * 100}%`;
+        progress.parentElement.setAttribute("aria-label", `Adoption progress: ${completed} of ${checks.length}`);
+      }
+      checks.forEach((box) => {
+        const key = `ai-sdlc-guide-check-${box.dataset.check}`;
+        box.checked = localStorage.getItem(key) === "true";
+        box.addEventListener("change", () => {
+          localStorage.setItem(key, String(box.checked));
+          updateChecks();
+        });
+      });
+      updateChecks();
+
+      const navLinks = Array.from(document.querySelectorAll("#guide-nav a"));
+      const sections = navLinks.map((link) => document.querySelector(link.getAttribute("href"))).filter(Boolean);
+      const observer = new IntersectionObserver((entries) => {
+        const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (!visible) return;
+        navLinks.forEach((link) => link.classList.toggle("active", link.getAttribute("href") === `#${visible.target.id}`));
+      }, { rootMargin: "-18% 0px -68% 0px", threshold: [0, .1, .5] });
+      sections.forEach((section) => observer.observe(section));
+
+      const search = document.getElementById("guide-search");
+      const searchable = Array.from(document.querySelectorAll("[data-search-section]"));
+      search.addEventListener("input", () => {
+        const query = search.value.trim().toLowerCase();
+        searchable.forEach((section) => {
+          section.hidden = Boolean(query) && !section.textContent.toLowerCase().includes(query);
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
