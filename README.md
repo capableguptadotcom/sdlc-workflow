@@ -10,6 +10,10 @@ for scenario-based tutorials, example prompts, routing visuals, artifact
 guidance, and a short team practice checklist. The adopter ships this page into
 each project so the team receives it through the normal repository workflow.
 
+For the complete evidence-backed guide—from isolated first adoption through the
+Pantry Ledger lifecycle, model architecture, release operations, rollback, and
+the pain points that shaped alpha.4—open [tutorial.html](tutorial.html).
+
 ## Team adoption: no extra clone
 
 The intended distribution flow is:
